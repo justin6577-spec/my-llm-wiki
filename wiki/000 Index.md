@@ -132,6 +132,18 @@ The through-line: every paper in this wiki is asking the same question — *how 
 
 ---
 
+## Benchmarks & Evaluation
+
+Quantitative comparisons across frontier models on knowledge, long context, and agentic tasks.
+
+| Note | Coverage | Year | TL;DR |
+|---|---|---|---|
+| [[LLM Benchmarks 2025]] | DS-V4-Pro, DS-V4-Flash, K2.6, GLM-5.1, Opus-4.6, GPT-5.4, Gemini-3.1-Pro — 22 benchmarks | 2025 | Gemini leads knowledge, Opus-4.6 leads long context, agentic tasks split across GPT-5.4 / Opus-4.6 / K2.6; DS-V4-Pro is strongest open model. |
+
+**Tags:** `benchmarks` `evaluation` `llm-comparison`
+
+---
+
 ## Reading Order
 
 **If you're new:** [[Transformer]] → [[Mixture-of-Experts]] → [[Mamba]] → [[Nemotron-3]]
