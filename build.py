@@ -132,6 +132,87 @@ def _convert_embeds(text):
     return re.sub(r"!\[\[([^\]|#]+?)(?:[|#][^\]]*)?\]\]", repl, text)
 
 
+# ── Math protection ─────────────────────────────────────────────────────────
+# We swap LaTeX math segments for plain alphanumeric placeholders before the
+# markdown renderer runs, then put the raw LaTeX back afterwards. This keeps
+# the markdown library from interpreting `_`, `*`, `[`, etc. inside math, and
+# it gives KaTeX the un-escaped LaTeX it needs at render time.
+
+_MATH_PLACEHOLDER_FMT = "MATHXBLOCKX{:06d}XEND"
+
+
+def _split_code_aware(text):
+    """Yield (is_code, segment) tuples, splitting on fenced code blocks so we
+    don't extract math from inside ``` blocks."""
+    pattern = re.compile(r"(^```[^\n]*\n.*?^```[ \t]*$)", re.MULTILINE | re.DOTALL)
+    last = 0
+    for m in pattern.finditer(text):
+        if m.start() > last:
+            yield False, text[last:m.start()]
+        yield True, m.group(0)
+        last = m.end()
+    if last < len(text):
+        yield False, text[last:]
+
+
+def protect_math(text):
+    """Replace $$...$$, $...$, \\[...\\], \\(...\\) outside fenced code blocks
+    with placeholders. Returns (modified_text, placeholders_dict)."""
+    placeholders = {}
+    counter = [0]
+
+    def make_ph(raw_with_delims):
+        counter[0] += 1
+        key = _MATH_PLACEHOLDER_FMT.format(counter[0])
+        placeholders[key] = raw_with_delims
+        return key
+
+    out_parts = []
+    for is_code, seg in _split_code_aware(text):
+        if is_code:
+            out_parts.append(seg)
+            continue
+
+        # Order matters: longest delimiters first so $$ doesn't get eaten by $.
+        # 1. $$ ... $$  (display, may span lines)
+        seg = re.sub(
+            r"\$\$(.+?)\$\$",
+            lambda m: make_ph("$$" + m.group(1) + "$$"),
+            seg,
+            flags=re.DOTALL,
+        )
+        # 2. \[ ... \]  (display, may span lines)
+        seg = re.sub(
+            r"\\\[(.+?)\\\]",
+            lambda m: make_ph("\\[" + m.group(1) + "\\]"),
+            seg,
+            flags=re.DOTALL,
+        )
+        # 3. \( ... \)  (inline)
+        seg = re.sub(
+            r"\\\((.+?)\\\)",
+            lambda m: make_ph("\\(" + m.group(1) + "\\)"),
+            seg,
+            flags=re.DOTALL,
+        )
+        # 4. $ ... $   (inline). Reject empty bodies, leading/trailing whitespace,
+        #    and $ that's been escaped with a backslash.
+        seg = re.sub(
+            r"(?<!\\)\$(?!\s)([^\n$]+?)(?<!\s)\$",
+            lambda m: make_ph("$" + m.group(1) + "$"),
+            seg,
+        )
+        out_parts.append(seg)
+
+    return "".join(out_parts), placeholders
+
+
+def restore_math(html, placeholders):
+    for key, raw in placeholders.items():
+        html = html.replace(key, raw)
+    return html
+
+
 def preprocess_obsidian(text):
     """Apply all Obsidian-specific transforms before markdown rendering."""
     # Strip Dataview blocks (replace with a placeholder line we'll swap later).
@@ -192,7 +273,11 @@ def build():
 
         links = extract_wikilinks(body)
 
-        processed, ph_dv, ph_mm = preprocess_obsidian(body)
+        # Protect math BEFORE other transforms so markdown / Obsidian rules
+        # never see the LaTeX. KaTeX needs the raw LaTeX at render time.
+        body_protected, math_placeholders = protect_math(body)
+
+        processed, ph_dv, ph_mm = preprocess_obsidian(body_protected)
         html = md_lib.markdown(processed, extensions=["tables", "fenced_code"])
         # Swap placeholder text for the final HTML notice (post-render so the
         # markdown library never wraps the marker in a <p>).
@@ -200,6 +285,9 @@ def build():
         html = html.replace(f"<p>{ph_mm}</p>", MERMAID_NOTICE)
         html = html.replace(ph_dv, DATAVIEW_NOTICE)
         html = html.replace(ph_mm, MERMAID_NOTICE)
+
+        # Restore the raw LaTeX so KaTeX can render it on the client.
+        html = restore_math(html, math_placeholders)
 
         notes.append({
             "id": file_id(path),
