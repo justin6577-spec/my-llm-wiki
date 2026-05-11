@@ -40,14 +40,129 @@ def parse_frontmatter(text):
 
 
 def extract_wikilinks(text):
-    """Return list of note IDs referenced via [[NoteTitle]] syntax."""
-    raw = re.findall(r"\[\[([^\]|#]+?)(?:[|#][^\]]*)?\]\]", text)
+    """Return list of note IDs referenced via [[NoteTitle]] or ![[NoteTitle]] syntax."""
+    raw = re.findall(r"!?\[\[([^\]|#]+?)(?:[|#][^\]]*)?\]\]", text)
     ids = []
     for r in raw:
         note_id = r.strip().replace(" ", "-")
         if note_id not in ids:
             ids.append(note_id)
     return ids
+
+
+# ── Obsidian-specific syntax preprocessor ───────────────────────────────────
+DATAVIEW_NOTICE = (
+    '<div class="obsidian-note">'
+    '📊 Live Dataview query — view in Obsidian'
+    '</div>'
+)
+MERMAID_NOTICE = (
+    '<div class="obsidian-note">'
+    '📈 Diagram — view in Obsidian'
+    '</div>'
+)
+
+CALLOUT_TYPES = {
+    "note":     ("📝", "Note"),
+    "info":     ("ℹ️", "Info"),
+    "tip":      ("💡", "Tip"),
+    "hint":     ("💡", "Hint"),
+    "warning":  ("⚠️", "Warning"),
+    "caution":  ("⚠️", "Caution"),
+    "danger":   ("🛑", "Danger"),
+    "important":("❗", "Important"),
+    "summary":  ("📌", "Summary"),
+    "abstract": ("📌", "Abstract"),
+    "example":  ("🔬", "Example"),
+    "question": ("❓", "Question"),
+    "quote":    ("❝",  "Quote"),
+}
+
+
+def _strip_fenced_blocks(text, lang):
+    """Replace ```{lang} ... ``` (case-insensitive) with a one-line marker we
+    can later swap for an HTML notice (after the markdown lib has run)."""
+    pattern = re.compile(
+        r"^```[ \t]*" + lang + r"\b[^\n]*\n.*?^```[ \t]*$",
+        re.MULTILINE | re.DOTALL | re.IGNORECASE,
+    )
+    return pattern.sub("", text)
+
+
+def _convert_callouts(text):
+    """Convert Obsidian callouts (> [!type] Optional Title) to styled HTML divs.
+
+    A callout is a blockquote whose first line begins with `[!type]`. Following
+    blockquote lines (starting with `>`) form the body. We emit raw HTML so the
+    markdown library leaves it alone."""
+    lines = text.split("\n")
+    out = []
+    i = 0
+    callout_re = re.compile(r"^>\s*\[!(?P<type>[A-Za-z]+)\][+\-]?\s*(?P<title>.*)$")
+    while i < len(lines):
+        m = callout_re.match(lines[i])
+        if not m:
+            out.append(lines[i])
+            i += 1
+            continue
+        ctype = m.group("type").lower()
+        ctitle = m.group("title").strip()
+        body_lines = []
+        i += 1
+        while i < len(lines) and lines[i].lstrip().startswith(">"):
+            body_lines.append(re.sub(r"^>\s?", "", lines[i]))
+            i += 1
+        emoji, default_label = CALLOUT_TYPES.get(ctype, ("💬", ctype.capitalize()))
+        title_html = (ctitle or default_label)
+        body_html = "<br>".join(l for l in body_lines if l.strip()) if body_lines else ""
+        out.append(
+            f'<div class="obsidian-note"><strong>{emoji} {title_html}</strong>'
+            + (f"<br>{body_html}" if body_html else "")
+            + "</div>"
+        )
+    return "\n".join(out)
+
+
+def _convert_embeds(text):
+    """Convert ![[NoteName]] embeds to clickable links pointing at the note."""
+    def repl(m):
+        ref = m.group(1).strip()
+        note_id = ref.replace(" ", "-")
+        return f'<a href="#" class="wikilink" data-noteid="{note_id}">📎 {ref}</a>'
+    return re.sub(r"!\[\[([^\]|#]+?)(?:[|#][^\]]*)?\]\]", repl, text)
+
+
+def preprocess_obsidian(text):
+    """Apply all Obsidian-specific transforms before markdown rendering."""
+    # Strip Dataview blocks (replace with a placeholder line we'll swap later).
+    # Use plain alphanumerics so the markdown renderer does not HTML-escape it.
+    placeholder_dv = "OBSIDIANNOTEXDATAVIEWXBLOCK"
+    placeholder_mm = "OBSIDIANNOTEXMERMAIDXBLOCK"
+
+    def replace_block(m, marker):
+        return marker
+
+    text = re.sub(
+        r"^```[ \t]*(?:dataview|dataviewjs)\b[^\n]*\n.*?^```[ \t]*$",
+        placeholder_dv,
+        text,
+        flags=re.MULTILINE | re.DOTALL | re.IGNORECASE,
+    )
+    text = re.sub(
+        r"^```[ \t]*mermaid\b[^\n]*\n.*?^```[ \t]*$",
+        placeholder_mm,
+        text,
+        flags=re.MULTILINE | re.DOTALL | re.IGNORECASE,
+    )
+
+    # Obsidian callouts → HTML divs
+    text = _convert_callouts(text)
+
+    # ![[note]] embeds → clickable links (do this before extract_wikilinks
+    # so the link survives markdown rendering as raw HTML)
+    text = _convert_embeds(text)
+
+    return text, placeholder_dv, placeholder_mm
 
 
 def file_id(path: Path) -> str:
@@ -76,7 +191,15 @@ def build():
             aliases = [a.strip() for a in aliases.split(",")]
 
         links = extract_wikilinks(body)
-        html = md_lib.markdown(body, extensions=["tables", "fenced_code"])
+
+        processed, ph_dv, ph_mm = preprocess_obsidian(body)
+        html = md_lib.markdown(processed, extensions=["tables", "fenced_code"])
+        # Swap placeholder text for the final HTML notice (post-render so the
+        # markdown library never wraps the marker in a <p>).
+        html = html.replace(f"<p>{ph_dv}</p>", DATAVIEW_NOTICE)
+        html = html.replace(f"<p>{ph_mm}</p>", MERMAID_NOTICE)
+        html = html.replace(ph_dv, DATAVIEW_NOTICE)
+        html = html.replace(ph_mm, MERMAID_NOTICE)
 
         notes.append({
             "id": file_id(path),

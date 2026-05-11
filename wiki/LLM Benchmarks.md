@@ -1,11 +1,11 @@
 ---
-title: "LLM Benchmarks 2025"
+title: "LLM Benchmarks"
 tags: [benchmarks, evaluation, llm-comparison, deepseek, claude, gpt, gemini]
 year: "2025"
 tldr: "Benchmark comparison across DS-V4-Pro, DS-V4-Flash, K2.6, GLM-5.1, Opus-4.6, GPT-5.4, Gemini-3.1-Pro on knowledge, long context, and agentic tasks"
 ---
 
-# LLM Benchmarks 2025
+# LLM Benchmarks
 
 > A side-by-side comparison of seven frontier models on 22 benchmarks spanning knowledge, long context, and agentic capability. Scores collected at each model's highest-compute serving tier.
 
