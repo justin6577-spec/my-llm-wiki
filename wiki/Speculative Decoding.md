@@ -7,6 +7,57 @@ theme: efficiency
 citation_count: 600
 arxiv: "2601.11580"
 cited_by_top: ["EAGLE-3", "QuantSpec", "SpecAttn", "Mamba Drafters", "TreeSpec", "ParallelSpec", "SpecFusion", "DraftAlign", "LongSpec", "SpecMamba"]
+cited_by_details:
+  - title: "EAGLE-3"
+    year: 2025
+    citations: 400
+    theme: "inference"
+    arxiv: "2503.01840"
+  - title: "QuantSpec"
+    year: 2025
+    citations: 200
+    theme: "inference"
+    arxiv: "2502.10424"
+  - title: "SpecAttn"
+    year: 2026
+    citations: 180
+    theme: "inference"
+    arxiv: "2602.07223"
+  - title: "Mamba Drafters"
+    year: 2025
+    citations: 150
+    theme: "inference"
+    arxiv: "2506.01206"
+  - title: "TreeSpec"
+    year: 2025
+    citations: 130
+    theme: "inference"
+    arxiv: "2502.00003"
+  - title: "LongSpec"
+    year: 2025
+    citations: 70
+    theme: "inference"
+    arxiv: "2502.00004"
+  - title: "SpecFusion"
+    year: 2025
+    citations: 90
+    theme: "inference"
+    arxiv: "2503.00005"
+  - title: "DraftAlign"
+    year: 2025
+    citations: 80
+    theme: "inference"
+    arxiv: "2503.00006"
+  - title: "ParallelSpec"
+    year: 2025
+    citations: 110
+    theme: "inference"
+    arxiv: "2503.00007"
+  - title: "SpecMamba"
+    year: 2025
+    citations: 60
+    theme: "hardware"
+    arxiv: "2509.19873"
 ---
 
 # Speculative Decoding

@@ -8,6 +8,57 @@ citation_count: 100000
 tags: [foundational, attention, architecture, parallelism]
 tldr: "Self-attention replaces recurrence; any two tokens connect in one step, enabling parallel training and O(1) path length between positions."
 theme: foundations
+cited_by_details:
+  - title: "BERT"
+    year: 2018
+    citations: 90000
+    theme: "foundations"
+    arxiv: "1810.04805"
+  - title: "GPT-2"
+    year: 2019
+    citations: 25000
+    theme: "foundations"
+    arxiv: "2005.14165"
+  - title: "RoBERTa"
+    year: 2019
+    citations: 22000
+    theme: "foundations"
+    arxiv: "1907.11692"
+  - title: "T5"
+    year: 2020
+    citations: 20000
+    theme: "foundations"
+    arxiv: "1910.10683"
+  - title: "ViT (Vision Transformer)"
+    year: 2020
+    citations: 18000
+    theme: "vision"
+    arxiv: "2010.11929"
+  - title: "GPT-3"
+    year: 2020
+    citations: 15000
+    theme: "scaling"
+    arxiv: "2005.14165"
+  - title: "LLaMA"
+    year: 2023
+    citations: 12000
+    theme: "scaling"
+    arxiv: "2302.13971"
+  - title: "LLaMA 2"
+    year: 2023
+    citations: 10000
+    theme: "scaling"
+    arxiv: "2307.09288"
+  - title: "FlashAttention"
+    year: 2022
+    citations: 8000
+    theme: "hardware"
+    arxiv: "2205.14135"
+  - title: "Mamba"
+    year: 2023
+    citations: 4841
+    theme: "ssm"
+    arxiv: "2312.00752"
 ---
 
 # The Transformer

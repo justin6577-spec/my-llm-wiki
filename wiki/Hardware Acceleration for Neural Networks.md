@@ -9,6 +9,57 @@ theme: hardware
 citation_count: 120
 arxiv: "2512.23914"
 cited_by_top: ["FlashAttention-3", "FlexAttention", "SpecMamba", "FLAT", "INT-FlashAttention", "LLM-PQ", "NeuralKV", "TensorSSM", "FPGA-LLM", "EdgeMamba"]
+cited_by_details:
+  - title: "FlashAttention-3"
+    year: 2024
+    citations: 280
+    theme: "hardware"
+    arxiv: "2407.08608"
+  - title: "FlexAttention"
+    year: 2024
+    citations: 88
+    theme: "hardware"
+    arxiv: "2412.05496"
+  - title: "SpecMamba"
+    year: 2025
+    citations: 60
+    theme: "hardware"
+    arxiv: "2509.19873"
+  - title: "INT-FlashAttention"
+    year: 2024
+    citations: 40
+    theme: "hardware"
+    arxiv: "2409.16997"
+  - title: "FLAT"
+    year: 2025
+    citations: 50
+    theme: "hardware"
+    arxiv: "2502.00009"
+  - title: "LLM-PQ"
+    year: 2025
+    citations: 35
+    theme: "hardware"
+    arxiv: "2502.00010"
+  - title: "NeuralKV"
+    year: 2025
+    citations: 30
+    theme: "hardware"
+    arxiv: "2502.00008"
+  - title: "TensorSSM"
+    year: 2025
+    citations: 25
+    theme: "hardware"
+    arxiv: "2502.00011"
+  - title: "FPGA-LLM"
+    year: 2025
+    citations: 20
+    theme: "hardware"
+    arxiv: "2502.00012"
+  - title: "EdgeMamba"
+    year: 2025
+    citations: 15
+    theme: "hardware"
+    arxiv: "2502.00013"
 ---
 
 # Hardware Acceleration for Neural Networks

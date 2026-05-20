@@ -290,15 +290,19 @@ def build():
         html = restore_math(html, math_placeholders)
 
         citation_count = meta.get("citation_count")
+        cited_by_details = meta.get("cited_by_details")
         notes.append({
             "id": file_id(path),
             "title": meta.get("title") or path.stem,
+            "authors": meta.get("authors", ""),
             "tags": [str(t) for t in tags] if tags else [],
             "year": str(meta.get("year", "")),
             "tldr": meta.get("tldr", ""),
             "aliases": [str(a) for a in aliases] if aliases else [],
             "links": links,
             "citation_count": int(citation_count) if citation_count else None,
+            "arxiv": str(meta.get("arxiv", "")) if meta.get("arxiv") else "",
+            "cited_by_details": cited_by_details if isinstance(cited_by_details, list) else None,
             "html": html,
         })
 

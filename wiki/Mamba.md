@@ -8,6 +8,57 @@ theme: efficiency
 citation_count: 4841
 arxiv: "2312.00752"
 cited_by_top: ["VMamba", "Vision Mamba", "Mamba-2", "Jamba", "MoE-Mamba", "BlackMamba", "MambaByte", "Griffin", "Zamba", "MedMamba"]
+cited_by_details:
+  - title: "VMamba"
+    year: 2024
+    citations: 2100
+    theme: "vision"
+    arxiv: "2401.13460"
+  - title: "Vision Mamba"
+    year: 2024
+    citations: 1800
+    theme: "vision"
+    arxiv: "2401.09417"
+  - title: "Mamba-2 (Transformers are SSMs)"
+    year: 2024
+    citations: 1200
+    theme: "theory"
+    arxiv: "2405.21060"
+  - title: "Jamba"
+    year: 2024
+    citations: 900
+    theme: "llm"
+    arxiv: "2403.19887"
+  - title: "MoE-Mamba"
+    year: 2024
+    citations: 700
+    theme: "efficiency"
+    arxiv: "2401.04081"
+  - title: "BlackMamba"
+    year: 2024
+    citations: 500
+    theme: "efficiency"
+    arxiv: "2402.01771"
+  - title: "MambaByte"
+    year: 2024
+    citations: 450
+    theme: "tokenization"
+    arxiv: "2401.13660"
+  - title: "Griffin"
+    year: 2024
+    citations: 400
+    theme: "architecture"
+    arxiv: "2402.19427"
+  - title: "Zamba"
+    year: 2024
+    citations: 350
+    theme: "scaling"
+    arxiv: "2405.18719"
+  - title: "MedMamba"
+    year: 2024
+    citations: 300
+    theme: "medical"
+    arxiv: "2403.03849"
 ---
 
 # Mamba

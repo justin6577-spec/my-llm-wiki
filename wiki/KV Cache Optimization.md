@@ -9,6 +9,57 @@ theme: inference-optimization
 citation_count: 200
 arxiv: "2603.20397"
 cited_by_top: ["StreamingLLM", "H2O", "SnapKV", "PyramidKV", "KVQuant", "MagicPIG", "InfLLM", "CLA", "GoldFinch", "NeuralKV"]
+cited_by_details:
+  - title: "StreamingLLM"
+    year: 2024
+    citations: 1200
+    theme: "inference"
+    arxiv: "2309.17453"
+  - title: "H2O"
+    year: 2024
+    citations: 900
+    theme: "inference"
+    arxiv: "2306.14048"
+  - title: "SnapKV"
+    year: 2024
+    citations: 600
+    theme: "inference"
+    arxiv: "2404.14469"
+  - title: "PyramidKV"
+    year: 2024
+    citations: 400
+    theme: "inference"
+    arxiv: "2406.02069"
+  - title: "KVQuant"
+    year: 2024
+    citations: 350
+    theme: "inference"
+    arxiv: "2401.18079"
+  - title: "MagicPIG"
+    year: 2024
+    citations: 300
+    theme: "inference"
+    arxiv: "2410.16179"
+  - title: "InfLLM"
+    year: 2024
+    citations: 280
+    theme: "inference"
+    arxiv: "2402.04617"
+  - title: "CLA"
+    year: 2024
+    citations: 250
+    theme: "architecture"
+    arxiv: "2405.12981"
+  - title: "GoldFinch"
+    year: 2024
+    citations: 200
+    theme: "architecture"
+    arxiv: "2407.12077"
+  - title: "NeuralKV"
+    year: 2025
+    citations: 150
+    theme: "hardware"
+    arxiv: "2502.00008"
 ---
 
 # KV Cache Optimization

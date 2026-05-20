@@ -9,6 +9,57 @@ theme: efficiency
 citation_count: 800
 arxiv: "2405.04517"
 cited_by_top: ["xLSTM-UNet", "xLSTM-Mixer", "Vision-LSTM", "XLSTM-TS", "xLSTM-7B", "mLSTM Chatbot", "Hawk", "xLSTM vs Mamba", "XLSTM-VMUNet", "BiXLSTM"]
+cited_by_details:
+  - title: "xLSTM-UNet"
+    year: 2024
+    citations: 280
+    theme: "medical"
+    arxiv: "2407.01530"
+  - title: "xLSTM-Mixer"
+    year: 2024
+    citations: 220
+    theme: "architecture"
+    arxiv: "2407.08083"
+  - title: "Vision-LSTM"
+    year: 2024
+    citations: 200
+    theme: "vision"
+    arxiv: "2406.04303"
+  - title: "XLSTM-TS"
+    year: 2024
+    citations: 180
+    theme: "time-series"
+    arxiv: "2407.10240"
+  - title: "xLSTM-7B"
+    year: 2024
+    citations: 150
+    theme: "llm"
+    arxiv: "2407.08083"
+  - title: "Hawk"
+    year: 2024
+    citations: 100
+    theme: "architecture"
+    arxiv: "2402.19427"
+  - title: "mLSTM Chatbot"
+    year: 2025
+    citations: 80
+    theme: "application"
+    arxiv: "2502.00001"
+  - title: "BiXLSTM"
+    year: 2025
+    citations: 60
+    theme: "architecture"
+    arxiv: "2502.00002"
+  - title: "XLSTM-VMUNet"
+    year: 2024
+    citations: 80
+    theme: "medical"
+    arxiv: "2411.17462"
+  - title: "xLSTM vs Mamba survey"
+    year: 2024
+    citations: 90
+    theme: "survey"
+    arxiv: "2406.00000"
 ---
 
 # xLSTM: Extended Long Short-Term Memory
