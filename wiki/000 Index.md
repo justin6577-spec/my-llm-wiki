@@ -116,184 +116,169 @@ Ranked by approximate citation count as of 2025. These are the most-referenced p
 
 ## Concept Glossary
 
-Every `[[wikilink]]` that appears anywhere in this wiki, with a one-line definition.
+Grouped by theme. Each entry links to its own wiki note with full explanation.
 
-| Concept | What it is | First introduced |
-|---|---|---|
-| [[Transformer]] | Self-attention-based encoder-decoder; the universal backbone of modern NLP | Vaswani et al. 2017 |
-| [[S4]] | Structured State Space model; HiPPO matrix + Cauchy kernel gives efficient long-range SSM | Gu, Goel & Ré 2022 |
-| [[Flash Attention]] | IO-aware exact attention: tiled SRAM computation avoids HBM round-trips; 2–4× speedup | Dao et al. 2022 |
-| [[FlashAttention-2]] | Better work partitioning pushing GPU utilization to 50–73%; 2× faster than v1 | Dao 2023 |
-| [[RWKV]] | Receptance Weighted Key Value: linear attention + channel decay = parallel training + O(1) RNN inference | Peng et al. 2023 |
-| [[RetNet]] | Retentive Network with parallel/recurrent/chunkwise triple-mode retention; 15.6× throughput vs Transformer | Sun et al. 2023 |
-| [[LLaMA 2]] | Meta's 7B–70B open models with full RLHF pipeline; introduced GQA at scale; base for most community finetunes | Touvron et al. 2023 |
-| [[Mamba]] | Selective SSM: input-dependent B, C, Δ parameters enable content-aware compression | Gu & Dao 2024 |
-| [[Griffin]] | RG-LRU + local attention hybrid; matches LLaMA-2 at 7× fewer training tokens | De, Smith et al. 2024 |
-| [[Medusa]] | K extra decoding heads on frozen LLM + tree attention verification; 2.2× lossless speedup | Cai et al. 2024 |
-| [[EAGLE]] | Feature-level draft model (second-to-last hidden state); 3–3.5× lossless speedup | Li et al. 2024 |
-| [[Transformers Are SSMs]] | Structured State Space Duality — attention and selective SSMs are the same structured-matrix object; gives Mamba-2 | Dao & Gu 2024 |
-| [[xLSTM]] | LSTM rehab: exponential gating + matrix memory + parallelizable mLSTM cell; competitive with Transformer at 1B+ | Beck, Hochreiter et al. 2024 |
-| [[Mixture-of-Experts]] | Sparse routing: each token activates only K of N expert FFNs; decouples params from FLOPs | Fedus et al. 2022 |
-| [[Nemotron-3]] | Hybrid Mamba-Transformer-LatentMoE; synthesizes Themes I–III into a production system | NVIDIA 2025 |
-| [[DeepSeek_V4]] | MoE LLM with CSA+HCA compressed attention, mHC residual connections, Muon optimizer; 1M-token context at 27% of V3's FLOPs | DeepSeek-AI 2026 |
+### Attention & Transformers
 
-**DeepSeek-V4 concept pages** — new mechanisms introduced in [[DeepSeek_V4]]:
+- [[Multi-head attention]] — Run h independent attention heads in parallel; each learns different relationship types between tokens.
+- [[Flash Attention]] — IO-aware exact attention: tile into SRAM, never write the T×T matrix to HBM; 2–4× speedup with zero approximation.
+- [[FlashAttention-2]] — Fixes v1's warp scheduling to push GPU utilization from ~25% to 50–73% of peak FLOPS.
+- [[Online softmax]] — Numerically stable tile-by-tile softmax that never materializes the full attention matrix.
+- [[IO-awareness]] — Design algorithms around HBM↔SRAM data movement cost, not raw FLOPs.
+- [[Tiling]] — Partition a matrix computation into SRAM-sized blocks to control memory residency.
+- [[Recomputation]] — Recompute attention scores in the backward pass instead of storing the T×T matrix; trades FLOPs for memory.
+- [[Warp]] — 32-thread lockstep execution unit inside a GPU; inter-warp scheduling is the bottleneck FlashAttention-2 fixes.
+- [[Occupancy]] — Fraction of a GPU's warps actively executing; the metric FlashAttention-2 optimizes.
+- [[Thread block]] — Group of warps sharing on-chip SRAM; the work unit assigned to one streaming multiprocessor.
+- [[GQA]] — Group query heads to share fewer KV heads; 16× KV cache reduction at near-zero quality cost.
+- [[MQA]] — Multi-Query Attention: all query heads share one KV head; extreme cache reduction with some quality loss.
+- [[Linear attention]] — Replace softmax with a kernel so Q(KᵀV) = Q(Kᵀ)V; O(Td²) instead of O(T²d).
+- [[Local attention]] — Attend only to the last W tokens; O(W·T) cost, bounded memory for very long sequences.
+- [[Sliding window attention]] — Keep the last W tokens in the KV cache; oldest fall off the window.
+- [[Attention sinks]] — First tokens accumulate disproportionate attention weight and cannot safely be evicted.
+- [[Compressed Sparse Attention]] — Compress m tokens → 1 KV entry via learned weighted sum, then sparse top-k block selection.
+- [[Heavily Compressed Attention]] — Compress m' >> m tokens → 1 KV entry; coarser than CSA, cheaper, for very distant context.
+- [[RoPE]] — Encodes position by rotating Q and K vectors in 2D planes by an angle proportional to position.
+- [[XPOS]] — RetNet's relative position embedding: multiply Q and K by exponentially decaying position-dependent scalars.
 
-| Concept | What it is | First introduced |
-|---|---|---|
-| [[Compressed Sparse Attention]] | Compress $m$ tokens → 1 KV entry via learned weighted sum, then sparse top-k selection via Lightning Indexer; reduces KV cache to $n/m \cdot k$ entries | DeepSeek-AI 2026 |
-| [[Heavily Compressed Attention]] | Compress $m' \gg m$ tokens → 1 entry, then full dense attention over the tiny sequence; coarser than CSA but cheaper | DeepSeek-AI 2026 |
-| [[Manifold-Constrained Hyper-Connections]] | Expand residual stream to $n_\text{hc} \times d$; constrain mixing matrix to Birkhoff polytope (doubly stochastic) via Sinkhorn-Knopp so spectral norm ≤ 1 | DeepSeek-AI 2026 |
-| [[Muon Optimizer]] | Orthogonalize gradient matrix via Newton-Schulz iterations before applying; isotropic update, faster convergence than AdamW on matrix weights | Jordan et al. 2024; used at scale in DeepSeek-V4 |
-| [[On-Policy Distillation]] | Student generates own rollouts and minimizes reverse KL vs. ensemble of specialist teachers; no distribution shift, mode-seeking | Lu & Lab 2025; DeepSeek-AI 2026 |
-| [[GRPO]] | PPO variant without a value function; normalizes advantages within a group of $G$ rollouts per prompt; cheaper and more stable than PPO for LLMs | DeepSeek-AI 2024–2026 |
+### State Space Models
 
-**New paper sub-concepts** — introduced in the high-impact papers:
+- [[State Space Model]] — Continuous-time linear dynamical system discretized for sequences: h_t = Āh_{t-1} + B̄x_t.
+- [[S4]] — First SSM to solve long-range benchmarks; HiPPO matrix + Cauchy kernel gives O(L log L) training.
+- [[Mamba]] — Selective SSM: B, C, Δ are input-dependent so the model compresses context by content, not position.
+- [[RWKV]] — Linear attention with WKV exponential decay; parallel training like a Transformer, O(1) inference like an RNN.
+- [[RetNet]] — Three computation modes (parallel/recurrent/chunkwise); 15.6× higher throughput vs Transformer at 8K length.
+- [[Griffin]] — RG-LRU + local attention hybrid; matches LLaMA-2 at 7× fewer training tokens.
+- [[xLSTM]] — LSTM modernized with exponential gating + matrix memory; competitive with Transformer at 1B+ scale.
+- [[Transformers Are SSMs]] — Proves attention and selective SSMs are both structured semiseparable matrices; gives Mamba-2.
+- [[HIPPO]] — Mathematical framework deriving optimal SSM state matrix A via polynomial projection of input history.
+- [[HiPPO matrix]] — The specific matrix A derived from HiPPO; gives S4 principled long-range memory from initialization.
+- [[Cauchy kernel]] — K_{ij} = 1/(ω_i - ζ_j) structured matrix arising from diagonalized SSM; enables O(L log²L) computation.
+- [[Low-rank correction]] — A = diagonal + rank-1 decomposition enabling the DPLR structure computable via Cauchy kernel.
+- [[Discretization]] — Convert ODE x' = Ax + Bu into discrete recurrence; ZOH gives Ā = exp(ΔA).
+- [[Convolutional view]] — SSMs during training are a global convolution y = K̄ * u; fully parallelizable via FFT.
+- [[Selective State Space Model]] — SSM whose B, C, Δ depend on the current input; the S6 cell at the heart of Mamba.
+- [[Semiseparable matrix]] — Matrix whose every off-diagonal block has rank ≤ N; the unifying structure behind SSMs and attention.
+- [[Multi-head SSM]] — Multiple parallel SSM heads by analogy with multi-head attention; used in Mamba-2.
+- [[Retention mechanism]] — RetNet's decayed causal attention substitute supporting parallel/recurrent/chunkwise computation.
+- [[Multi-scale retention]] — Multiple retention heads with different γ decay values; like multi-head attention with different time scales.
+- [[Chunkwise recurrent]] — Intra-chunk parallel + inter-chunk recurrent; linear-complexity long-sequence processing.
+- [[Positional decay]] — Attention weight between positions decays as γ^(i-j); RetNet and RWKV's implicit position encoding.
+- [[Recurrent state]] — Fixed-size hidden state h_t that summarizes all past context for RNN-style models.
+- [[Diagonal recurrence]] — Linear recurrence h_t = a_t ⊙ h_{t-1} + b_t with diagonal transition; efficient on parallel hardware.
+- [[RG-LRU]] — Griffin's Real-Gated Linear Recurrent Unit: diagonal recurrence with input-dependent scalar decay gate.
+- [[LRU]] — Complex-valued diagonal linear recurrence with eigenvalue initialization; theoretical precursor to RG-LRU.
+- [[Exponential decay]] — Linear RNNs discount older tokens via a multiplicative scalar < 1 at each recurrent step.
+- [[Time-mixing]] — RWKV sublayer for cross-time interaction via the WKV exponential decay recurrence.
+- [[Channel-mixing]] — RWKV pointwise FFN-like sublayer for within-position transformation.
+- [[Time shift]] — RWKV's blend of current token embedding with previous token's embedding; cheap temporal context.
+- [[Receptance]] — RWKV's output gate r_t = sigmoid(W_r x̂_t) that controls how much the WKV signal contributes.
+- [[LSTM]] — 1997 Hochreiter–Schmidhuber recurrent network with cell state constant-error carousel.
+- [[Constant error carousel]] — Identity path through LSTM cell state; the original solution to vanishing gradients.
+- [[Exponential gating]] — Replace sigmoid gates with exp(·) + running max-stabilizer; a single token can reset memory.
+- [[Matrix memory]] — Replace LSTM's scalar cell with a d×d matrix updated by outer product; a learned key-value store.
+- [[Covariance update rule]] — C_t = f_t C_{t-1} + i_t v_t k_tᵀ; the outer-product update at the heart of mLSTM.
+- [[sLSTM]] — xLSTM scalar-memory cell with exponential gating + cross-cell memory mixing.
+- [[mLSTM]] — xLSTM matrix-memory cell; fully parallelizable during training.
+- [[Long Range Arena]] — 6-task benchmark suite testing long-range dependencies up to 16K steps; S4 first solved Path-X.
 
-| Concept | What it is | From |
-|---|---|---|
-| [[HiPPO matrix]] | State matrix A derived to optimally project input history onto polynomial basis; enables principled long-range memory | [[S4]] |
-| [[Long Range Arena]] | Benchmark suite of 6 tasks testing long-range dependencies (up to 16K steps); S4 solves all, including Path-X | Tay et al. 2021 |
-| [[Cauchy kernel]] | Structured matrix $K_{ij} = 1/(\omega_i - \zeta_j)$ arising from diagonalized SSM; computable in O((N+L) log²(N+L)) | [[S4]] |
-| [[Online softmax]] | Numerically stable running softmax that works tile-by-tile without materializing full attention matrix | [[Flash Attention]] |
-| [[IO-awareness]] | Designing algorithms around HBM↔SRAM data movement rather than raw FLOPs | [[Flash Attention]] |
-| [[Tiling]] | Partition matrices into SRAM-sized blocks to control memory residency; core trick in FlashAttention | [[Flash Attention]] |
-| [[Recomputation]] | Recomputing attention scores in the backward pass instead of storing the T×T matrix; trades FLOPs for memory | [[Flash Attention]] |
-| [[Warp]] | 32-thread lockstep execution unit inside a GPU; inter-warp communication is the scheduling bottleneck v2 fixes | [[FlashAttention-2]] |
-| [[Receptance]] | RWKV's gating vector $r_t$ that controls how much output uses the WKV signal | [[RWKV]] |
-| [[Time-mixing]] | RWKV layer that implements cross-time interaction via the WKV exponential decay recurrence | [[RWKV]] |
-| [[Channel-mixing]] | RWKV pointwise FFN-like layer for within-position transformation | [[RWKV]] |
-| [[Retention mechanism]] | RetNet's decayed causal attention substitute supporting parallel/recurrent/chunkwise computation | [[RetNet]] |
-| [[Multi-scale retention]] | Multiple retention heads with different γ decay values (like multi-head attention with different time scales) | [[RetNet]] |
-| [[Chunkwise recurrent]] | Intra-chunk parallel + inter-chunk recurrent; enables linear-complexity long-sequence processing | [[RetNet]] |
-| [[RG-LRU]] | Real-Gated Linear Recurrent Unit: diagonal recurrence with input-dependent scalar decay; Griffin's core | [[Griffin]] |
-| [[Local attention]] | Sliding-window attention attending only to the last W tokens; used in Griffin as complement to recurrence | [[Griffin]] |
-| [[GQA]] | Grouped-query attention: multiple query heads share fewer KV heads; introduced at scale in LLaMA 2 | [[LLaMA 2]] |
-| [[RLHF]] | Reinforcement Learning from Human Feedback: reward model trained on preferences, then PPO to optimize | [[LLaMA 2]] |
-| [[Ghost Attention]] | Training trick: append system message to every turn, mask in loss; teaches model to persist instructions | [[LLaMA 2]] |
-| [[Medusa heads]] | K extra 2-layer MLP heads attached to frozen LLM; each predicts a different future token | [[Medusa]] |
-| [[Tree attention]] | Modified attention mask encoding a tree of candidate continuations; verifies all paths in one forward pass | [[Medusa]] |
-| [[Feature-level drafting]] | Drafting at the second-to-last hidden state (smooth feature space) rather than token logits | [[EAGLE]] |
-| [[Feature uncertainty]] | The hard problem with token-level feature autoregression: next state depends on sampled token; EAGLE resolves via one-step advance | [[EAGLE]] |
+### Inference Optimization
 
-**Stub pages** — key sub-concepts with their own notes:
+- [[Speculative Decoding]] — Draft model proposes K tokens; target model verifies all K in one parallel pass; ~2× throughput.
+- [[Medusa]] — K extra frozen-backbone MLP heads predict K future tokens; tree attention verifies; 2.2–2.8× lossless speedup.
+- [[EAGLE]] — Feature-level autoregressive draft model; 3–3.5× lossless speedup on LLaMA-2-Chat 70B.
+- [[KV Cache]] — Cached key-value tensors from past attention steps; grows linearly with sequence length.
+- [[KV Cache Optimization]] — Five families of techniques (eviction, compression, hybrid memory, novel attention, combination) for bounded cache.
+- [[Cache eviction]] — Drop KV-cache entries to keep memory bounded; the simplest optimization family.
+- [[Cache compression]] — Keep all KV entries but shrink each via INT8/INT4/NVFP4 quantization or low-rank approximation.
+- [[Hybrid memory]] — Tier KV cache across HBM / host DRAM / NVMe; page hot blocks back for decoding.
+- [[Novel attention mechanisms]] — Architectural changes that structurally shrink the KV cache (GQA, MQA, CSA, HCA).
+- [[Combination strategies]] — Stack two or more optimization families; the production reality for large-scale serving.
+- [[Eviction policy]] — Rule deciding which KV-cache entries to drop (LRU, attention-score, attention-sinks-aware).
+- [[Token budget]] — Hard cap on KV-cache size the eviction policy works within.
+- [[H2O eviction]] — Drop tokens with lowest accumulated attention scores; heavy hitter oracle eviction.
+- [[Paged attention]] — Store KV cache in 16-token pages like OS virtual memory; foundation of vLLM.
+- [[KV offloading]] — Page cold KV blocks from HBM to host DRAM or NVMe SSD.
+- [[Prefill]] — Initial parallel pass that processes the prompt and populates the KV cache.
+- [[Decode phase]] — Autoregressive token-by-token generation; memory bandwidth-bound.
+- [[Draft model]] — Small fast model in speculative decoding that proposes K candidate tokens.
+- [[Verification step]] — Single parallel target-model pass that accepts/rejects all K draft tokens simultaneously.
+- [[Draft model-free speculative decoding]] — Speculative decoding without a separate model; Medusa is the canonical example.
+- [[Lookahead Decoding]] — Jacobi-iteration-based method that speculatively drafts multiple candidate continuations simultaneously.
+- [[Tree attention]] — Modified attention mask encoding a tree of candidates; verifies all paths in one forward pass.
+- [[Tree-based decoding]] — Organizing speculative candidates as a tree to verify exponentially more paths per pass.
+- [[Medusa heads]] — K extra 2-layer MLP heads on a frozen LLM; each predicts one token further into the future.
+- [[Medusa-1]] — Medusa variant where only the extra heads are fine-tuned; plug-and-play with any frozen LLM.
+- [[Medusa-2]] — Medusa variant where both extra heads and backbone are jointly fine-tuned for higher quality.
+- [[Typical acceptance scheme]] — Medusa's acceptance criterion based on typical set filtering instead of full speculative rejection.
+- [[Lossless speedup]] — Acceleration method that produces samples from the exact target distribution.
+- [[Feature-level drafting]] — Draft at the second-to-last hidden state rather than token logits; smoother prediction surface.
+- [[Feature uncertainty]] — Next hidden state depends on sampled token; EAGLE resolves via one-step token advance.
+- [[One-step token advance]] — EAGLE's trick: shift the actual next token into the draft input, collapsing feature uncertainty.
+- [[Inference optimization]] — The family of post-training techniques reducing wall-clock time, memory, and cost of serving.
+- [[Multi-Token Prediction]] — Predict 2, 3… tokens ahead simultaneously; richer training signal + free speculative drafts.
 
-| Term | Brief definition | Appears in |
-|---|---|---|
-| [[KV Cache]] | Stored key-value pairs from attention; grows linearly with sequence length | [[Transformer]], [[Mamba]], [[Nemotron-3]] |
-| [[State Space Model]] | Continuous-time linear system discretized for sequences: h_t = Āh_{t-1} + B̄x_t | [[Mamba]] |
-| [[Hardware-Aware Scan]] | Kernel fusion keeping SSM recurrence in SRAM; avoids HBM reads for intermediate states | [[Mamba]] |
-| [[Load Balancing Loss]] | Auxiliary loss encouraging uniform token distribution across experts | [[Mixture-of-Experts]], [[Nemotron-3]] |
-| [[LatentMoE]] | Project d → ℓ before routing; cuts all-to-all communication by d/ℓ, allows more experts | [[Nemotron-3]], [[Mixture-of-Experts]] |
-| [[Multi-Token Prediction]] | Auxiliary heads predict 2, 3… tokens ahead; richer training signal + free speculative decoding | [[Nemotron-3]] |
-| [[NVFP4]] | NVIDIA 4-bit float (E2M1 elements, 16-element micro-blocks); 3× peak throughput vs BF16 | [[Nemotron-3]] |
-| [[Speculative Decoding]] | Draft tokens verified in one parallel pass; [[Multi-Token Prediction]] heads provide drafts | [[Nemotron-3]] |
-| [[GQA]] | Grouped-query attention; 32 Q-heads share 2 KV-heads, cutting [[KV Cache]] size 16× | [[Nemotron-3]] |
-| [[RLVR]] | RL with verifiable rewards across 21 simultaneous environments (math, code, tools, …) | [[Nemotron-3]] |
+### Hardware & Systems
 
-**SSM / xLSTM concept pages** — introduced or formalized in [[Transformers Are SSMs]] and [[xLSTM]]:
+- [[GPU]] — Massively parallel SIMT processor; dominant DL accelerator with tensor cores + HBM.
+- [[TPU]] — Google ASIC built around large systolic arrays; high matmul density per watt.
+- [[NPU]] — Inference-focused accelerator for mobile/edge devices; INT8-optimized, low-power.
+- [[FPGA]] — Reconfigurable silicon; compile a circuit, not a program; flexible but less dense than ASIC.
+- [[ASIC]] — Fixed-function silicon for one workload; best perf/W; expensive to design.
+- [[LPU]] — Language Processing Unit: ASIC engineered for low-latency LLM token generation (Groq, SambaNova).
+- [[Systolic array]] — 2D MAC grid that pipelines operands across rows and columns; TPU's core compute unit.
+- [[Tensor Cores]] — Specialized matmul engines inside modern NVIDIA GPUs; execute a dense matmul per clock cycle.
+- [[HBM]] — Stacked DRAM next to the accelerator die; ~3–8 TB/s bandwidth; the dominant GPU memory tier.
+- [[SRAM]] — On-chip cache (KB–MB); 10–100× faster than HBM; where hot data must live for peak throughput.
+- [[Memory hierarchy]] — Registers → SRAM → HBM → host RAM → SSD; performance set by where data lives.
+- [[Kernel fusion]] — Combine consecutive ops into one GPU kernel so intermediates stay in SRAM instead of round-tripping HBM.
+- [[Operator fusion]] — Compiler-level kernel fusion (XLA, Inductor, TVM); automatic version of kernel fusion.
+- [[Hardware-aware algorithms]] — Algorithms designed around the memory hierarchy and parallelism of the target chip.
+- [[Hardware-Aware Scan]] — Kernel fusion keeping Mamba's SSM recurrence entirely in SRAM; avoids HBM reads for intermediates.
+- [[NVFP4]] — NVIDIA 4-bit float (E2M1 + 16-element micro-block scaling); 3× peak throughput vs BF16.
+- [[Pallas kernel]] — Google's JAX-based language for custom GPU/TPU kernels; analogous to Triton.
+- [[Quantization-aware datapath]] — Silicon paths natively executing INT8/FP8/NVFP4 without padding to FP32.
+- [[In-memory computing]] — Perform multiply-accumulate inside analog memory crossbars; research stage.
+- [[Near-memory computing]] — Place compute logic next to memory (HBM-PIM, UPMEM) to reduce data movement.
+- [[Neuromorphic computing]] — Spiking-neuron-inspired chips (Loihi, TrueNorth); niche, not yet competitive for LLMs.
 
-| Concept | What it is | First introduced |
-|---|---|---|
-| [[Selective State Space Model]] | An SSM whose B, C, Δ depend on the current input — the S6 cell at the heart of Mamba | Gu & Dao 2024 |
-| [[Selective State Spaces]] | Synonym for [[Selective State Space Model]]; phrase used in Mamba's title | Gu & Dao 2024 |
-| [[Semiseparable matrix]] | Matrix whose every off-diagonal block has rank ≤ N; the structure SSMs produce | Dao & Gu 2024 |
-| [[Multi-head SSM]] | SSM split into H parallel heads, by analogy with multi-head attention | Dao & Gu 2024 |
-| [[Tensor parallelism]] | Shard each layer's weights across GPUs in a node; Mamba-2 needs half the syncs of a Transformer | Shoeybi et al. 2019 |
-| [[Sequence parallelism]] | Shard the sequence dimension across GPUs; for SSMs, pass the recurrent state at boundaries | Korthikanti et al. 2022 |
-| [[Linear attention]] | Replace softmax with a kernel; rank-1 SSM in the SSD framework | Katharopoulos et al. 2020 |
-| [[LSTM]] | 1997 Hochreiter–Schmidhuber recurrent network with constant-error carousel + sigmoid gates | Hochreiter & Schmidhuber 1997 |
-| [[Constant error carousel]] | Identity path through the LSTM cell state; the trick that beat vanishing gradients | Hochreiter & Schmidhuber 1997 |
-| [[Exponential gating]] | Replace LSTM's sigmoid gates with exp + max-stabilizer; lets a single token reset the cell | Beck et al. 2024 |
-| [[Matrix memory]] | $d \times d$ matrix cell state updated by an outer product; learned key→value associative store | Beck et al. 2024 |
-| [[Covariance update rule]] | $C_t = f_t C_{t-1} + i_t v_t k_t^\top$ — outer-product update at the heart of mLSTM | Beck et al. 2024 |
-| [[sLSTM]] | xLSTM scalar-memory cell with exponential gating + cross-cell memory mixing | Beck et al. 2024 |
-| [[mLSTM]] | xLSTM matrix-memory cell, fully parallelizable in training | Beck et al. 2024 |
+### Training & Optimization
 
-**Hardware concept pages** — defined in [[Hardware Acceleration for Neural Networks]]:
+- [[RLHF]] — Reinforcement Learning from Human Feedback: reward model on preference pairs, then PPO to align the LLM.
+- [[RLVR]] — RL with verifiable rewards (math, code, tool-use); eliminates subjective human ratings, harder to game.
+- [[GRPO]] — PPO variant without a value function; normalizes advantages within a group of rollouts per prompt.
+- [[Ghost Attention]] — Training trick for persistent instruction following: append system message to every turn, mask in loss.
+- [[Load Balancing Loss]] — Auxiliary loss penalizing unequal token distribution across MoE experts.
+- [[On-Policy Distillation]] — Student generates own rollouts and minimizes reverse KL vs. ensemble of specialist teachers.
+- [[Muon Optimizer]] — Orthogonalize gradient matrix via Newton-Schulz iterations before applying; isotropic update, faster convergence.
+- [[Tensor parallelism]] — Shard layer weights across GPUs on the same node; each GPU holds a column slice of each matrix.
+- [[Sequence parallelism]] — Shard the sequence dimension across GPUs; pass recurrent state at chunk boundaries for SSMs.
 
-| Concept | What it is | Where it shows up |
-|---|---|---|
-| [[GPU]] | Massively parallel SIMT processor with tensor cores + HBM; dominant DL accelerator | All training & inference |
-| [[TPU]] | Google ASIC built around large systolic arrays; high matmul density | Google's training stack |
-| [[NPU]] | Inference-focused accelerator for mobile/edge devices, INT8-optimized | Phone/laptop on-device inference |
-| [[FPGA]] | Reconfigurable silicon — compile a circuit, not a program; flexible, less dense than ASIC | Niche or low-volume workloads |
-| [[ASIC]] | Fixed-function silicon for one workload; best perf/W, expensive to design | Inferentia, TPU, LPUs |
-| [[LPU]] | Language Processing Unit — ASIC engineered for low-latency LLM inference | Groq, SambaNova |
-| [[Systolic array]] | 2D MAC grid that pipelines operands across rows and columns | TPUs, many ASICs |
-| [[Tensor Cores]] | Specialized matmul engines inside modern GPUs; produce a small dense matmul per clock | Every NVIDIA GPU since V100 |
-| [[HBM]] | Stacked DRAM next to the accelerator die; ~3–8 TB/s; the dominant memory tier | All modern GPUs/TPUs |
-| [[SRAM]] | On-chip cache (KB–MB), 10–100× faster than HBM; where you want hot data | Every accelerator |
-| [[Memory hierarchy]] | Registers → SRAM → HBM → host RAM → SSD; performance set by where data lives | Universal |
-| [[Kernel fusion]] | Merge consecutive ops into one kernel to keep operands in SRAM | FlashAttention, Mamba scan |
-| [[Operator fusion]] | Compiler-level kernel fusion (XLA, Inductor, TVM) | Modern DL compilers |
-| [[Hardware-aware algorithms]] | Algorithms designed around the memory hierarchy and parallelism of the target chip | FlashAttention, Mamba scan |
-| [[Flash Attention]] | IO-aware exact attention that keeps softmax in SRAM; 2–4× wall-clock faster | Production attention kernels |
-| [[In-memory computing]] | Multiply-accumulate inside analog memory crossbars | Research / exotic chips |
-| [[Near-memory computing]] | Compute next to memory rather than inside it (HBM-PIM, UPMEM) | Research / emerging |
-| [[Neuromorphic computing]] | Spiking-neuron-inspired chips (Loihi, TrueNorth) | Niche; not yet for LLMs |
-| [[Quantization-aware datapath]] | Hardware multipliers that natively execute INT8/FP8/[[NVFP4]] | Modern tensor cores |
+### Architecture Components
 
-**Inference & KV-cache concept pages** — defined in [[KV Cache Optimization]] and [[Speculative Decoding]]:
-
-| Concept | What it is | Family |
-|---|---|---|
-| [[Prefill]] | Initial parallel pass that processes the prompt and populates the KV cache | Inference phase |
-| [[Decode phase]] | Autoregressive generation pass; bandwidth-bound, where KV-cache tricks pay off | Inference phase |
-| [[Cache eviction]] | Drop KV-cache entries to bound memory | KV-cache family 1 |
-| [[Cache compression]] | Keep all entries but shrink each (INT8/INT4/[[NVFP4]], low-rank) | KV-cache family 2 |
-| [[Hybrid memory]] | Tier the cache across HBM / DRAM / NVMe with paging | KV-cache family 3 |
-| [[Novel attention mechanisms]] | Architectural changes that shrink the cache structurally (GQA, MQA, CSA, HCA) | KV-cache family 4 |
-| [[Combination strategies]] | Stack two or more of the above; the production reality | KV-cache family 5 |
-| [[Eviction policy]] | Rule deciding which entries to drop (LRU / attention-score / sinks-aware) | Eviction sub-knob |
-| [[Token budget]] | Hard cap on cache size that the eviction policy works within | Eviction sub-knob |
-| [[Sliding window attention]] | Keep the last W tokens; oldest fall off | Eviction recipe |
-| [[Attention sinks]] | First few tokens accumulate disproportionate attention; cannot be evicted | Eviction recipe |
-| [[H2O eviction]] | Drop tokens with lowest accumulated attention scores | Eviction recipe |
-| [[Paged attention]] | Store cache in 16-token pages like OS virtual memory; vLLM's foundation | Hybrid-memory recipe |
-| [[KV offloading]] | Page cold blocks to host DRAM or NVMe | Hybrid-memory recipe |
-| [[Multi-Query Attention]] | All query heads share one K/V projection; H× cache reduction | Architectural |
-| [[Draft model]] | Small/fast model in [[Speculative Decoding]] that proposes K tokens | Speculative decoding |
-| [[Verification step]] | Single parallel pass through the target model that scores all K draft tokens | Speculative decoding |
-
-**Inline concepts** — too granular for their own page, defined where they first appear:
-
-| Term | Brief definition | Appears in |
-|---|---|---|
-| Self-attention | Dot-product of Q, K, V matrices; every token attends to every other in one step | [[Transformer]] |
-| Multi-head attention | Run h attention heads in parallel, each learning different relationship types | [[Transformer]] |
-| Selective SSM (S6) | SSM where B, C, Δ depend on the current input x (vs. fixed constants in S4) | [[Mamba]] |
-| Top-K routing | Router selects the K highest-scoring experts per token; all others contribute zero | [[Mixture-of-Experts]] |
-| Expert capacity | Max tokens an expert processes per batch; overflow tokens skip the layer via residual | [[Mixture-of-Experts]] |
-| NVFP4 PTQ | Post-training quantization to NVFP4 via AutoQuantize NAS-style sensitivity search | [[Nemotron-3]] |
-| WSD schedule | Warmup–Stable–Decay LR schedule; stable phase supports checkpoint merging | [[Nemotron-3]] |
-| Checkpoint merging | Weighted average of checkpoints from different training windows; 2–4 point free quality gain | [[Nemotron-3]] |
-| LC-Phase | Continued pre-training at 1M context (34B tokens) enabling million-token inference | [[Nemotron-3]] |
-| PivotRL | Reuses offline SFT traces; focuses RL updates on high-uncertainty "pivot" turns | [[Nemotron-3]] |
-| Async GRPO | Group Relative Policy Optimization with asynchronous rollout generation | [[Nemotron-3]] |
-| Mamba SSM cache | Recurrent state cache; quantized to FP16 with stochastic rounding to prevent verbosity | [[Nemotron-3]], [[Mamba]] |
+- [[Transformer]] — Self-attention encoder-decoder; the universal backbone of modern NLP since 2017.
+- [[LLaMA 2]] — Meta's 7B–70B open models with RLHF pipeline and GQA; the community finetuning base.
+- [[Mixture-of-Experts]] — Sparse routing: each token activates K of N expert FFNs; decouples parameters from FLOPs.
+- [[Mixtral]] — Mistral's 8-expert top-2 MoE Transformer; outperforms LLaMA-2 70B at 5× fewer active parameters.
+- [[Nemotron-3]] — Mamba-2 + sparse attention + LatentMoE + NVFP4; 7.5× inference throughput at 1M context.
+- [[DeepSeek_V4]] — CSA + HCA attention compression + mHC residual + Muon; 1M-token context at 27% of V3 FLOPs.
+- [[LatentMoE]] — Project tokens d → ℓ before routing; cuts all-to-all communication by d/ℓ and enables more experts.
+- [[Manifold-Constrained Hyper-Connections]] — Expand residual stream to n_hc × d; doubly-stochastic mixing matrix guarantees spectral norm ≤ 1.
+- [[Selective State Spaces]] — Synonym for Selective State Space Model; the S6 parameterization in Mamba.
+- [[LLM evaluation]] — Measuring LLM capability across standardized benchmarks (MMLU, MATH, HumanEval, RULER, SWE-bench).
+- [[LLM Benchmarks]] — 2025 comparison across frontier models on knowledge, reasoning, code, long-context, and agentic tasks.
 
 ---
 
 ## How These Papers Connect
 
-The Transformer (2017) solved sequential training by replacing RNNs with self-attention, achieving O(1) path length between any two tokens — but at the cost of O(n²) compute and a KV cache that grows without bound. That single limitation became the organizing constraint for the next eight years of research.
+The **Transformer** (Vaswani et al., 2017) solved sequential training by replacing recurrence with self-attention, giving every token direct access to every other in O(1) path length — but at O(n²) compute and a KV cache that grows without bound. That constraint became the organizing force behind the next decade of research. Three enabling technologies arrived in 2022–2023 to make the Transformer actually usable at scale: [[Flash Attention]] showed that the O(n²) computation was never necessary — tile attention into SRAM and avoid the HBM round-trips entirely for 2–4× wall-clock speedup with zero approximation, enabling 32K+ context training in practice. [[S4]] showed that continuous-time state space models, initialized via the [[HIPPO|HiPPO]] polynomial projection framework, could solve long-range benchmarks (including 16K-step Path-X) where all prior architectures failed — laying the theoretical foundation for every recurrent model that followed. And [[LLaMA 2]] gave the open community the RLHF training blueprint: 7B–70B pretrained-and-chat-tuned models with full GQA scaling details and Ghost Attention for multi-turn instruction consistency, democratizing fine-tuning for thousands of downstream models.
 
-Mamba (2024) attacks the O(n²) problem directly: it shows that the failure mode of older recurrent models was not compression itself but *blind* compression. Make the SSM parameters depend on the input and you get selective memory — the model decides what to keep and what to forget based on content, not just position. A hardware-aware kernel fusion pass makes this as fast in practice as FlashAttention. Mamba matches Transformer quality at 5× throughput and constant memory per step.
+The **linear-RNN revival** of 2023–2024 proved that recurrence, done correctly, can match Transformer quality with O(1)-per-step inference. [[RWKV]] formulated exponential time-decay attention as a pure recurrence, scaling to 14B parameters — the first linear RNN to match Transformer quality at that scale. [[RetNet]] gave the retention mechanism three equivalent computation modes (parallel for training, recurrent for O(1) decode, chunkwise for long sequences), achieving 15.6× higher throughput than Transformer at 8K context. [[Griffin]] showed that RG-LRU plus local sliding-window attention matches LLaMA-2 at 7× fewer training tokens — proving the hybrid is more data-efficient than pure attention. [[Mamba]] closed the remaining quality gap by making SSM parameters input-dependent, so the model selectively compresses context by *content* rather than position alone, paired with a hardware-aware kernel fusion pass. [[Transformers Are SSMs]] unified everything: selective SSMs and attention are both parameterizations of structured semiseparable matrices, giving Mamba-2 which is 2–8× faster than Mamba-1 while inheriting FlashAttention IO-awareness, tensor parallelism, and sequence parallelism from the Transformer toolbox. [[xLSTM]] took the third path — neither SSM nor attention but a modernized 1997 LSTM, fixed with exponential gating (a single token can override stored memory) and d×d matrix memory (cell becomes a learned key-value store) — closing the quality gap at billion-parameter scale.
 
-Mixture-of-Experts attacks a different axis: not compute per token but the coupling between parameter count and compute. A dense model can't add knowledge without adding FLOPs. MoE breaks that coupling — route each token to K of N experts, so total parameters scale with N while active compute scales only with K. Switch Transformers prove that top-1 routing works; Mixtral proves that top-2 of 8 SwiGLU experts outperforms LLaMA-2 70B at 5× fewer active parameters.
+**Mixture-of-Experts** (Switch Transformers / [[Mixtral]]) attacked a different axis: decouple parameter count from compute by routing each token to K of N expert FFNs — more knowledge without more FLOPs. [[Nemotron-3]] (NVIDIA, 2025) synthesizes all three themes: Mamba-2 recurrence, sparse attention, LatentMoE (routes in a compressed latent space to cut all-to-all communication by d/ℓ), NVFP4 training (3× hardware throughput over BF16), multi-token prediction (denser training signal + free speculative drafts at inference), and 21-environment simultaneous RL — into a production system delivering 7.5× throughput over comparably-sized Transformer MoEs at 1M context. [[DeepSeek_V4]] (2026) attacks the O(n²) problem from the Transformer side rather than replacing it: Compressed Sparse Attention squeezes m tokens into one KV entry then sparse-selects the top-k relevant blocks; Heavily Compressed Attention goes coarser for distant context; together they cut the KV cache 10× at 1M tokens. Manifold-Constrained Hyper-Connections expand and stabilize the residual stream via a doubly-stochastic mixing matrix (spectral norm ≤ 1 guaranteed); the Muon optimizer orthogonalizes gradient updates for faster convergence. Post-training distills specialist expert models into a unified model via on-policy rollouts.
 
-Nemotron-3 (2025) is the synthesis. It takes Mamba's insight (most sequence processing is cheap recurrence; exact recall needs occasional attention) and MoE's insight (parameters and compute are independent axes), adds LatentMoE to cut the all-to-all communication bottleneck by routing in a compressed latent space, trains the whole thing at NVFP4 precision for 3× hardware throughput, uses multi-token prediction to densify the training signal and enable speculative decoding at inference, and then runs 21-environment simultaneous RL to specialize the model for agentic workloads. The result is a model that is simultaneously cheaper to run, better at long context, and more capable on reasoning tasks than any pure Transformer MoE of comparable size.
-
-DeepSeek-V4 (2026) attacks the same O(n²) problem from a different angle: instead of replacing attention entirely, it keeps the Transformer backbone but radically compresses what attention has to look at. Compressed Sparse Attention (CSA) squeezes every m tokens into one KV entry then sparsely selects the top-k relevant blocks; Heavily Compressed Attention (HCA) compresses even more aggressively and does dense attention over the tiny result. Interleaving the two cuts the KV cache by 10× at 1M tokens relative to DeepSeek-V3.2. Two additional innovations compound the gains: Manifold-Constrained Hyper-Connections (mHC) expand the residual stream and constrain the mixing matrix to be doubly stochastic — guaranteeing spectral norm ≤ 1 and numerically stable deep stacking — and the Muon optimizer replaces AdamW for most layers by orthogonalizing gradient updates via Newton-Schulz iterations, yielding faster convergence on ill-conditioned loss landscapes. Post-training follows a specialist-then-distill paradigm: independent expert models are trained per domain via SFT + GRPO, then unified into a single model through on-policy distillation. DeepSeek-V4-Pro-Max sets the open-model SOTA on reasoning and knowledge benchmarks.
-
-[[Transformers Are SSMs]] (2024) closes the loop on the SSM-vs-attention debate: Dao & Gu prove the two families are different parameterizations of the same structured-matrix object. Selective SSMs are exactly the rank-$N$ semiseparable case; full attention is the unstructured case; linear attention is rank-1. The "Structured State Space Duality" framework gives the new layer **Mamba-2**, whose core is 2–8× faster than Mamba while remaining matmul-friendly enough to inherit Tensor Parallelism, Sequence Parallelism, and FlashAttention-style IO awareness from the Transformer toolbox.
-
-[[xLSTM]] (2024, Hochreiter et al.) takes the third path — neither attention nor SSM, but a modernized [[LSTM]]. Two surgical fixes — exponential gating (so a single token can override stored memory) and a $d \times d$ matrix memory updated via outer product (so the cell becomes a learned key-value store) — close the gap with Transformer and Mamba at billion-parameter scale, while keeping LSTM's $O(1)$-per-step inference cost.
-
-Underneath every algorithm is the silicon. The [[Hardware Acceleration for Neural Networks]] survey (2025) maps the accelerator landscape — GPUs, TPUs, NPUs, FPGAs, ASICs, the new LLM-serving LPUs, and exotic in-/near-memory designs — and shows why the binding constraint for modern LLMs is *not* peak FLOPS but **memory bandwidth and KV-cache I/O**. That same observation drives [[KV Cache Optimization]] (2026), which catalogs the five families of techniques (eviction, compression, hybrid memory, novel attention, combination) production teams use to keep the cache from blowing up — and shows that no single strategy dominates; the right tool is workload-specific. [[Speculative Decoding]] is the complementary inference-side trick: amortize one verifier pass across multiple draft tokens for ~2× throughput at zero quality loss.
-
-The through-line: every paper in this wiki is asking the same question — *how do you get the most intelligence per FLOP, per byte moved, per joule?* — and each one pries open a different dimension: computation graph (Transformer), memory management (Mamba), structural unification (Transformers Are SSMs), modernized recurrence (xLSTM), parameter efficiency (MoE), hardware utilization (Nemotron-3, Hardware Acceleration survey), long-context attention efficiency (DeepSeek-V4, KV Cache Optimization), and inference throughput (Speculative Decoding).
+The **inference layer** runs orthogonally to every architecture choice. [[Medusa]] attaches K frozen MLP heads to an existing LLM that predict K future tokens simultaneously — tree attention verifies all candidate continuations in one forward pass, 2.2–2.8× lossless speedup without a separate draft model. [[EAGLE]] drafts at the feature level (second-to-last hidden state), feeding the actual next token into the draft input to collapse the feature uncertainty problem — 3–3.5× lossless speedup on 70B models. These pair with [[KV Cache Optimization]] (2026), which maps five families of cache techniques to seven production workload scenarios (no single strategy dominates), and with [[FlashAttention-2]] (2023), which pushes GPU attention utilization to 50–73% of peak FLOPS by fixing warp scheduling. The [[Hardware Acceleration for Neural Networks]] survey explains the binding constraint behind every technique: LLM inference is memory-bandwidth-bound, not compute-bound. Reading the model and KV cache from HBM is the bottleneck. Every paper in this wiki — from FlashAttention's tiling to Mamba's hardware-aware scan to EAGLE's feature drafting — is answering the same question: *how do you move fewer bytes between silicon and memory per token of intelligence produced?*
 
 ---
 

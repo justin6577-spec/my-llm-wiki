@@ -59,58 +59,103 @@ AI research knowledge base — papers, concepts & intuitions. Curated by Saqlain
 
 ```
 Transformer (2017, ~100K citations)
+│  Self-attention; O(n²) cost; KV cache grows linearly with context
 │
-├── Problem: O(n²) attention cost at long sequences
-│   ├──► S4 (2022, ~3K): SSM + HiPPO matrix solves Path-X (16K steps)
-│   ├──► RWKV (2023, ~2K): linear attention = O(1) RNN inference, 14B scale
-│   ├──► RetNet (2023, ~1K): parallel/recurrent/chunkwise triple mode; 15.6× throughput
-│   ├──► Mamba (2024): selective SSM; 5× inference throughput
-│   ├──► Transformers Are SSMs (2024): unify attention + SSM via SSD; Mamba-2 2–8× faster
-│   ├──► xLSTM (2024): exponential gating + matrix memory; O(1) inference
-│   ├──► Griffin (2024, ~1K): RG-LRU + local attention; matches LLaMA-2 at 7× fewer tokens
-│   └──► DeepSeek-V4 (2026): CSA + HCA compress KV cache 10× at 1M tokens
+│  ── RNN REVIVAL CLUSTER ─────────────────────────────────────────
+├── Problem: O(n²) recurrence / attention too expensive
+│   ├──► S4 (2022, ~3K)
+│   │      HiPPO matrix + Cauchy kernel; O(L log L) train, O(1) decode
+│   │      First to solve Path-X (16K steps)
+│   ├──► RWKV (2023, ~2K)
+│   │      WKV linear attention; O(1) RNN inference; scales to 14B
+│   ├──► RetNet (2023, ~1K)
+│   │      Retention: parallel / recurrent / chunkwise; 15.6× throughput
+│   ├──► Griffin (2024, ~1K)
+│   │      RG-LRU + local attention; matches LLaMA-2 at 7× fewer tokens
+│   ├──► Mamba (2024)
+│   │      Selective SSM (input-dependent B,C,Δ); 5× inference throughput
+│   └──► xLSTM (2024)
+│          Exponential gating + d×d matrix memory; O(1) inference
+│
+│  ── UNIFIED THEORY NODE ─────────────────────────────────────────
+├── Insight: attention and SSMs are the same object
+│   └──► Transformers Are SSMs (2024)
+│          SSD framework: both are structured semiseparable matrices
+│          ⟹ Mamba-2: 2–8× faster, matmul-friendly, TP/SP-compatible
+│
+│  ── HARDWARE & SYSTEMS CLUSTER ──────────────────────────────────
+├── Problem: attention kernel bottlenecked by HBM bandwidth
+│   ├──► FlashAttention (2022, ~8K)
+│   │      IO-aware tiling into SRAM; 2–4× speedup, zero approximation
+│   │      Key tricks: tiling, online softmax, recomputation
+│   ├──► FlashAttention-2 (2023, ~4K)
+│   │      Fix warp scheduling → 50–73% GPU utilization (vs 25–40%)
+│   └──► Hardware Acceleration Survey (2025)
+│          GPU / TPU / NPU / FPGA / ASIC / LPU / in-/near-memory
+│          Binding constraint: memory bandwidth, not FLOPS
+│
+│  ── INFERENCE OPTIMIZATION CLUSTER ──────────────────────────────
+├── Problem: autoregressive decode is memory-bandwidth bound
+│   ├──► Speculative Decoding
+│   │      Draft K tokens; verify all K in one parallel target pass
+│   ├──► Medusa (2024, ~1.5K)
+│   │      K frozen MLP heads + tree attention; 2.2–2.8× lossless
+│   ├──► EAGLE (2024, ~1.2K)
+│   │      Feature-level drafting + one-step token advance; 3–3.5×
+│   └──► KV Cache Optimization (2026)
+│          5 families: eviction, compression, hybrid memory,
+│          novel attention, combination — choose by workload
 │
 ├── Problem: Parameters tied to compute
 │   └──► Mixture-of-Experts: sparse routing, constant FLOPs/token
+│          Mixtral: top-2 of 8; beats LLaMA-2 70B at 5× fewer active params
 │
-├── Problem: MoE communication + latency bottlenecks
-│   └──► Nemotron-3 LatentMoE: route in latent space
+├── Problem: Open RLHF-aligned model needed
+│   └──► LLaMA 2 (2023, ~10K)
+│          7B–70B + GQA + full RLHF recipe; democratized finetuning
 │
-├── Problem: Attention kernel too slow / memory-intensive
-│   ├──► FlashAttention (2022, ~8K): IO-aware tiling; 2–4× speedup, zero approximation
-│   └──► FlashAttention-2 (2023, ~4K): better warp scheduling; 50–73% GPU utilization
-│
-├── Problem: Inference is memory-bandwidth bound
-│   ├──► Medusa (2024, ~1.5K): K extra heads + tree attention; 2.2× lossless speedup
-│   ├──► EAGLE (2024, ~1.2K): feature-level drafting; 3–3.5× lossless speedup
-│   ├──► Speculative Decoding: amortize verifier passes across K draft tokens
-│   └──► KV Cache Optimization (2026): 5 families — eviction, compression,
-│        hybrid memory, novel attention, combination
-│
-├── Problem: Open RLHF-aligned models
-│   └──► LLaMA 2 (2023, ~10K): 7B–70B + GQA + detailed RLHF recipe; democratized finetuning
-│
-└── Problem: Knowing which silicon to run on
-    └──► Hardware Acceleration Survey (2025): GPU vs TPU vs NPU vs FPGA vs ASIC vs LPU vs
-         in-memory; bandwidth/KV-cache I/O dominates, not FLOPS
+└── Problem: Combine all insights into a production system
+    ├──► Nemotron-3 (2025)
+    │      Mamba-2 + sparse attention + LatentMoE + NVFP4 + MTP + RLVR
+    │      7.5× throughput over Transformer MoE at 1M context
+    └──► DeepSeek-V4 (2026)
+           CSA + HCA compress KV cache 10× at 1M tokens
+           + mHC residual + Muon optimizer + on-policy distillation
 ```
 
 ```
-Mamba + MoE + few attention layers
-= Nemotron-3 hybrid architecture
-= best throughput-to-accuracy frontier (2025)
+Sub-concepts by cluster:
 
-Standard attention + DeepSeekMoE + CSA/HCA + mHC + Muon
-= DeepSeek-V4 (2026)
-= 1M-token context at 27% of V3 FLOPs, SOTA open model
+RNN Revival:
+  [[HiPPO matrix]]           optimal state-matrix A for long-range memory (S4)
+  [[Cauchy kernel]]          O(L log²L) structured computation (S4)
+  [[Retention mechanism]]    RetNet's parallel/recurrent/chunkwise layer
+  [[RG-LRU]]                 Griffin's diagonal recurrence with decay gate
+  [[Selective State Space Model]]  Mamba's input-dependent B,C,Δ (S6 cell)
+  [[Semiseparable matrix]]   the unifying structure (Transformers Are SSMs)
 
-DeepSeek-V4 sub-concepts:
-  [[Compressed Sparse Attention]]          compress + sparse select KV
-  [[Heavily Compressed Attention]]         compress hard, dense attention
-  [[Manifold-Constrained Hyper-Connections]]  stable residual highway
-  [[Muon Optimizer]]                       orthogonal gradient updates
-  [[On-Policy Distillation]]               unify specialists post-RL
-  [[GRPO]]                                 group-relative RL, no critic
+Hardware & Systems:
+  [[HBM]]        stacked DRAM; ~3–8 TB/s; the bottleneck
+  [[SRAM]]       on-chip cache; 10–100× faster; where hot data must live
+  [[Tiling]]     partition matmul into SRAM-sized blocks (FlashAttention)
+  [[Kernel fusion]]  merge ops to avoid HBM round-trips (Mamba scan)
+  [[NVFP4]]      4-bit float; 3× peak throughput vs BF16 (Nemotron-3)
+
+Inference Optimization:
+  [[Tree attention]]          verify exponential candidate tree in one pass
+  [[Feature-level drafting]]  draft at hidden-state level, not token logits
+  [[Lossless speedup]]        exact target distribution preserved
+  [[KV Cache]]                the O(sequence) memory bottleneck
+  [[Paged attention]]         16-token pages; vLLM's foundation
+  [[GQA]]                     group Q heads to share KV; 16× cache reduction
+  [[MQA]]                     all Q heads share one KV; 32× cache reduction
+
+Modern Synthesis:
+  [[LatentMoE]]               route in d→ℓ latent; cuts all-to-all by d/ℓ
+  [[Manifold-Constrained Hyper-Connections]]  doubly-stochastic residual
+  [[Muon Optimizer]]          orthogonalize gradients via Newton-Schulz
+  [[GRPO]]                    group-relative RL, no value function
+  [[On-Policy Distillation]]  unify specialist teachers into one student
 ```
 
 ---
