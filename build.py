@@ -289,6 +289,7 @@ def build():
         # Restore the raw LaTeX so KaTeX can render it on the client.
         html = restore_math(html, math_placeholders)
 
+        citation_count = meta.get("citation_count")
         notes.append({
             "id": file_id(path),
             "title": meta.get("title") or path.stem,
@@ -297,6 +298,7 @@ def build():
             "tldr": meta.get("tldr", ""),
             "aliases": [str(a) for a in aliases] if aliases else [],
             "links": links,
+            "citation_count": int(citation_count) if citation_count else None,
             "html": html,
         })
 

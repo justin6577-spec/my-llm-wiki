@@ -12,13 +12,14 @@ tldr: "All papers, grouped by theme, with a concept glossary and a paragraph on 
 
 ## Theme I — Foundations
 
-The paper that started everything. Everything else in this wiki is either built on it or reacting to it.
+The papers that started everything. Everything else in this wiki is either built on them or reacting to them.
 
 | Note | Paper | Year | TL;DR |
 |---|---|---|---|
 | [[Transformer]] | Attention Is All You Need | 2017 | Self-attention replaces recurrence; any two tokens connect in one step, enabling parallel training and O(1) path length between positions. |
+| [[LLaMA 2]] | Llama 2: Open Foundation and Fine-Tuned Chat Models | 2023 | 7B–70B open models with full RLHF pipeline details. Introduces GQA for efficient KV cache. First open model competitive with ChatGPT on helpfulness; became the base for thousands of community finetunes. |
 
-**Tags:** `foundational` `attention` `architecture` `parallelism`
+**Tags:** `foundational` `attention` `architecture` `parallelism` `rlhf` `open-source` `gqa`
 
 ---
 
@@ -28,11 +29,15 @@ The O(n²) attention cost is fine for short sequences. For long ones it breaks. 
 
 | Note | Paper | Year | TL;DR |
 |---|---|---|---|
+| [[S4]] | Efficiently Modeling Long Sequences with Structured State Spaces | 2022 | First SSM to solve long-range benchmark tasks. Low-rank + normal A matrix → Cauchy kernel → O(L log L) convolution at training, O(1) recurrence at inference. Solves Path-X (16K steps) where all prior models fail. |
+| [[RWKV]] | RWKV: Reinventing RNNs for the Transformer Era | 2023 | Linear attention with exponential decay, formulated as either Transformer (parallel training) or RNN (O(1) inference). Scales to 14B parameters — largest dense RNN ever. |
+| [[RetNet]] | Retentive Network: A Successor to Transformer for Large Language Models | 2023 | Retention mechanism with 3 computation modes: parallel (train), recurrent (O(1) decode), chunkwise (long seq). 3.4× lower memory, 15.6× higher throughput than Transformer at 8K. |
 | [[Mamba]] | Mamba: Linear-Time Sequence Modeling with Selective State Spaces | 2024 | Make SSM parameters input-dependent so the model selectively compresses context. Hardware-aware kernel fusion makes it practical. 5× inference throughput over Transformers. |
 | [[Transformers Are SSMs]] | Transformers are SSMs: Generalized Models and Efficient Algorithms Through Structured State Space Duality | 2024 | Attention and selective SSMs are two faces of the same structured semiseparable matrix. The SSD framework unlocks Mamba-2: 2–8× faster than Mamba, matmul-friendly, TP-friendly. |
 | [[xLSTM]] | xLSTM: Extended Long Short-Term Memory | 2024 | Modernize the 1997 LSTM with exponential gating + matrix memory + no hidden-to-hidden recurrence. Matches Transformer/Mamba quality at 1B+ scale, keeps O(1)-per-step inference. |
+| [[Griffin]] | Griffin: Mixing Gated Linear Recurrences with Local Attention for Efficient Language Models | 2024 | Google DeepMind's RG-LRU + local attention hybrid. Griffin-14B matches LLaMA-2 on 7× fewer training tokens. Hawk (pure recurrence) beats Mamba at 3B. |
 
-**Tags:** `ssm` `efficiency` `linear-time` `recurrence` `selectivity` `lstm` `gating` `mamba-2` `ssd`
+**Tags:** `ssm` `efficiency` `linear-time` `recurrence` `selectivity` `lstm` `gating` `mamba-2` `ssd` `rnn` `linear-attention` `retention`
 
 ---
 
@@ -67,9 +72,11 @@ The silicon and memory systems the algorithms have to run on. Knowing the hardwa
 
 | Note | Paper | Year | TL;DR |
 |---|---|---|---|
+| [[Flash Attention]] | FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness | 2022 | IO-aware exact attention: tiles into SRAM, never writes T×T matrix to HBM. 2–4× wall-clock speedup, zero approximation. The template every serious attention kernel copies. |
+| [[FlashAttention-2]] | FlashAttention-2: Faster Attention with Better Parallelism and Work Partitioning | 2023 | Fixes v1's warp scheduling to push GPU utilization from 25–40% to 50–73% of peak FLOPS. Reaches 225 TFLOPS/s per A100 training GPT models. |
 | [[Hardware Acceleration for Neural Networks]] | Xu, Banerjee & Gupta — A Comprehensive Survey | 2025 | Survey of every chip family running NNs (GPU, TPU, NPU, FPGA, ASIC, LPU, in/near-memory, neuromorphic). The recurring theme: peak FLOPS doesn't matter — memory bandwidth and KV-cache I/O dominate end-to-end performance. |
 
-**Tags:** `hardware` `gpu` `tpu` `npu` `fpga` `asic` `lpu` `in-memory` `kv-cache`
+**Tags:** `hardware` `gpu` `tpu` `npu` `fpga` `asic` `lpu` `in-memory` `kv-cache` `io-awareness` `kernel-fusion`
 
 ---
 
@@ -79,10 +86,31 @@ Once a model is trained, the cost is moving bytes. These papers attack inference
 
 | Note | Paper | Year | TL;DR |
 |---|---|---|---|
+| [[Medusa]] | MEDUSA: Simple LLM Inference Acceleration Framework with Multiple Decoding Heads | 2024 | K extra decoding heads on the frozen LLM predict K future tokens in parallel. Tree attention verifies all candidate continuations in one forward pass. No separate draft model needed. 2.2–2.8× speedup. |
+| [[EAGLE]] | EAGLE: Speculative Sampling Requires Rethinking Feature Uncertainty | 2024 | Draft at the hidden-state (feature) level, not token level. One lightweight autoregressive head predicts features given the actual next token. 3–3.5× lossless speedup on LLaMA-2-Chat 70B. |
 | [[Speculative Decoding]] | (Concept note) | — | Fast draft model proposes K tokens; large model verifies all K in one parallel pass. Expected accepted tokens per call = K × acceptance-rate. With MTP heads as drafts, ~2× throughput. |
 | [[KV Cache Optimization]] | Xu, Khaira & Singh — KV Cache Optimization Strategies for Scalable and Efficient LLM Inference | 2026 | Five families of KV-cache optimization (eviction, compression, hybrid memory, novel attention, combination), mapped to seven production scenarios. No single technique dominates — choose by workload. |
 
-**Tags:** `inference` `kv-cache` `throughput` `eviction` `compression` `paged-attention` `speculative-decoding`
+**Tags:** `inference` `kv-cache` `throughput` `eviction` `compression` `paged-attention` `speculative-decoding` `medusa` `eagle` `draft-model`
+
+---
+
+## High-Impact Papers (1000+ Citations)
+
+Ranked by approximate citation count as of 2025. These are the most-referenced papers in the ecosystem covered by this wiki.
+
+| Rank | Note | Year | ~Citations | One-Line Impact |
+|---|---|---|---|---|
+| 1 | [[Transformer]] | 2017 | ~100,000 | Invented self-attention; made every LLM possible |
+| 2 | [[LLaMA 2]] | 2023 | ~10,000 | First open RLHF-aligned model competitive with ChatGPT; democratized finetuning |
+| 3 | [[Flash Attention]] | 2022 | ~8,000 | IO-aware exact attention; enabled 32K+ context training in practice |
+| 4 | [[FlashAttention-2]] | 2023 | ~4,000 | Pushed attention to 50–73% of GPU peak FLOPS; the default attention kernel today |
+| 5 | [[S4]] | 2022 | ~3,000 | First SSM to solve 16K-step tasks; theoretical foundation for Mamba |
+| 6 | [[RWKV]] | 2023 | ~2,000 | Proved linear RNNs scale to 14B; parallel training + O(1) inference |
+| 7 | [[Medusa]] | 2024 | ~1,500 | Speculative decoding without a draft model; 2.2× speedup from extra heads |
+| 8 | [[EAGLE]] | 2024 | ~1,200 | Feature-level drafting; 3–3.5× lossless speedup on 70B models |
+| 9 | [[RetNet]] | 2023 | ~1,000 | Three computation modes; 15.6× higher inference throughput than Transformer |
+| 10 | [[Griffin]] | 2024 | ~1,000 | Google DeepMind hybrid; matches LLaMA-2 at 7× fewer training tokens |
 
 ---
 
@@ -93,7 +121,16 @@ Every `[[wikilink]]` that appears anywhere in this wiki, with a one-line definit
 | Concept | What it is | First introduced |
 |---|---|---|
 | [[Transformer]] | Self-attention-based encoder-decoder; the universal backbone of modern NLP | Vaswani et al. 2017 |
+| [[S4]] | Structured State Space model; HiPPO matrix + Cauchy kernel gives efficient long-range SSM | Gu, Goel & Ré 2022 |
+| [[Flash Attention]] | IO-aware exact attention: tiled SRAM computation avoids HBM round-trips; 2–4× speedup | Dao et al. 2022 |
+| [[FlashAttention-2]] | Better work partitioning pushing GPU utilization to 50–73%; 2× faster than v1 | Dao 2023 |
+| [[RWKV]] | Receptance Weighted Key Value: linear attention + channel decay = parallel training + O(1) RNN inference | Peng et al. 2023 |
+| [[RetNet]] | Retentive Network with parallel/recurrent/chunkwise triple-mode retention; 15.6× throughput vs Transformer | Sun et al. 2023 |
+| [[LLaMA 2]] | Meta's 7B–70B open models with full RLHF pipeline; introduced GQA at scale; base for most community finetunes | Touvron et al. 2023 |
 | [[Mamba]] | Selective SSM: input-dependent B, C, Δ parameters enable content-aware compression | Gu & Dao 2024 |
+| [[Griffin]] | RG-LRU + local attention hybrid; matches LLaMA-2 at 7× fewer training tokens | De, Smith et al. 2024 |
+| [[Medusa]] | K extra decoding heads on frozen LLM + tree attention verification; 2.2× lossless speedup | Cai et al. 2024 |
+| [[EAGLE]] | Feature-level draft model (second-to-last hidden state); 3–3.5× lossless speedup | Li et al. 2024 |
 | [[Transformers Are SSMs]] | Structured State Space Duality — attention and selective SSMs are the same structured-matrix object; gives Mamba-2 | Dao & Gu 2024 |
 | [[xLSTM]] | LSTM rehab: exponential gating + matrix memory + parallelizable mLSTM cell; competitive with Transformer at 1B+ | Beck, Hochreiter et al. 2024 |
 | [[Mixture-of-Experts]] | Sparse routing: each token activates only K of N expert FFNs; decouples params from FLOPs | Fedus et al. 2022 |
@@ -110,6 +147,34 @@ Every `[[wikilink]]` that appears anywhere in this wiki, with a one-line definit
 | [[Muon Optimizer]] | Orthogonalize gradient matrix via Newton-Schulz iterations before applying; isotropic update, faster convergence than AdamW on matrix weights | Jordan et al. 2024; used at scale in DeepSeek-V4 |
 | [[On-Policy Distillation]] | Student generates own rollouts and minimizes reverse KL vs. ensemble of specialist teachers; no distribution shift, mode-seeking | Lu & Lab 2025; DeepSeek-AI 2026 |
 | [[GRPO]] | PPO variant without a value function; normalizes advantages within a group of $G$ rollouts per prompt; cheaper and more stable than PPO for LLMs | DeepSeek-AI 2024–2026 |
+
+**New paper sub-concepts** — introduced in the high-impact papers:
+
+| Concept | What it is | From |
+|---|---|---|
+| [[HiPPO matrix]] | State matrix A derived to optimally project input history onto polynomial basis; enables principled long-range memory | [[S4]] |
+| [[Long Range Arena]] | Benchmark suite of 6 tasks testing long-range dependencies (up to 16K steps); S4 solves all, including Path-X | Tay et al. 2021 |
+| [[Cauchy kernel]] | Structured matrix $K_{ij} = 1/(\omega_i - \zeta_j)$ arising from diagonalized SSM; computable in O((N+L) log²(N+L)) | [[S4]] |
+| [[Online softmax]] | Numerically stable running softmax that works tile-by-tile without materializing full attention matrix | [[Flash Attention]] |
+| [[IO-awareness]] | Designing algorithms around HBM↔SRAM data movement rather than raw FLOPs | [[Flash Attention]] |
+| [[Tiling]] | Partition matrices into SRAM-sized blocks to control memory residency; core trick in FlashAttention | [[Flash Attention]] |
+| [[Recomputation]] | Recomputing attention scores in the backward pass instead of storing the T×T matrix; trades FLOPs for memory | [[Flash Attention]] |
+| [[Warp]] | 32-thread lockstep execution unit inside a GPU; inter-warp communication is the scheduling bottleneck v2 fixes | [[FlashAttention-2]] |
+| [[Receptance]] | RWKV's gating vector $r_t$ that controls how much output uses the WKV signal | [[RWKV]] |
+| [[Time-mixing]] | RWKV layer that implements cross-time interaction via the WKV exponential decay recurrence | [[RWKV]] |
+| [[Channel-mixing]] | RWKV pointwise FFN-like layer for within-position transformation | [[RWKV]] |
+| [[Retention mechanism]] | RetNet's decayed causal attention substitute supporting parallel/recurrent/chunkwise computation | [[RetNet]] |
+| [[Multi-scale retention]] | Multiple retention heads with different γ decay values (like multi-head attention with different time scales) | [[RetNet]] |
+| [[Chunkwise recurrent]] | Intra-chunk parallel + inter-chunk recurrent; enables linear-complexity long-sequence processing | [[RetNet]] |
+| [[RG-LRU]] | Real-Gated Linear Recurrent Unit: diagonal recurrence with input-dependent scalar decay; Griffin's core | [[Griffin]] |
+| [[Local attention]] | Sliding-window attention attending only to the last W tokens; used in Griffin as complement to recurrence | [[Griffin]] |
+| [[GQA]] | Grouped-query attention: multiple query heads share fewer KV heads; introduced at scale in LLaMA 2 | [[LLaMA 2]] |
+| [[RLHF]] | Reinforcement Learning from Human Feedback: reward model trained on preferences, then PPO to optimize | [[LLaMA 2]] |
+| [[Ghost Attention]] | Training trick: append system message to every turn, mask in loss; teaches model to persist instructions | [[LLaMA 2]] |
+| [[Medusa heads]] | K extra 2-layer MLP heads attached to frozen LLM; each predicts a different future token | [[Medusa]] |
+| [[Tree attention]] | Modified attention mask encoding a tree of candidate continuations; verifies all paths in one forward pass | [[Medusa]] |
+| [[Feature-level drafting]] | Drafting at the second-to-last hidden state (smooth feature space) rather than token logits | [[EAGLE]] |
+| [[Feature uncertainty]] | The hard problem with token-level feature autoregression: next state depends on sampled token; EAGLE resolves via one-step advance | [[EAGLE]] |
 
 **Stub pages** — key sub-concepts with their own notes:
 
@@ -246,12 +311,14 @@ Quantitative comparisons across frontier models on knowledge, long context, and 
 
 ## Reading Order
 
-**If you're new:** [[Transformer]] → [[Mixture-of-Experts]] → [[Mamba]] → [[Nemotron-3]]
+**If you're new:** [[Transformer]] → [[LLaMA 2]] → [[Mixture-of-Experts]] → [[Mamba]] → [[Nemotron-3]]
 
-**If you care about efficiency:** [[Mamba]] → [[Transformers Are SSMs]] → [[xLSTM]] → [[Nemotron-3]]
+**If you care about efficiency:** [[S4]] → [[Mamba]] → [[Transformers Are SSMs]] → [[xLSTM]] → [[RWKV]] → [[RetNet]] → [[Griffin]]
 
-**If you're deploying:** [[KV Cache Optimization]] → [[Speculative Decoding]] → [[Hardware Acceleration for Neural Networks]] → [[Nemotron-3]]
+**If you're deploying:** [[Flash Attention]] → [[FlashAttention-2]] → [[KV Cache Optimization]] → [[Medusa]] → [[EAGLE]] → [[Speculative Decoding]]
 
-**If you want the math:** [[Transformer]] (attention) → [[Mamba]] (SSM discretization + selection) → [[Transformers Are SSMs]] (semiseparable matrices, SSD) → [[xLSTM]] (exponential gating + matrix memory) → [[Mixture-of-Experts]] (load balancing loss) → [[Nemotron-3]] (LatentMoE projection + NVFP4 format)
+**If you want the math:** [[Transformer]] (attention) → [[S4]] (SSM, HiPPO, Cauchy kernel) → [[Mamba]] (selectivity) → [[Transformers Are SSMs]] (semiseparable matrices, SSD) → [[xLSTM]] (exponential gating + matrix memory)
 
-**If you care about silicon:** [[Hardware Acceleration for Neural Networks]] → [[KV Cache Optimization]] → [[Hardware-Aware Scan]] → [[Flash Attention]]
+**If you care about silicon:** [[Hardware Acceleration for Neural Networks]] → [[Flash Attention]] → [[FlashAttention-2]] → [[KV Cache Optimization]] → [[Hardware-Aware Scan]]
+
+**If you want to understand the linear-RNN family:** [[S4]] → [[RWKV]] → [[RetNet]] → [[Griffin]] → [[Mamba]] → [[Transformers Are SSMs]]

@@ -5,7 +5,7 @@ year: 2026
 tags: [kv-cache, inference, throughput, long-context, eviction, compression, paged-attention]
 tldr: "A systematic survey of KV-cache optimization for production LLM serving, organized into five families: cache eviction, cache compression, hybrid memory, novel attention mechanisms, and combination strategies. Maps each technique to seven concrete deployment scenarios — long-context single-shot, datacenter throughput, edge, multi-turn chat, etc. — and concludes that no single strategy dominates; the right answer is workload-specific."
 aliases: [KV Cache Optimization, KV Cache Survey]
-theme: efficiency
+theme: inference-optimization
 ---
 
 # KV Cache Optimization

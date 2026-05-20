@@ -50,6 +50,23 @@ SORT year ASC, title ASC
 
 ---
 
+## 🏆 Most Cited Papers
+
+Notes with a `citation_count` field, ranked by approximate citation count.
+
+```dataview
+TABLE
+  title AS "Title",
+  year AS "Year",
+  citation_count AS "~Citations",
+  tldr AS "TL;DR"
+FROM "wiki"
+WHERE citation_count != null
+SORT citation_count DESC
+```
+
+---
+
 ## 🗂️ By Theme
 
 ### 🔷 Foundations
@@ -107,6 +124,36 @@ TABLE
   tldr AS "TL;DR"
 FROM "wiki"
 WHERE theme = "synthesis"
+SORT year ASC
+```
+
+---
+
+### 💾 Hardware
+*Silicon, memory hierarchy, and IO-aware algorithms — the physics layer all other papers must obey.*
+
+```dataview
+TABLE
+  title AS "Title",
+  year AS "Year",
+  tldr AS "TL;DR"
+FROM "wiki"
+WHERE theme = "hardware"
+SORT year ASC
+```
+
+---
+
+### 🚀 Inference Optimization
+*Speculative decoding, KV-cache compression, and draft models — squeezing more tokens per second.*
+
+```dataview
+TABLE
+  title AS "Title",
+  year AS "Year",
+  tldr AS "TL;DR"
+FROM "wiki"
+WHERE theme = "inference-optimization"
 SORT year ASC
 ```
 
