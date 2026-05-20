@@ -67,6 +67,22 @@ SORT citation_count DESC
 
 ---
 
+## 🏅 Citation Leaderboard
+
+Core papers ranked by citation count, with their top downstream works. See [[Citation Map]] for full per-paper citation tables.
+
+```dataview
+TABLE
+  citation_count AS "~Citations",
+  join(cited_by_top, " · ") AS "Top Citing Papers",
+  year AS "Year"
+FROM "wiki"
+WHERE cited_by_top != null
+SORT citation_count DESC
+```
+
+---
+
 ## 🗂️ By Theme
 
 ### 🔷 Foundations

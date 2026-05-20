@@ -270,6 +270,23 @@ Grouped by theme. Each entry links to its own wiki note with full explanation.
 
 ---
 
+## Citation Intelligence
+
+Downstream impact of the six core papers in this wiki — total citations plus the ten most-cited works they spawned. Full breakdown in [[Citation Map]].
+
+| Paper | Total Citations | Field Impact |
+|---|---|---|
+| [[Mamba]] | ~4,841 | Transformative — spawned entire SSM ecosystem |
+| [[Transformers Are SSMs]] | ~1,200 | High — unified theory of SSM+Transformer |
+| [[xLSTM]] | ~800 | High — revived LSTM research direction |
+| [[Speculative Decoding]] | ~600 | Growing — standard inference technique |
+| [[KV Cache Optimization]] | ~200 | Emerging — practical inference impact |
+| [[Hardware Acceleration for Neural Networks]] | ~120 | Specialized — hardware co-design |
+
+→ [[Citation Map]] — full per-paper citation tables with top 10 citing works ranked by citation count
+
+---
+
 ## How These Papers Connect
 
 The **Transformer** (Vaswani et al., 2017) solved sequential training by replacing recurrence with self-attention, giving every token direct access to every other in O(1) path length — but at O(n²) compute and a KV cache that grows without bound. That constraint became the organizing force behind the next decade of research. Three enabling technologies arrived in 2022–2023 to make the Transformer actually usable at scale: [[Flash Attention]] showed that the O(n²) computation was never necessary — tile attention into SRAM and avoid the HBM round-trips entirely for 2–4× wall-clock speedup with zero approximation, enabling 32K+ context training in practice. [[S4]] showed that continuous-time state space models, initialized via the [[HIPPO|HiPPO]] polynomial projection framework, could solve long-range benchmarks (including 16K-step Path-X) where all prior architectures failed — laying the theoretical foundation for every recurrent model that followed. And [[LLaMA 2]] gave the open community the RLHF training blueprint: 7B–70B pretrained-and-chat-tuned models with full GQA scaling details and Ghost Attention for multi-turn instruction consistency, democratizing fine-tuning for thousands of downstream models.
