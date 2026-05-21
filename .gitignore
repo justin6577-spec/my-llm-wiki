@@ -6,3 +6,11 @@
 .DS_Store
 __pycache__/
 *.pyc
+
+# Server scripts and credentials — never commit these
+*.sh
+*.env
+.env*
+*credentials*
+*secret*
+*api_key*
