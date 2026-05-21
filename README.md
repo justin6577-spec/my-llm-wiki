@@ -19,6 +19,15 @@ What makes this wiki distinct is a full citation intelligence layer on top of th
 
 ## 🌐 Live Web Demo Features
 
+- Full-text search, multi-tag filtering, and sort controls across all 138 notes
+- Citation Explorer — master-detail panel with ranked citation bars and top-10 citing papers
+- Interactive D3.js knowledge graph sized and colored by citation count and research theme
+- Theme Navigation — notes grouped by research area
+- Three appearance modes: System / Dark / Light with live theme switching
+- Reading progress tracker with per-note status badges (Unread / Reading / Done)
+- Timeline view — papers arranged chronologically 2017–2026
+- Knowledge graph node color coding by research theme with color and size legends
+
 ### Browse & Search
 
 - Full-text search across all 138 notes by title, tag, or keyword
@@ -69,6 +78,23 @@ A master-detail two-panel layout — click the **Citation Explorer** tab to open
 - Legend: color = theme, node size = citation count (where available, else link count)
 - Zoom, pan, drag nodes freely
 
+### Knowledge Graph Enhancements
+
+- Node color coding by research theme:
+  - Purple → SSM / Mamba / sequence modeling papers
+  - Teal → concept glossary stubs
+  - Amber → inference optimization papers
+  - Blue → hardware & systems papers
+  - Green → foundational papers
+  - Red → benchmarks & evaluation
+- Color legend displayed in the top-left corner of the graph
+- Node size legend displayed in the bottom-left:
+  - Small = under 100 citations (sized by incoming link count)
+  - Medium = 100–1,000 citations
+  - Large = 1,000–10,000 citations
+  - Extra large = 10,000+ citations (e.g. Attention Is All You Need)
+- Theme colors update live when appearance mode is switched — no page reload
+
 ### Theme Navigation
 
 Notes grouped by theme in the **By Theme** tab:
@@ -85,11 +111,39 @@ Notes grouped by theme in the **By Theme** tab:
 | Benchmarks | Frontier model comparisons |
 | Concepts & Glossary | 100+ sub-concept stub notes |
 
-### Dark / Light Mode
+### Appearance Modes
 
-- Toggle between dark (default) and light themes via the ☾ button
-- Preference persisted in `localStorage`
-- All components respond: cards, graph, citation bars, side panel
+- Three-way toggle in the nav bar: **System** / **Dark** / **Light**
+- System: automatically follows your OS preference (`prefers-color-scheme`)
+- Dark: deep background (`#0d1117`), glowing colored nodes, high-contrast text
+- Light: clean white background, rich color nodes, dark labels
+- Preference saved between sessions via `localStorage` key `appearance`
+- All components respond: cards, graph nodes, citation bars, side panel, legends
+
+### Reading Progress Tracker
+
+- Track your reading status per note directly in the browser — no account needed
+- Three states per note: **Unread** / **Reading** / **Done**
+- Click the status badge on any note card to cycle through states
+- Progress bar at the top of the browse view: "X of Y notes done · M reading"
+- Filter the grid by reading status: **All** / **Unread** / **Reading** / **Done**
+- Progress filter applies across All, By Theme, and Timeline tabs
+- State persisted in `localStorage` — survives page reloads and browser restarts
+
+### Timeline View
+
+- Horizontal scrollable timeline spanning **2017 to 2026**
+- Papers arranged in columns by publication year — one column per year
+- Each card shows: title, up to 3 tags, and theme color stripe
+- Click any card to open the full note detail panel
+- Color-coded by research theme — same scheme as the knowledge graph
+- Concept stubs and reference notes without a year in a dedicated **Reference** column
+- Reveals the field's evolution at a glance:
+  - 2017 — Transformer (Attention Is All You Need)
+  - 2022 — FlashAttention, S4 Structured State Spaces
+  - 2023 — Mamba, RWKV, RetNet, LLaMA 2, FlashAttention-2
+  - 2024 — xLSTM, Griffin, Mamba-2, Medusa, EAGLE
+  - 2025–2026 — Speculative Decoding, KV Cache Optimization, DeepSeek-V4, Hardware Acceleration
 
 ### Math Rendering
 
@@ -258,6 +312,9 @@ python -m http.server 8000
 | Local knowledge base | Obsidian (Dataview plugin) |
 | Version control | Git + GitHub |
 | Auto-deploy | GitHub Actions |
+| Reading tracker | `localStorage` API | Per-note progress persistence (Unread / Reading / Done) |
+| Timeline view | Vanilla JS + CSS flex | Year-based chronological paper layout |
+| Appearance modes | CSS `prefers-color-scheme` + JS | System / Dark / Light theming |
 
 ---
 
