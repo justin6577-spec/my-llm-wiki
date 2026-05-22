@@ -9,5 +9,44 @@
       "MambaMixer2025.pdf"
     ],
     "skipped": []
+  },
+  {
+    "timestamp": "2026-05-22T00:12:10.883701",
+    "mode": "citations",
+    "topic": null,
+    "added": [],
+    "skipped": [
+      "Mamba (2312.00752) \u2014 0 qualifying citations",
+      "Transformers are SSMs / Mamba-2 (2405.21060) \u2014 0 qualifying citations",
+      "xLSTM (2405.04517) \u2014 0 qualifying citations",
+      "FlashAttention (2205.14135) \u2014 0 qualifying citations",
+      "FlashAttention-2 (2307.08691) \u2014 0 qualifying citations",
+      "S4 (2111.00396) \u2014 0 qualifying citations",
+      "RWKV (2305.13048) \u2014 0 qualifying citations",
+      "RetNet (2307.08621) \u2014 0 qualifying citations"
+    ]
+  },
+  {
+    "timestamp": "2026-05-22T00:15:49.797671",
+    "mode": "daily",
+    "topic": null,
+    "added": [
+      "nanoGPT (karpathy/nanoGPT) \u2014 GitHub repo note",
+      "micrograd (karpathy/micrograd) \u2014 GitHub repo note",
+      "minbpe (karpathy/minbpe) \u2014 GitHub repo note",
+      "llm.c (karpathy/llm.c) \u2014 GitHub repo note"
+    ],
+    "skipped": [
+      "arXiv: transformer/attention \u2014 HTTP 429 rate limit",
+      "arXiv: state space model/SSM/Mamba \u2014 timeout",
+      "arXiv: LSTM/recurrent \u2014 HTTP 429 rate limit",
+      "arXiv: speculative decoding \u2014 HTTP 429 rate limit",
+      "arXiv: KV cache \u2014 HTTP 429 rate limit",
+      "arXiv: LSTM long short-term memory \u2014 HTTP 429 rate limit",
+      "arXiv: mixture of experts MoE \u2014 HTTP 429 rate limit",
+      "arXiv: mamba selective state space (retry) \u2014 timeout",
+      "arXiv: KV cache compression (retry) \u2014 timeout",
+      "arXiv: speculative decoding draft (retry) \u2014 timeout"
+    ]
   }
 ]
