@@ -14,6 +14,7 @@ import json
 import os
 import re
 import sys
+import time
 import urllib.request
 import urllib.parse
 import xml.etree.ElementTree as ET
@@ -63,7 +64,11 @@ client = anthropic.AnthropicVertex(project_id=_PROJECT, region=_REGION)
 # ── Tool implementations ───────────────────────────────────────────────────
 
 def search_arxiv(query: str, days_back: int = 1, max_results: int = 10) -> list:
-    """Search arXiv for recent papers sorted by submission date."""
+    """Search arXiv for recent papers sorted by submission date.
+
+    Retries up to 3 times on HTTP 429 (rate limit), waiting 5 s between attempts.
+    A 1-second inter-call delay is enforced by the caller via _arxiv_sleep().
+    """
     base = "http://export.arxiv.org/api/query?"
     params = urllib.parse.urlencode({
         "search_query": f"all:{query}",
@@ -72,32 +77,44 @@ def search_arxiv(query: str, days_back: int = 1, max_results: int = 10) -> list:
         "sortBy": "submittedDate",
         "sortOrder": "descending",
     })
-    try:
-        with urllib.request.urlopen(base + params, timeout=15) as r:
-            tree = ET.parse(r)
-        ns = {"atom": "http://www.w3.org/2005/Atom"}
-        cutoff = datetime.now() - timedelta(days=days_back)
-        papers = []
-        for entry in tree.findall("atom:entry", ns):
-            published = entry.find("atom:published", ns).text
-            pub_date  = datetime.fromisoformat(published.replace("Z", ""))
-            if pub_date < cutoff and days_back <= 7:
+    url = base + params
+
+    for attempt in range(3):
+        try:
+            time.sleep(1)  # polite delay before every arXiv call
+            req = urllib.request.Request(url, headers={"User-Agent": "LLMWikiAgent/1.0"})
+            with urllib.request.urlopen(req, timeout=15) as r:
+                tree = ET.parse(r)
+            ns = {"atom": "http://www.w3.org/2005/Atom"}
+            cutoff = datetime.now() - timedelta(days=days_back)
+            papers = []
+            for entry in tree.findall("atom:entry", ns):
+                published = entry.find("atom:published", ns).text
+                pub_date  = datetime.fromisoformat(published.replace("Z", ""))
+                if pub_date < cutoff and days_back <= 7:
+                    continue
+                arxiv_id = entry.find("atom:id", ns).text.split("/abs/")[-1]
+                papers.append({
+                    "id":        arxiv_id,
+                    "title":     entry.find("atom:title",   ns).text.strip(),
+                    "abstract":  entry.find("atom:summary", ns).text.strip(),
+                    "published": published,
+                    "url":       f"https://arxiv.org/abs/{arxiv_id}",
+                    "pdf_url":   f"https://arxiv.org/pdf/{arxiv_id}",
+                })
+            return papers
+        except urllib.error.HTTPError as e:
+            if e.code == 429 and attempt < 2:
+                print(f"  arXiv 429 — waiting 5 s (attempt {attempt + 1}/3)")
+                time.sleep(5)
                 continue
-            arxiv_id = entry.find("atom:id", ns).text.split("/abs/")[-1]
-            papers.append({
-                "id":        arxiv_id,
-                "title":     entry.find("atom:title",   ns).text.strip(),
-                "abstract":  entry.find("atom:summary", ns).text.strip(),
-                "published": published,
-                "url":       f"https://arxiv.org/abs/{arxiv_id}",
-                "pdf_url":   f"https://arxiv.org/pdf/{arxiv_id}",
-            })
-        return papers
-    except Exception as e:
-        return [{"error": str(e)}]
+            return [{"error": f"HTTP {e.code}: {e.reason}"}]
+        except Exception as e:
+            return [{"error": str(e)}]
+    return [{"error": "arXiv rate-limited after 3 attempts"}]
 
 
-def get_semantic_scholar_citations(arxiv_id: str, min_citations: int = 500) -> list:
+def get_semantic_scholar_citations(arxiv_id: str, min_citations: int = 100) -> list:
     """Return highly-cited papers that cite a given arXiv paper."""
     try:
         url = (
@@ -247,7 +264,7 @@ TOOLS = [
             "type": "object",
             "properties": {
                 "arxiv_id":      {"type": "string",  "description": "arXiv ID of the source paper"},
-                "min_citations": {"type": "integer", "default": 500, "description": "Minimum citation count"},
+                "min_citations": {"type": "integer", "default": 100, "description": "Minimum citation count"},
             },
             "required": ["arxiv_id"],
         },
@@ -347,7 +364,7 @@ def execute_tool(name: str, inputs: dict) -> str:
         result = search_arxiv(**inputs)
     elif name == "get_citations":
         result = get_semantic_scholar_citations(
-            inputs["arxiv_id"], inputs.get("min_citations", 500)
+            inputs["arxiv_id"], inputs.get("min_citations", 100)
         )
     elif name == "fetch_github_readme":
         result = fetch_github_readme(inputs["repo"])
@@ -398,7 +415,7 @@ def _make_system(mode: str, extra: str, existing: list[str]) -> list[dict]:
 
 # ── Main agent loop ────────────────────────────────────────────────────────
 
-def run_agent(mode: str = "daily", topic: str = None) -> dict:
+def run_agent(mode: str = "daily", topic: str = None, min_citations: int = 100) -> dict:
     existing = [f.stem for f in WIKI.glob("*.md")]
 
     if mode == "topic" and topic:
@@ -417,10 +434,10 @@ def run_agent(mode: str = "daily", topic: str = None) -> dict:
             "2307.08621": "RetNet",
         }
         extra = (
-            "Check each wiki paper for highly-cited new papers that cite it "
-            "(min 500 citations). For each high-impact citing paper NOT already in the wiki, download it."
+            f"Check each wiki paper for highly-cited new papers that cite it "
+            f"(min {min_citations} citations). For each high-impact citing paper NOT already in the wiki, download it."
         )
-        messages = [{"role": "user", "content": f"Check citations for: {json.dumps(wiki_arxiv_ids)}"}]
+        messages = [{"role": "user", "content": f"Check citations (threshold={min_citations}): {json.dumps(wiki_arxiv_ids)}"}]
 
     else:  # daily
         extra = (
@@ -496,12 +513,24 @@ def run_agent(mode: str = "daily", topic: str = None) -> dict:
 
 if __name__ == "__main__":
     mode  = sys.argv[1] if len(sys.argv) > 1 else "daily"
-    topic = " ".join(sys.argv[2:]) if len(sys.argv) > 2 else None
 
-    print(f"\nRunning agent — mode: '{mode}'" + (f", topic: '{topic}'" if topic else ""))
+    # citations mode accepts an optional numeric threshold:
+    #   python3 agent.py citations 200
+    min_citations = 100
+    topic = None
+    if mode == "citations" and len(sys.argv) > 2:
+        try:
+            min_citations = int(sys.argv[2])
+        except ValueError:
+            pass
+    elif mode != "citations":
+        topic = " ".join(sys.argv[2:]) if len(sys.argv) > 2 else None
+
+    print(f"\nRunning agent — mode: '{mode}'" + (f", topic: '{topic}'" if topic else "")
+          + (f", min_citations: {min_citations}" if mode == "citations" else ""))
     print("-" * 60)
 
-    results = run_agent(mode=mode, topic=topic)
+    results = run_agent(mode=mode, topic=topic, min_citations=min_citations)
     log_agent_run(results)
 
     print(f"\nAdded  : {len(results['added'])} item(s)")
