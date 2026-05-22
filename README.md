@@ -241,6 +241,10 @@ my-wiki/
 ├── raw/                           # Source PDF papers
 ├── build.py                       # wiki/*.md → docs/notes.json + HTML
 ├── build_wiki.py                  # PDF → wiki note (Claude API)
+├── agent.py                       # Agentic ingestion system
+├── agent_log.json                 # Log of all agent runs
+├── setup_cron.sh                  # Optional cron scheduler
+├── cron.log                       # Cron output log (if scheduled)
 ├── .github/workflows/deploy.yml   # Auto-deploy to GitHub Pages on push
 └── README.md
 ```
@@ -273,52 +277,76 @@ https://MuhammadSaqlainAslam.github.io/my-llm-wiki
 
 The wiki has an autonomous research agent (`agent.py`) that automatically finds, evaluates, and adds new content from multiple sources using Claude as the decision-making brain.
 
-### Usage
+### Three Modes
 
+**1. Topic search — add content about a specific topic:**
 ```bash
-# Add content about a specific topic
-python3 agent.py topic "speculative decoding 2025"
+python3 agent.py topic "DeepSeek R2 architecture"
+python3 agent.py topic "LLM inference optimization 2025"
+python3 agent.py topic "Mamba 2 SSM improvements"
+```
 
-# Track citations of existing wiki papers (≥ 500 citations threshold)
+**2. Citation tracking — find high-impact papers citing existing wiki papers:**
+```bash
 python3 agent.py citations
+```
+Queries Semantic Scholar API for papers with 100+ citations that cite existing wiki papers. Automatically downloads any high-impact papers not yet in the wiki.
 
-# Run daily monitoring — arXiv last 24 h + GitHub repos
+**3. Daily monitor — broad sweep of new content:**
+```bash
 python3 agent.py daily
 ```
+Searches arXiv (cs.LG, cs.CL, cs.AI), checks GitHub repos for updates, fetches blog posts. Run this once a week for a broad update.
 
-### What the agent does
+### Sources the Agent Monitors
 
-1. Searches arXiv, GitHub, blogs, and YouTube for relevant content
-2. Claude evaluates each candidate for relevance (7/10+ threshold against wiki themes)
-3. Downloads PDFs to `raw/` or writes structured notes directly to `wiki/`
-4. Runs `build_wiki.py` and `build.py` automatically
-5. Commits and pushes to GitHub
-6. Logs every run to `agent_log.json`
+| Source | What it fetches | API |
+|--------|----------------|-----|
+| arXiv | New papers by keyword/topic | Free |
+| Semantic Scholar | Citation tracking | Free |
+| GitHub | READMEs, notebooks, releases | Free |
+| Blogs | Karpathy, Lilian Weng, HuggingFace, Distill | Web fetch |
+| YouTube | Lecture transcripts (yt-dlp) | Free |
 
-### Automated schedule
+### Why Manual Over Automated
 
-Set up a daily cron job (runs at 8:00 AM):
+The agent is intentionally triggered manually rather than running on a cron schedule:
+- Full control over what enters the knowledge base
+- No unnecessary server load on shared infrastructure
+- Every update is intentional and visible
+- API credits used only when needed
+
+### Agent Log
+
+Every agent run is logged to `agent_log.json`:
 
 ```bash
-bash setup_cron.sh
-```
-
-Check logs:
-
-```bash
+# See what was added in the last run
 cat agent_log.json
-tail -f cron.log
+
+# See cron output if scheduled
+cat cron.log
 ```
 
-### Sources monitored
+### Relevance Filter
 
-| Source | Details |
-|---|---|
-| arXiv | cs.LG, cs.CL, cs.AI — last 24 h in daily mode |
-| GitHub | karpathy/nanoGPT, micrograd, minbpe, llm.c · state-spaces/mamba · huggingface/transformers |
-| Blogs | Karpathy, Lilian Weng, HuggingFace, Distill.pub |
-| YouTube | Andrej Karpathy channel transcripts via yt-dlp |
-| Citations | Semantic Scholar API — papers citing existing wiki papers |
+Claude evaluates every candidate paper or article against these wiki themes before adding:
+transformer, attention, SSM, Mamba, LSTM, speculative decoding, KV cache, MoE, FlashAttention, hardware acceleration, LLM inference, scaling, RLHF, tokenization, language models
+
+Only content scoring 7/10+ relevance is added. Everything else is logged as skipped.
+
+### For Staying Current (use the agent)
+
+```bash
+# Weekly: broad new paper sweep
+python3 agent.py daily
+
+# On demand: specific topic
+python3 agent.py topic "your research interest"
+
+# Monthly: citation updates
+python3 agent.py citations
+```
 
 ---
 
@@ -368,6 +396,11 @@ python -m http.server 8000
 | Reading tracker | `localStorage` API | Per-note progress persistence (Unread / Reading / Done) |
 | Timeline view | Vanilla JS + CSS flex | Year-based chronological paper layout |
 | Appearance modes | CSS `prefers-color-scheme` + JS | System / Dark / Light theming |
+| Research agent | Claude API tool use | Autonomous paper ingestion |
+| arXiv API | urllib + XML parsing | Paper search and download |
+| Semantic Scholar | REST API | Citation tracking |
+| yt-dlp | Python library | YouTube transcript extraction |
+| GitHub API | REST API | Repo README extraction |
 
 ---
 
