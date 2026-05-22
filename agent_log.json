@@ -1,0 +1,13 @@
+[
+  {
+    "timestamp": "2026-05-22T00:11:34.483117",
+    "mode": "topic",
+    "topic": "Mamba 2 SSM improvements 2025",
+    "added": [
+      "Mamba2_StateSpaceDuality.pdf",
+      "Mamba3_InferenceFirst_SSM.pdf",
+      "MambaMixer2025.pdf"
+    ],
+    "skipped": []
+  }
+]
