@@ -9,6 +9,7 @@ __pycache__/
 
 # Server scripts and credentials — never commit these
 *.sh
+!setup_cron.sh
 *.env
 .env*
 *credentials*

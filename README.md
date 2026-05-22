@@ -269,6 +269,59 @@ https://MuhammadSaqlainAslam.github.io/my-llm-wiki
 
 ---
 
+## Agentic Ingestion
+
+The wiki has an autonomous research agent (`agent.py`) that automatically finds, evaluates, and adds new content from multiple sources using Claude as the decision-making brain.
+
+### Usage
+
+```bash
+# Add content about a specific topic
+python3 agent.py topic "speculative decoding 2025"
+
+# Track citations of existing wiki papers (≥ 500 citations threshold)
+python3 agent.py citations
+
+# Run daily monitoring — arXiv last 24 h + GitHub repos
+python3 agent.py daily
+```
+
+### What the agent does
+
+1. Searches arXiv, GitHub, blogs, and YouTube for relevant content
+2. Claude evaluates each candidate for relevance (7/10+ threshold against wiki themes)
+3. Downloads PDFs to `raw/` or writes structured notes directly to `wiki/`
+4. Runs `build_wiki.py` and `build.py` automatically
+5. Commits and pushes to GitHub
+6. Logs every run to `agent_log.json`
+
+### Automated schedule
+
+Set up a daily cron job (runs at 8:00 AM):
+
+```bash
+bash setup_cron.sh
+```
+
+Check logs:
+
+```bash
+cat agent_log.json
+tail -f cron.log
+```
+
+### Sources monitored
+
+| Source | Details |
+|---|---|
+| arXiv | cs.LG, cs.CL, cs.AI — last 24 h in daily mode |
+| GitHub | karpathy/nanoGPT, micrograd, minbpe, llm.c · state-spaces/mamba · huggingface/transformers |
+| Blogs | Karpathy, Lilian Weng, HuggingFace, Distill.pub |
+| YouTube | Andrej Karpathy channel transcripts via yt-dlp |
+| Citations | Semantic Scholar API — papers citing existing wiki papers |
+
+---
+
 ## How to Add a New Paper
 
 1. Drop the PDF into `raw/`
