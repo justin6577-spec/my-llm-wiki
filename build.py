@@ -291,6 +291,15 @@ def build():
 
         citation_count = meta.get("citation_count")
         cited_by_details = meta.get("cited_by_details")
+
+        # Strip HTML tags → plain text for full-text search
+        search_text = re.sub(r'<[^>]+>', ' ', html)
+        # Unescape common HTML entities
+        search_text = search_text.replace('&amp;', '&').replace('&lt;', '<') \
+                                 .replace('&gt;', '>').replace('&quot;', '"') \
+                                 .replace('&#39;', "'").replace('&nbsp;', ' ')
+        search_text = re.sub(r'\s+', ' ', search_text).strip().lower()
+
         notes.append({
             "id": file_id(path),
             "title": meta.get("title") or path.stem,
@@ -304,7 +313,18 @@ def build():
             "arxiv": str(meta.get("arxiv", "")) if meta.get("arxiv") else "",
             "cited_by_details": cited_by_details if isinstance(cited_by_details, list) else None,
             "html": html,
+            "search_text": search_text,
         })
+
+    # Second pass: compute backlinks (inverse of links[])
+    id_set = {n["id"] for n in notes}
+    backlink_map = {n["id"]: [] for n in notes}
+    for n in notes:
+        for link_id in n.get("links", []):
+            if link_id in backlink_map and link_id != n["id"]:
+                backlink_map[link_id].append(n["id"])
+    for n in notes:
+        n["backlinks"] = backlink_map.get(n["id"], [])
 
     out_path = DOCS_DIR / "notes.json"
     out_path.write_text(json.dumps(notes, indent=2, ensure_ascii=False), encoding="utf-8")
