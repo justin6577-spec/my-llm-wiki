@@ -15,6 +15,8 @@ The writing philosophy is borrowed from Andrej Karpathy: lead with the concrete 
 
 What makes this wiki distinct is a full citation intelligence layer on top of the content. Every core paper carries its real citation count from Semantic Scholar, a `cited_by_details` list of the ten most-cited downstream works, and arXiv IDs throughout. The live web demo exposes all of this through a Citation Explorer, an interactive D3 knowledge graph sized by citation count, and a full-text search interface — all from a single static site deployed automatically via GitHub Actions to GitHub Pages.
 
+The most referenced note in the wiki is "Attention Is All You Need" with 46 backlinks — reflecting its foundational role across all modern LLM research.
+
 ---
 
 ## 🌐 Live Web Demo Features
@@ -150,6 +152,35 @@ Notes grouped by theme in the **By Theme** tab:
 - KaTeX renders LaTeX inline (`$O(n^2)$`) and display (`$$\text{Attention}(Q,K,V) = \text{softmax}\!\left(\frac{QK^T}{\sqrt{d_k}}\right)V$$`)
 - Math is protected during Markdown preprocessing so the renderer never mangles LaTeX delimiters
 - Supports `$...$`, `$$...$$`, `\(...\)`, `\[...\]` delimiters
+
+### Full-text Search
+
+- Search indexes complete note body content — not just title and tags
+- Results ranked by relevance: title match → tag match → tldr → body content
+- Matching terms highlighted inside the note detail panel with a subtle purple tint
+- Result count shown in the result bar: "X of 142 notes"
+- Press `/` anywhere on the page to focus the search bar
+- Example: searching `"exponential gating"` finds xLSTM even though the term only appears in the note body, not the title
+
+### Paper Comparison
+
+- Click **⊕ Compare** on any note card to select it for comparison
+- Select 2 or 3 papers — a comparison tray slides up from the bottom of the page showing selected titles as pills
+- Click **"Compare (X)"** to open a full-screen side-by-side view
+- Each column shows per paper: TL;DR · Year · Citations · Tags · outgoing wiki links · body excerpt · reading status badge
+- Column top borders are color-coded: first paper = purple, second = teal, third = amber
+- Maximum 3 papers at once; selecting a 4th bumps the oldest
+- Press **Escape** or click **✕ Close** to dismiss
+- Example: compare Mamba vs RWKV vs RetNet to see that all share O(n) complexity but differ in their gating and memory mechanisms
+
+### Backlinks
+
+- Every note tracks which other notes reference it — the inverse of the `[[wikilink]]` graph
+- **"Referenced by X notes"** section appears at the bottom of every open note detail panel (only shown when X > 0)
+- Clicking any backlink pill opens that note in the same panel
+- First 8 backlinks shown; click **"+X more"** to expand the full list
+- **← X** backlink count badge on every note card
+- Example: "Attention Is All You Need" shows ← 46, meaning 46 other notes reference it — the most central paper in the wiki
 
 ---
 
