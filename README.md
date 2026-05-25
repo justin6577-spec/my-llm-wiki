@@ -155,12 +155,28 @@ Notes grouped by theme in the **By Theme** tab:
 
 ### Full-text Search
 
-- Search indexes complete note body content — not just title and tags
+- Indexes complete note body content — not just title and tags
 - Results ranked by relevance: title match → tag match → tldr → body content
-- Matching terms highlighted inside the note detail panel with a subtle purple tint
-- Result count shown in the result bar: "X of 142 notes"
-- Press `/` anywhere on the page to focus the search bar
-- Example: searching `"exponential gating"` finds xLSTM even though the term only appears in the note body, not the title
+- Press `/` anywhere on page to focus search bar
+- Result count shown: "X notes found"
+
+**Ctrl+F style match navigation:**
+- Opening a note from search auto-scrolls to the first match instantly
+- Match navigation bar appears at top of note: 🔍 "search term"  1 of 6  ‹  ›
+- ‹ › buttons navigate between every occurrence
+- Current match = bright purple highlight
+- All other matches = light purple highlight
+- Keyboard shortcuts: Enter or ↓ → next match · Shift+Enter or ↑ → previous match
+- Navigation bar hides automatically when note is closed or search is cleared
+- Case insensitive — finds "Attention", "attention", "ATTENTION" equally
+- Single-match notes disable the › button automatically
+
+**Example workflow:**
+1. Type `"exponential gating"` in search bar
+2. xLSTM note appears in results (term is in the body, not the title)
+3. Click xLSTM → note opens, auto-scrolls to first match, shows "1 of 3 ‹ ›"
+4. Press › to jump through all 3 occurrences
+5. Clear search → highlights disappear
 
 ### Paper Comparison
 
