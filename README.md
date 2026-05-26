@@ -32,7 +32,7 @@ The most referenced note in the wiki is "Attention Is All You Need" with 46 back
 
 ### Browse & Search
 
-- Full-text search across all 138 notes by title, tag, or keyword
+- Full-text search across all notes by title, tag, or keyword
 - Multi-tag AND filtering — click multiple tags to narrow results simultaneously
 - Note cards showing title, year badge, citation count badge (🔖 N citations), tags, and 3-line TL;DR
 - Sort by title A–Z, year (newest first), or citation count descending
