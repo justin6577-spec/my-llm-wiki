@@ -5,6 +5,12 @@
 
 **🌐 Live Web Demo:** https://MuhammadSaqlainAslam.github.io/my-llm-wiki
 
+[![Wiki Notes](https://img.shields.io/badge/dynamic/json?url=https://MuhammadSaqlainAslam.github.io/my-llm-wiki/notes.json&query=$.length&label=wiki+notes&color=7c3aed&style=flat)](https://MuhammadSaqlainAslam.github.io/my-llm-wiki)
+![GitHub last commit](https://img.shields.io/github/last-commit/MuhammadSaqlainAslam/my-llm-wiki?color=7c3aed&style=flat)
+![GitHub repo size](https://img.shields.io/github/repo-size/MuhammadSaqlainAslam/my-llm-wiki?color=0d9488&style=flat)
+![License](https://img.shields.io/badge/license-MIT-green?style=flat)
+![Live Demo](https://img.shields.io/badge/live-demo-brightgreen?style=flat&logo=github)
+
 ---
 
 ## Overview
@@ -202,7 +208,7 @@ Notes grouped by theme in the **By Theme** tab:
 
 ## 📚 Wiki Contents
 
-138 notes total — 20 full paper articles + 118 concept and meta notes.
+[![Wiki Notes](https://img.shields.io/badge/dynamic/json?url=https://MuhammadSaqlainAslam.github.io/my-llm-wiki/notes.json&query=$.length&label=wiki+notes&color=7c3aed&style=flat)](https://MuhammadSaqlainAslam.github.io/my-llm-wiki) — 20+ full paper articles + growing concept glossary (badge updates automatically with each new paper).
 
 ### Papers
 
@@ -270,7 +276,7 @@ The wiki includes a full citation intelligence layer: `wiki/Citation Map.md` tra
 
 ```
 my-wiki/
-├── wiki/                          # 138 Markdown notes (Obsidian vault)
+├── wiki/                          # Markdown notes — grows automatically (Obsidian vault)
 │   ├── Home.md                    # Entry point with concept map + reading paths
 │   ├── 000 Index.md               # Full index: themes, glossary, narrative, citation table
 │   ├── Citation Map.md            # Citation scores + top-10 citing papers per core paper
@@ -281,6 +287,10 @@ my-wiki/
 │   ├── KV Cache.md                # Concept stub notes (100+ total)
 │   ├── HBM.md
 │   └── ...
+│
+│   💡 Grows automatically — run `python3 agent.py topic "..."` to add papers.
+│      Note count updates live on the badge at the top of this README.
+│
 ├── docs/                          # Static web demo (auto-deployed)
 │   ├── index.html                 # Browse, search, Citation Explorer
 │   ├── graph.html                 # D3 knowledge graph
