@@ -21,7 +21,7 @@ The most referenced note in the wiki is "Attention Is All You Need" with 46 back
 
 ## 🌐 Live Web Demo Features
 
-- Full-text search, multi-tag filtering, and sort controls across all 138 notes
+- Full-text search, multi-tag filtering, and sort controls across all notes
 - Citation Explorer — master-detail panel with ranked citation bars and top-10 citing papers
 - Interactive D3.js knowledge graph sized and colored by citation count and research theme
 - Theme Navigation — notes grouped by research area
