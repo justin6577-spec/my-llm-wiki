@@ -478,16 +478,15 @@ Designed by the **Artificial Intelligence Research Center**
 
 ---
 
-## 📊 Analytics
+## 📊 Analytics & Visitor Tracking
 
-Privacy-friendly visitor tracking via
+**Visitor counter:** Live country-based visitor tracking displayed at the bottom of every page
+via [Flag Counter](https://flagcounter.com) — updates automatically on every visit, visible to all visitors.
+
+**Analytics dashboard:** Privacy-friendly analytics via
 [Cloudflare Web Analytics](https://cloudflare.com/web-analytics).
-No cookies. No personal data collected.
-GDPR compliant.
-
-View live visitor stats on the
-[web demo](https://MuhammadSaqlainAslam.github.io/my-llm-wiki)
-— country breakdown shown at the bottom of every page.
+No cookies. No personal data. GDPR compliant.
+View at: dash.cloudflare.com → Web Analytics
 
 ---
 
