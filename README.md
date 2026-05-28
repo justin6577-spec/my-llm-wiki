@@ -1,9 +1,10 @@
-# LLM Wiki
+# HHRI Research Wiki
 
 > AI research knowledge base — papers, concepts & intuitions
-> Curated by Muhammad Saqlain Aslam
+> Designed by Artificial Intelligence Research Center, Hon Hai Research Institute
 
-**🌐 Live Web Demo:** https://MuhammadSaqlainAslam.github.io/my-llm-wiki
+🏛️ **Institute:** https://hhri.foxconn.com/en/about-us
+🌐 **Live Demo:** https://MuhammadSaqlainAslam.github.io/my-llm-wiki
 
 [![Wiki Notes](https://img.shields.io/badge/dynamic/json?url=https://MuhammadSaqlainAslam.github.io/my-llm-wiki/notes.json&query=$.length&label=wiki+notes&color=7c3aed&style=flat)](https://MuhammadSaqlainAslam.github.io/my-llm-wiki)
 ![GitHub last commit](https://img.shields.io/github/last-commit/MuhammadSaqlainAslam/my-llm-wiki?color=7c3aed&style=flat)
@@ -80,8 +81,10 @@ A master-detail two-panel layout — click the **Citation Explorer** tab to open
 - Every node = one wiki note, sized logarithmically by `citation_count`; nodes without citation data sized by incoming link count
 - Every edge = a `[[wikilink]]` connection between notes
 - Color-coded by theme tag (foundations, efficiency, hardware, inference-optimization, scaling, synthesis, meta)
-- Click any node → opens full note detail in the side panel
-- Hover a node → highlights direct neighbors, dims everything else; tooltip shows title, year, citations, and TL;DR
+- Click any node → opens full note detail in the side panel with two action buttons:
+  - **📄 Read on arXiv** — opens the paper on arxiv.org (shown when arXiv ID is available)
+  - **🔗 Open in wiki** — opens the full note in the browse view
+- Hover a node → highlights direct neighbors, dims everything else; tooltip shows title, year, citations, TL;DR, and arXiv ID if available
 - Filter by tag — dims non-matching nodes
 - Legend: color = theme, node size = citation count (where available, else link count)
 - Zoom, pan, drag nodes freely
@@ -188,12 +191,18 @@ Notes grouped by theme in the **By Theme** tab:
 
 - Click **⊕ Compare** on any note card to select it for comparison
 - Select 2 or 3 papers — a comparison tray slides up from the bottom of the page showing selected titles as pills
-- Click **"Compare (X)"** to open a full-screen side-by-side view
-- Each column shows per paper: TL;DR · Year · Citations · Tags · outgoing wiki links · body excerpt · reading status badge
-- Column top borders are color-coded: first paper = purple, second = teal, third = amber
+- Click **"Compare (X)"** to open a full side-by-side table view
+- Toggle between **Summary** (quick 5-row) and **Technical** (10-row default) views
+- **Technical mode** shows 10 rows extracted from each note:
+  - Core Innovation, Architecture Type, Sequence Complexity, Key Formula / Mechanism,
+    Best Benchmark Result, Hardware Requirement, Limitations, vs Transformer,
+    Year & Citations, Reading Status
+- **Key differences:** auto-detected — a banner highlights which rows actually differ between papers
+- Row labels color-coded: **purple** when papers differ (key differences), gray when they match
+- Column top borders color-coded: first paper = purple, second = teal, third = amber
+- Alternating row backgrounds for readability
 - Maximum 3 papers at once; selecting a 4th bumps the oldest
 - Press **Escape** or click **✕ Close** to dismiss
-- Example: compare Mamba vs RWKV vs RetNet to see that all share O(n) complexity but differ in their gating and memory mechanisms
 
 ### Backlinks
 
@@ -458,6 +467,25 @@ python -m http.server 8000
 | Semantic Scholar | REST API | Citation tracking |
 | yt-dlp | Python library | YouTube transcript extraction |
 | GitHub API | REST API | Repo README extraction |
+
+---
+
+## 🏛️ Institution
+
+Designed by the **Artificial Intelligence Research Center**
+
+[Hon Hai Research Institute](https://hhri.foxconn.com/en/about-us)
+
+---
+
+## 📊 Visitor Analytics
+
+Privacy-friendly analytics via Cloudflare Web Analytics.
+No cookies. No personal data. GDPR compliant.
+
+View dashboard: https://dash.cloudflare.com → Web Analytics
+
+Tracks: page views, unique visitors, top pages, countries, referrers.
 
 ---
 
