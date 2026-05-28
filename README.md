@@ -1,4 +1,4 @@
-# HHRI Research Wiki
+# HHRI-AI Research Wiki
 
 > AI research knowledge base — papers, concepts & intuitions
 > Designed by Artificial Intelligence Research Center, Hon Hai Research Institute
