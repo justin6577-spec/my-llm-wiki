@@ -1,6 +1,6 @@
 # LLM Wiki
 
-AI research knowledge base — papers, concepts & intuitions. Curated by Saqlain.
+AI research knowledge base — papers, concepts & intuitions. Artificial Intelligence Research Center, Hon Hai Research Institute.
 
 ---
 
