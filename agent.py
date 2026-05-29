@@ -26,6 +26,20 @@ RAW   = VAULT / "raw"
 WIKI  = VAULT / "wiki"
 LOG   = VAULT / "agent_log.json"
 
+
+def _strip_md_fence(text: str) -> str:
+    """Strip leading/trailing markdown code fences that the API
+    sometimes wraps responses in.
+
+    Handles ```markdown ... ```, ```md ... ```, and bare ``` ... ```.
+    """
+    text = text.strip()
+    # Remove opening fence (```markdown, ```md, ```)
+    text = re.sub(r'^```(?:markdown|md|)[\r\n]+', '', text, flags=re.IGNORECASE)
+    # Remove closing fence
+    text = re.sub(r'[\r\n]+```\s*$', '', text)
+    return text.strip() + '\n'
+
 WIKI_THEMES = [
     "transformer", "attention", "state space model", "SSM",
     "mamba", "LSTM", "speculative decoding", "KV cache",
@@ -222,6 +236,7 @@ def check_already_in_wiki(title: str) -> bool:
 
 def write_content_note(filename: str, content: str) -> dict:
     """Write a markdown note to wiki/ for non-PDF content (GitHub, blog, YouTube)."""
+    content = _strip_md_fence(content)
     out_path = WIKI / filename
     if out_path.exists():
         return {"status": "already_exists", "path": str(out_path)}

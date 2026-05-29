@@ -19,6 +19,20 @@ VAULT = Path("/work/HHRI-AI/Saqlain/my-wiki")
 RAW   = VAULT / "raw"
 WIKI  = VAULT / "wiki"
 
+
+def _strip_md_fence(text: str) -> str:
+    """Strip leading/trailing markdown code fences that the API
+    sometimes wraps responses in.
+
+    Handles ```markdown ... ```, ```md ... ```, and bare ``` ... ```.
+    """
+    text = text.strip()
+    # Remove opening fence (```markdown, ```md, ```)
+    text = re.sub(r'^```(?:markdown|md|)[\r\n]+', '', text, flags=re.IGNORECASE)
+    # Remove closing fence
+    text = re.sub(r'[\r\n]+```\s*$', '', text)
+    return text.strip() + '\n'
+
 _PROJECT = os.environ.get("ANTHROPIC_VERTEX_PROJECT_ID", "ceo-proj-foxbrain-prod")
 _REGION  = os.environ.get("VERTEX_REGION_CLAUDE_4_6_SONNET", "europe-west1")
 _MODEL   = os.environ.get("ANTHROPIC_DEFAULT_SONNET_MODEL", "claude-sonnet-4-6")
@@ -134,7 +148,7 @@ def generate_note(pdf_path: Path) -> str:
         system=[{"type": "text", "text": SYSTEM, "cache_control": {"type": "ephemeral"}}],
         messages=[{"role": "user", "content": NOTE_PROMPT.format(text=text)}],
     )
-    return response.content[0].text.strip()
+    return _strip_md_fence(response.content[0].text)
 
 
 def note_filename_from_content(content: str, fallback: str) -> str:
