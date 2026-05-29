@@ -187,7 +187,7 @@ Both released with optimized CUDA training + inference kernels at https://github
 ### Competes with:
 - [[Gated DeltaNet (Yang et al. 2025)]] — current strongest linear model baseline; Mamba-3 SISO beats it by +0.6pp, MIMO by +1.8pp
 - [[Linear Attention (Katharopoulos et al. 2020)]] — simplest SSD instance; Mamba-3 significantly outperforms
-- [[HGRN2]], [[RetNet]], [[GLA]] — other sub-quadratic recurrent models on the quality-efficiency frontier
+- [[HGRN2]], [[RetNet]], [[Gated Linear Attention]] — other sub-quadratic recurrent models on the quality-efficiency frontier
 
 ### Enables / appears in:
 - [[Hybrid SSM-Transformer models]] — Mamba-2 layers were incorporated into Kimi Team 2025, NVIDIA 2025 (Hymba), Hunyuan 2025, Qwen 2025 hybrid models; Mamba-3 layers are drop-in improvements

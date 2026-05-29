@@ -1,4 +1,3 @@
-```markdown
 ---
 title: "Chinchilla Scaling Laws"
 tags: [glossary, scaling, training, llms]
@@ -21,7 +20,6 @@ The practical upshot is enormous: if you have a fixed FLOP budget, you should tr
 ## Key Formula or Mechanism
 Optimal allocation given compute budget C (in FLOPs):
 
-```
 N_opt ∝ C^0.5
 D_opt ∝ C^0.5
 
@@ -30,7 +28,6 @@ Concretely:
   D_opt = C / (6 · N_opt)
 
 Rule of thumb: D_opt ≈ 20 × N_opt
-```
 
 Loss follows a power law:
 **L(N, D) = E + A/N^α + B/D^β**
@@ -48,4 +45,3 @@ where E is irreducible entropy, α ≈ 0.34, β ≈ 0.28.
 [[Kaplan Scaling Laws]]
 [[Training Token Budget]]
 [[Inference Efficiency]]
-```

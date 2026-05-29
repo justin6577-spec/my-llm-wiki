@@ -1,4 +1,3 @@
-```markdown
 ---
 title: "BPE Tokenization"
 tags: [glossary, tokenization, nlp, preprocessing]
@@ -28,7 +27,6 @@ for i in range(num_merges):          # e.g. 50,000 iterations
     corpus = merge(corpus, best)      # replace all ('e','s') → 'es'
     vocab.add(best)                   # add 'es' to vocabulary
 # Store merge rules in order — this IS the tokenizer
-```
 
 ## Where It Appears
 - **Sennrich et al. 2016** — *Neural Machine Translation of Rare Words with Subword Units*: original NLP application of BPE
@@ -42,4 +40,3 @@ for i in range(num_merges):          # e.g. 50,000 iterations
 [[Vocabulary Size Tradeoffs]]
 [[Tokenization Artifacts]]
 [[Byte-Level Encoding]]
-```

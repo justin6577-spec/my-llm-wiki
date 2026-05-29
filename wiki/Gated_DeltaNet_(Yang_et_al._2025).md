@@ -1,4 +1,3 @@
-```markdown
 ---
 title: "Gated DeltaNet"
 tags: [glossary, ssm, linear-attention, memory, recurrent-models]
@@ -19,7 +18,6 @@ Gated DeltaNet adds a **global forget gate** `α_t ∈ (0,1)` that scales the en
 - **Hybrid architecture synergy**: Gated DeltaNet layers can be interleaved with full attention (e.g., every 4th layer) to get associative memory + exact recall, matching Transformer quality at a fraction of the compute.
 
 ## Key Formula or Mechanism
-```
 # Gated DeltaNet recurrence
 S_t = α_t · [S_{t-1} - β_t (S_{t-1} k_t) k_t^T] + β_t v_t k_t^T
 y_t = S_t q_t
@@ -29,7 +27,6 @@ y_t = S_t q_t
 #   β_t  ∈ (0,1)  — per-step learning rate (data-dependent)
 #   k_t, q_t, v_t ∈ R^d — keys, queries, values
 #   S_t  ∈ R^{d_k × d_v} — matrix-valued hidden state
-```
 
 The term `S_{t-1} k_t` retrieves the currently stored value at key `k_t`; subtracting it before writing is the delta rule — write the *residual*, not the raw value.
 
@@ -45,4 +42,3 @@ The term `S_{t-1} k_t` retrieves the currently stored value at key `k_t`; subtra
 [[State Space Models]]
 [[Mamba]]
 [[Associative Memory]]
-```

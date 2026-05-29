@@ -1,4 +1,3 @@
-```markdown
 ---
 title: "Efficient LLM Inference"
 tags: [glossary, inference, systems, optimization]
@@ -19,7 +18,6 @@ The entire field of efficient inference is essentially: (1) reduce the bytes you
 - **Speculative decoding breaks the serial bottleneck** — a small draft model proposes k=4–8 tokens in parallel, verified by the large model in one forward pass, achieving 2–3× speedup with *zero* quality loss.
 
 ## Key Formula or Mechanism
-```
 # Roofline model for inference throughput
 arithmetic_intensity = FLOPs_per_token / bytes_moved_per_token
                      ≈ 2P / (2P) = 1  [batch=1, P=params, FP16]
@@ -31,7 +29,6 @@ arithmetic_intensity < (peak_FLOPs / peak_bandwidth)
 # Effective throughput ceiling (tokens/sec):
 max_throughput ≈ peak_bandwidth / (bytes_per_param × num_params)
 # A100 + 7B FP16: 2e12 / (2 × 7e9) ≈ 143 tokens/sec
-```
 
 ## Where It Appears
 - **FlashAttention** (Dao et al., 2022) — IO-aware exact attention, 2–4× faster
@@ -47,4 +44,3 @@ max_throughput ≈ peak_bandwidth / (bytes_per_param × num_params)
 [[Speculative Decoding]]
 [[FlashAttention]]
 [[Grouped Query Attention]]
-```

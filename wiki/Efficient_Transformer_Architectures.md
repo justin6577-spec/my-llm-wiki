@@ -1,4 +1,3 @@
-```markdown
 ---
 title: "Efficient Transformer Architectures"
 tags: [glossary, transformers, efficiency, architecture]
@@ -20,9 +19,7 @@ In practice, FlashAttention is the dominant practical win — not a mathematical
 
 ## Key Formula or Mechanism
 **Standard attention (expensive):**
-```
 O = softmax(QKᵀ / √d) · V    # materializes n×n matrix
-```
 
 **FlashAttention (IO-aware tiling — exact, not approximate):**
 ```python
@@ -36,7 +33,6 @@ for block_q in tiles(Q):
         l   = l   * exp(m - m_new) + rowsum(exp(s - m_new))
         m   = m_new
     O[block_q] = acc / l            # numerically stable, never writes n×n
-```
 
 ## Where It Appears
 - **FlashAttention** — Dao et al. 2022, 2023 (FlashAttention-2), 2024 (FlashAttention-3)
@@ -51,4 +47,3 @@ for block_q in tiles(Q):
 [[State Space Models (SSM)]]
 [[Sparse Attention]]
 [[KV Cache]]
-```
