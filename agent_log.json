@@ -48,5 +48,25 @@
       "arXiv: KV cache compression (retry) \u2014 timeout",
       "arXiv: speculative decoding draft (retry) \u2014 timeout"
     ]
+  },
+  {
+    "timestamp": "2026-05-28T17:35:23.970807",
+    "mode": "topic",
+    "topic": "Mamba 2 SSM improvements",
+    "added": [
+      "Mamba2.pdf (arXiv 2405.21060)",
+      "Mamba3.pdf (arXiv 2603.15569)",
+      "Jamba.pdf (arXiv 2403.19887)",
+      "Mamba2_SSD_Blog_Part1.md \u2013 State Space Duality Part I: The Model (blog)",
+      "Mamba2_SSD_Blog_Part3_Algorithm.md \u2013 State Space Duality Part III: The Algorithm (blog)",
+      "state_spaces_mamba_repo.md \u2013 Official state-spaces/mamba GitHub repo",
+      "Jamba.md \u2013 Jamba Hybrid Transformer-Mamba-MoE paper",
+      "Mamba3.md \u2013 Mamba-3 MIMO SSM paper"
+    ],
+    "skipped": [
+      "Linear Attention \u2013 already in wiki",
+      "RetNet \u2013 already in wiki",
+      "Mamba (v1) \u2013 already in wiki as 'Mamba'"
+    ]
   }
 ]
