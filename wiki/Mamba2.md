@@ -130,7 +130,7 @@ Mamba-2 matches or exceeds Transformers on the difficult MQAR task (Arora et al.
 - [[Pythia]] — direct comparison baseline on Pile
 - [[RWKV]] — another linear-complexity sequence model with recurrent form
 - [[RetNet]] — retention mechanism, also attempts SSM-attention unification
-- [[GLA (Gated Linear Attention)]] — related gated linear attention work in the SMA family
+- [[Gated Linear Attention]] — related gated linear attention work in the SMA family
 
 ### Enables
 - [[Hybrid SSM-Attention Architectures]] — SSD framework makes mixing SSM and attention layers principled

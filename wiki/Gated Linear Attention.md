@@ -1,6 +1,5 @@
-```markdown
 ---
-title: "GLA (Gated Linear Attention)"
+title: "Gated Linear Attention (GLA)"
 tags: [glossary, attention, linear-attention, ssm, efficient-transformers]
 tldr: "A linear attention variant that adds a data-dependent decay gate, closing the gap with softmax attention while keeping O(1) recurrent inference cost."
 ---
@@ -44,4 +43,3 @@ cross-chunk: recurrent carry of `S` with accumulated gate product `∏ G`.
 [[RetNet]]
 [[RWKV]]
 [[Flash Attention]]
-```
