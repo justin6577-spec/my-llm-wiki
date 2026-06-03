@@ -40,7 +40,7 @@ The problem: this matrix is highly non-normal (its eigenvectors are nearly paral
 ```
 HiPPO-LegS (Legendre measure, sliding window):
 A_nk = -(2n+1)^{1/2} * (2k+1)^{1/2}   if n > k
-A_nk = -(n+1)                           if n = k  
+A_nk = -(n+1)                           if n = k
 A_nk = 0                                if n < k
 
 Properties:

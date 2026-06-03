@@ -15,7 +15,7 @@ Content-based attention ([[Transformer]]) says: attend based on relevance — an
 
 The decay rate determines the effective "context window":
 - $\gamma = 0.99$: ~100-token half-life (remembers ~100 tokens clearly)
-- $\gamma = 0.9$: ~10-token half-life  
+- $\gamma = 0.9$: ~10-token half-life
 - $\gamma = 0.999$: ~1000-token half-life
 
 [[RetNet]] uses per-head $\gamma$ (multi-scale), giving the model different effective windows per head. [[RWKV]] uses per-channel learned $w$ (more granular).

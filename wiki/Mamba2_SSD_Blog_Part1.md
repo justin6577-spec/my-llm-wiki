@@ -49,10 +49,10 @@ wikilinks:
 
 # State Space Duality (Mamba-2) Part I – The Model
 
-**Source:** [https://tridao.me/blog/2024/mamba2-part1-model/](https://tridao.me/blog/2024/mamba2-part1-model/)  
-**Authors:** Tri Dao (Princeton), Albert Gu (CMU)  
-**Published:** May 31, 2024  
-**Paper:** [arXiv 2405.21060](https://arxiv.org/abs/2405.21060)  
+**Source:** [https://tridao.me/blog/2024/mamba2-part1-model/](https://tridao.me/blog/2024/mamba2-part1-model/)
+**Authors:** Tri Dao (Princeton), Albert Gu (CMU)
+**Published:** May 31, 2024
+**Paper:** [arXiv 2405.21060](https://arxiv.org/abs/2405.21060)
 
 ---
 
@@ -66,7 +66,7 @@ wikilinks:
 
 Despite [[Mamba]]'s strong results, two key problems remained:
 
-1. **Understanding:** SSMs felt disconnected from the dominant paradigm of **[[Attention|attention]]**. How are they related conceptually?  
+1. **Understanding:** SSMs felt disconnected from the dominant paradigm of **[[Attention|attention]]**. How are they related conceptually?
 2. **Efficiency:** [[Mamba]]'s [[Hardware-Aware Scan]] did not use **tensor cores** (matrix-multiplication units). On an H100 GPU, BF16 matmul delivers **989 TFLOPS** vs. **67 TFLOPS** for FP32 scalar ops — a **~15× gap** that Mamba-1's scan algorithm could not exploit.
 
 ---
@@ -91,8 +91,8 @@ Despite [[Mamba]]'s strong results, two key problems remained:
 
 $$h_t = A_t h_{t-1} + B_t x_t, \qquad y_t = C_t^\top h_t$$
 
-- $x_t, y_t \in \mathbb{R}$ (scalars)  
-- $h_t \in \mathbb{R}^N$ (hidden state, size $N$)  
+- $x_t, y_t \in \mathbb{R}$ (scalars)
+- $h_t \in \mathbb{R}^N$ (hidden state, size $N$)
 - $(A, B, C)$ are **input-dependent** (selective) parameters
 
 ### The SSD Restriction
@@ -115,9 +115,9 @@ This is the core of **State Space Duality ([[SSD]])**.
 
 To handle multi-dimensional inputs, [[Mamba-2]] introduces a **multi-head** design analogous to multi-head [[Attention]]:
 
-- Inputs $X, Y$ have shape $(T, H \cdot P)$ where $H$ = heads, $P$ = head dim  
-- Each head independently runs an [[SSD]] layer with its own $(A, B, C)$  
-- Larger state sizes (e.g., $N=64$ or $N=128$) are now tractable — vs. $N=16$ in [[Mamba]]  
+- Inputs $X, Y$ have shape $(T, H \cdot P)$ where $H$ = heads, $P$ = head dim
+- Each head independently runs an [[SSD]] layer with its own $(A, B, C)$
+- Larger state sizes (e.g., $N=64$ or $N=128$) are now tractable — vs. $N=16$ in [[Mamba]]
 
 This is related to Multi-Query Attention in its grouped/shared-parameter philosophy.
 
@@ -202,17 +202,17 @@ Key contrasts with standard [[Transformer]] [[Attention]]:
 
 ## Related Wiki Notes
 
-- [[Mamba]] — predecessor selective [[SSM]]  
-- [[Mamba-2]] — the full [[Mamba-2]] model and training results  
-- [[SSM]] — broader state space model family  
-- [[SSD]] — the Structured State Space Duality algorithm  
-- [[Chunkwise recurrent]] — the [[SSD]] algorithm processes sequences in chunks  
-- [[Hardware-Aware Scan]] — [[Mamba]]'s approach replaced by [[SSD]] matmuls  
-- [[Diagonal recurrence]] — the recurrence type used in [[SSD]]  
-- [[Exponential decay]] — the scalar $a_t$ acts as a positional decay  
-- [[FlashAttention]] — systems inspiration for [[SSD]]  
-- [[Sequence parallelism]] — [[SSD]] unlocks [[Transformer]]-style parallelism for [[SSM|SSMs]]  
-- [[RWKV]] — another recurrent model with [[Attention]]-like duality  
-- [[RetNet]] — linear [[Attention]] with fixed [[Exponential decay]]; closely related to [[SSD]]  
-- [[KV cache]] — [[SSD]]'s fixed-size state as the recurrent analogue  
-- [[Jamba]] — hybrid architecture combining [[Mamba]] layers with [[Transformer]] blocks  
+- [[Mamba]] — predecessor selective [[SSM]]
+- [[Mamba-2]] — the full [[Mamba-2]] model and training results
+- [[SSM]] — broader state space model family
+- [[SSD]] — the Structured State Space Duality algorithm
+- [[Chunkwise recurrent]] — the [[SSD]] algorithm processes sequences in chunks
+- [[Hardware-Aware Scan]] — [[Mamba]]'s approach replaced by [[SSD]] matmuls
+- [[Diagonal recurrence]] — the recurrence type used in [[SSD]]
+- [[Exponential decay]] — the scalar $a_t$ acts as a positional decay
+- [[FlashAttention]] — systems inspiration for [[SSD]]
+- [[Sequence parallelism]] — [[SSD]] unlocks [[Transformer]]-style parallelism for [[SSM|SSMs]]
+- [[RWKV]] — another recurrent model with [[Attention]]-like duality
+- [[RetNet]] — linear [[Attention]] with fixed [[Exponential decay]]; closely related to [[SSD]]
+- [[KV cache]] — [[SSD]]'s fixed-size state as the recurrent analogue
+- [[Jamba]] — hybrid architecture combining [[Mamba]] layers with [[Transformer]] blocks

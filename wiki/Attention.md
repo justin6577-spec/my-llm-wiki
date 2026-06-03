@@ -30,6 +30,7 @@ if mask is not None:
     scores = scores.masked_fill(mask == 0, -1e9)
 weights = scores.softmax(dim=-1)
 out = weights @ V  # (batch, heads, seq, d_k)
+```
 
 ## Where It Appears
 - **Attention Is All You Need** (Vaswani et al., 2017) — original formulation

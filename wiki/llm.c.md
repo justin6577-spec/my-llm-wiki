@@ -8,8 +8,8 @@ wikilinks: ["[[nanoGPT]]", "[[FlashAttention-2]]", "[[Hardware-Aware Scan]]", "[
 
 # llm.c
 
-**Repository:** [karpathy/llm.c](https://github.com/karpathy/llm.c)  
-**Author:** Andrej Karpathy  
+**Repository:** [karpathy/llm.c](https://github.com/karpathy/llm.c)
+**Author:** Andrej Karpathy
 **Year:** 2024
 
 ## Overview

@@ -33,6 +33,7 @@ for block_q in tiles(Q):
         l   = l   * exp(m - m_new) + rowsum(exp(s - m_new))
         m   = m_new
     O[block_q] = acc / l            # numerically stable, never writes n×n
+```
 
 ## Where It Appears
 - **FlashAttention** — Dao et al. 2022, 2023 (FlashAttention-2), 2024 (FlashAttention-3)

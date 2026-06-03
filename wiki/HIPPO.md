@@ -37,7 +37,7 @@ There are multiple HiPPO variants depending on the "measure" (how to weight old 
 HiPPO projection problem:
   At time t, find coefficients c(t) ∈ R^N such that:
   u(s) ≈ Σ_n c_n(t) P_n(s/t)  for s ∈ [0, t]
-  
+
   where P_n are Legendre polynomials (or other orthogonal basis)
 
 Optimal update rule: dc/dt = Ac + Bu  (an ODE!)

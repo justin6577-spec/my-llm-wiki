@@ -9,7 +9,7 @@ theme: synthesis
 
 # Nemotron 3
 
-> NVIDIA, "Nemotron 3: Efficient and Open Intelligence", December 2025  
+> NVIDIA, "Nemotron 3: Efficient and Open Intelligence", December 2025
 > NVIDIA, "Nemotron 3 Super Technical Report", 2025
 
 ## What It Is
@@ -318,7 +318,7 @@ Process: evaluate each layer's quantization sensitivity, find the Pareto-optimal
 - **Time:** < 2 hours on 8× B200 GPUs
 - **Accuracy:** 99.8% median accuracy vs. BF16 across benchmarks
 
-What gets NVFP4: sparse expert GEMMs (the dominant compute)  
+What gets NVFP4: sparse expert GEMMs (the dominant compute)
 What stays in BF16: attention projections, latent projections, sensitive layers
 
 ### Mamba SSM Cache Quantization

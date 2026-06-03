@@ -8,16 +8,16 @@ wikilinks: ["[[Mamba]]", "[[FlashAttention-2]]", "[[Multi-Query Attention]]", "[
 
 # nanoGPT
 
-**Repository:** [karpathy/nanoGPT](https://github.com/karpathy/nanoGPT)  
-**Author:** Andrej Karpathy  
-**Year:** 2022  
+**Repository:** [karpathy/nanoGPT](https://github.com/karpathy/nanoGPT)
+**Author:** Andrej Karpathy
+**Year:** 2022
 **Status:** Deprecated (Nov 2025) — superseded by [nanochat](https://github.com/karpathy/nanochat)
 
 ## Overview
 
 nanoGPT is a minimal, readable codebase for training and fine-tuning GPT-style [[transformer]] language models. The entire implementation lives in two ~300-line files:
 
-- `train.py` — a straightforward training loop with DDP support  
+- `train.py` — a straightforward training loop with DDP support
 - `model.py` — a GPT model definition that can load OpenAI GPT-2 weights
 
 Its design philosophy prioritises *practicality over pedagogy*, making it easy to hack for custom [[language model]] experiments.
@@ -35,9 +35,9 @@ Its design philosophy prioritises *practicality over pedagogy*, making it easy t
 
 ## Architecture
 
-- Standard decoder-only Transformer (identical to GPT-2)  
-- Configurable: layers, heads, embedding size, context length (`block_size`)  
-- Optional weight loading from GPT-2 (up to 1.3B parameters)  
+- Standard decoder-only Transformer (identical to GPT-2)
+- Configurable: layers, heads, embedding size, context length (`block_size`)
+- Optional weight loading from GPT-2 (up to 1.3B parameters)
 - [[RoPE]] and [[FlashAttention-2]] not built-in, but easily added
 
 ## Quick Start
@@ -51,9 +51,9 @@ python sample.py --out_dir=out-shakespeare-char
 
 ## Relation to Other Projects
 
-- Predecessor: **minGPT** (more educational)  
-- Successor: **llm.c** (C/CUDA, faster, no PyTorch) → see [[llm.c]]  
-- Tokenizer companion: **minbpe** → see [[minbpe]]  
+- Predecessor: **minGPT** (more educational)
+- Successor: **llm.c** (C/CUDA, faster, no PyTorch) → see [[llm.c]]
+- Tokenizer companion: **minbpe** → see [[minbpe]]
 - Autograd engine: **micrograd** → see [[micrograd]]
 
 ## Relevance to Wiki Themes

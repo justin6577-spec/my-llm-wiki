@@ -13,7 +13,7 @@ When you tell a chatbot "always respond in French" at the start of a conversatio
 
 Standard multi-turn training: the model sees `[system_msg] [turn 1] [response 1] [turn 2] [response 2] ...`. After many turns, the system message is far in the past and its attention weight has decayed. The model naturally "forgets" it.
 
-Ghost Attention modifies the training data: duplicate the system message before every turn — `[system_msg] [turn 1] [response 1] [system_msg] [turn 2] [response 2] ...`. These ghost copies are masked from the loss (the model isn't penalized for predicting them), but they appear in the attention context so the model can attend to them. 
+Ghost Attention modifies the training data: duplicate the system message before every turn — `[system_msg] [turn 1] [response 1] [system_msg] [turn 2] [response 2] ...`. These ghost copies are masked from the loss (the model isn't penalized for predicting them), but they appear in the attention context so the model can attend to them.
 
 During inference, no ghost copies are needed — the model has learned to behave as if the system message is always present, because it was always present during training.
 

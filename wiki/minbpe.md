@@ -8,8 +8,8 @@ wikilinks: ["[[nanoGPT]]", "[[llm.c]]", "[[Inference optimization]]"]
 
 # minbpe
 
-**Repository:** [karpathy/minbpe](https://github.com/karpathy/minbpe)  
-**Author:** Andrej Karpathy  
+**Repository:** [karpathy/minbpe](https://github.com/karpathy/minbpe)
+**Author:** Andrej Karpathy
 **Year:** 2024
 
 ## Overview

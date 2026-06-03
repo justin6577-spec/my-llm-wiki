@@ -49,10 +49,10 @@ wikilinks:
 
 # State Space Duality (Mamba-2) Part III – The Algorithm
 
-**Source:** [https://tridao.me/blog/2024/mamba2-part3-algorithm/](https://tridao.me/blog/2024/mamba2-part3-algorithm/)  
-**Authors:** Tri Dao (Princeton), Albert Gu (CMU)  
-**Published:** May 31, 2024  
-**Paper:** [arXiv 2405.21060](https://arxiv.org/abs/2405.21060)  
+**Source:** [https://tridao.me/blog/2024/mamba2-part3-algorithm/](https://tridao.me/blog/2024/mamba2-part3-algorithm/)
+**Authors:** Tri Dao (Princeton), Albert Gu (CMU)
+**Published:** May 31, 2024
+**Paper:** [arXiv 2405.21060](https://arxiv.org/abs/2405.21060)
 
 ---
 
@@ -170,7 +170,7 @@ Like [[FlashAttention]], the [[SSD]] algorithm is designed to minimize reads/wri
 - Leverages the [[Memory hierarchy]] of modern GPUs
 
 ### Numerical Stability
-- The [[Exponential decay]] scalar $a_t$ can underflow for long sequences → log-space computation  
+- The [[Exponential decay]] scalar $a_t$ can underflow for long sequences → log-space computation
 - Discretization of continuous-time [[SSM]] parameters follows standard ZOH (zero-order hold)
 
 ### Chunk Size Selection

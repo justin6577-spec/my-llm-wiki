@@ -9,7 +9,7 @@ theme: scaling
 
 # Mixture of Experts (MoE)
 
-> Switch Transformers: Fedus, Zoph & Shazeer, JMLR 2022  
+> Switch Transformers: Fedus, Zoph & Shazeer, JMLR 2022
 > Mixtral of Experts: Jiang et al., Mistral AI, 2024
 
 ## The Central Idea

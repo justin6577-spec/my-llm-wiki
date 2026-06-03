@@ -41,7 +41,7 @@ For position m, dimension pair (2i, 2i+1):
 
   q̃_m = R(m) q_m    (rotate query at position m)
   k̃_n = R(n) k_n    (rotate key at position n)
-  
+
 Dot product: q̃_m · k̃_n = q_m · R(m-n) k_n  [depends only on m-n]
 ```
 

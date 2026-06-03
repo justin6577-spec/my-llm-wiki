@@ -8,9 +8,9 @@ wikilinks: ["[[nanoGPT]]", "[[llm.c]]"]
 
 # micrograd
 
-**Repository:** [karpathy/micrograd](https://github.com/karpathy/micrograd)  
-**Author:** Andrej Karpathy  
-**Year:** 2020  
+**Repository:** [karpathy/micrograd](https://github.com/karpathy/micrograd)
+**Author:** Andrej Karpathy
+**Year:** 2020
 **License:** MIT
 
 ## Overview

@@ -40,16 +40,16 @@ Sequence length T, chunk size B, num chunks C = T/B
 
 For chunk c = 1..C:
   Q_c, K_c, V_c = current chunk's projections
-  
+
   # Intra-chunk: parallel retention (B × B matmul)
   Y_local = LocalRetention(Q_c, K_c, V_c, γ)    # O(B²)
-  
+
   # Inter-chunk: apply accumulated state
   Y_cross = Q_c @ S_{c-1}                         # O(B × d²)
-  
+
   # Update state for next chunk
   S_c = γ^B * S_{c-1} + K_c^T V_c                # O(d²)
-  
+
   Y_c = Y_local + Y_cross
 
 Total: O(B · T) — linear in T

@@ -66,7 +66,7 @@ Each layer = (Attention or Mamba module) + (MLP or MoE):
 Types of layers:
 1. Mamba layer:           RMSNorm → Mamba → RMSNorm → MLP
 2. Mamba MoE layer:       RMSNorm → Mamba → RMSNorm → MoE
-3. Transformer layer:     RMSNorm → Attention → RMSNorm → MLP  
+3. Transformer layer:     RMSNorm → Attention → RMSNorm → MLP
 4. Attention MoE layer:   RMSNorm → Attention → RMSNorm → MoE
 ```
 

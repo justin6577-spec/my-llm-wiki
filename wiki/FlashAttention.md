@@ -28,6 +28,7 @@ for block_j in blocks(K, V):           # iterate key/value blocks
     O_i = diag(exp(m_prev - m_new)) * O_i + P_ij @ block_j.V
     l_i = exp(m_prev - m_new) * l_i + rowsum(P_ij)  # running denom
 O_i = O_i / l_i                        # final normalization
+```
 
 ## Where It Appears
 - **FlashAttention** (Dao et al., 2022) — original paper, MLSys 2022

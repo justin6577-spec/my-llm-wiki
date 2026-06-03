@@ -42,8 +42,8 @@ wikilinks:
 
 # state-spaces/mamba – Official Mamba Repository
 
-**URL:** [https://github.com/state-spaces/mamba](https://github.com/state-spaces/mamba)  
-**Authors:** Albert Gu (CMU), Tri Dao (Princeton)  
+**URL:** [https://github.com/state-spaces/mamba](https://github.com/state-spaces/mamba)
+**Authors:** Albert Gu (CMU), Tri Dao (Princeton)
 **Papers:**
 - Mamba-1: [arXiv 2312.00752](https://arxiv.org/abs/2312.00752)
 - Mamba-2: [arXiv 2405.21060](https://arxiv.org/abs/2405.21060)
@@ -80,10 +80,10 @@ This is the **official implementation** of the Mamba family of models, including
 
 ## Mamba-1
 
-- **Core:** Selective SSM (S6) with input-dependent $(A, B, C)$ parameters  
-- **Algorithm:** Hardware-aware parallel associative scan (see [[Hardware-Aware Scan]])  
-- **State size:** $N = 16$ (limited by scan efficiency)  
-- **Training:** Scan-based, no tensor cores  
+- **Core:** Selective SSM (S6) with input-dependent $(A, B, C)$ parameters
+- **Algorithm:** Hardware-aware parallel associative scan (see [[Hardware-Aware Scan]])
+- **State size:** $N = 16$ (limited by scan efficiency)
+- **Training:** Scan-based, no tensor cores
 - **Inference speed:** **5× faster** than [[Transformer]] of equal size at sequence length 2K; gap grows with sequence length
 - **Memory:** Constant recurrent state replaces growing [[KV cache]]; e.g., 2.8B model state is ~100MB regardless of context length
 
@@ -96,16 +96,16 @@ model = Mamba(d_model=16, d_state=16, d_conv=4, expand=2).cuda()
 
 ## Mamba-2 (SSD)
 
-- **Core:** [[SSD]] layer — scalar-times-identity $A_t$, multi-head structure  
-- **Algorithm:** Chunkwise matmul + short scan (see [[Chunkwise recurrent]])  
+- **Core:** [[SSD]] layer — scalar-times-identity $A_t$, multi-head structure
+- **Algorithm:** Chunkwise matmul + short scan (see [[Chunkwise recurrent]])
 - **State size:** $N = 64$–$128$ (tensor-core friendly; **4–8× larger** than Mamba-1)
 - **Training:** **2–8× faster** than Mamba-1 (2× at small batch; up to 8× at large batch on A100)
-- **Perplexity:** Matches or slightly exceeds Mamba-1 at equal parameter count; both competitive with [[Transformer]]++ on Pile  
+- **Perplexity:** Matches or slightly exceeds Mamba-1 at equal parameter count; both competitive with [[Transformer]]++ on Pile
 
 Key implementation files:
-- `mamba_ssm/modules/mamba2.py` — full Mamba-2 block  
-- `mamba_ssm/modules/mamba2_simple.py` — simplified version  
-- `mamba_ssm/modules/ssd_minimal.py` — minimal SSD (Listing 1 from paper)  
+- `mamba_ssm/modules/mamba2.py` — full Mamba-2 block
+- `mamba_ssm/modules/mamba2_simple.py` — simplified version
+- `mamba_ssm/modules/ssd_minimal.py` — minimal SSD (Listing 1 from paper)
 
 ```python
 from mamba_ssm import Mamba2
@@ -116,9 +116,9 @@ model = Mamba2(d_model=16, d_state=64, d_conv=4, expand=2).cuda()
 
 ## Mamba-3
 
-- **Core:** MIMO (multiple-input multiple-output) SSM for improved expressivity  
-- **Focus:** Inference-first design, improved long-range recall  
-- **Parameters:** `is_mimo=True`, `mimo_rank`, `chunk_size`  
+- **Core:** MIMO (multiple-input multiple-output) SSM for improved expressivity
+- **Focus:** Inference-first design, improved long-range recall
+- **Parameters:** `is_mimo=True`, `mimo_rank`, `chunk_size`
 
 ```python
 from mamba_ssm import Mamba3
@@ -201,18 +201,18 @@ lm_eval --model mamba_ssm \
 
 ## Related Wiki Notes
 
-- [[Mamba]] — the foundational selective SSM paper  
-- [[Mamba-2]] — SSD: Structured State Space Duality  
-- [[SSM]] — state space models background  
-- [[SSD]] — the core Mamba-2 algorithm  
-- [[Hardware-Aware Scan]] — Mamba-1's training algorithm  
-- [[Chunkwise recurrent]] — Mamba-2's SSD training algorithm  
-- [[Diagonal recurrence]] — scalar-$a_t$ recurrence in SSD  
-- [[FlashAttention]] — systems inspiration (IO-aware design)  
-- [[Sequence parallelism]] — enabled for SSMs by SSD  
-- [[Attention]] — mechanism replaced by Mamba's recurrent form  
-- [[KV cache]] — Transformer inference bottleneck Mamba avoids  
-- [[Jamba]] — production hybrid Mamba-2 + Attention model  
-- [[RWKV]], [[xLSTM]], [[RetNet]], [[Griffin]] — concurrent linear recurrence alternatives  
-- [[speculative decoding]] — complementary inference optimization  
-- [[HBM]] / [[Memory hierarchy]] — GPU memory design principles  
+- [[Mamba]] — the foundational selective SSM paper
+- [[Mamba-2]] — SSD: Structured State Space Duality
+- [[SSM]] — state space models background
+- [[SSD]] — the core Mamba-2 algorithm
+- [[Hardware-Aware Scan]] — Mamba-1's training algorithm
+- [[Chunkwise recurrent]] — Mamba-2's SSD training algorithm
+- [[Diagonal recurrence]] — scalar-$a_t$ recurrence in SSD
+- [[FlashAttention]] — systems inspiration (IO-aware design)
+- [[Sequence parallelism]] — enabled for SSMs by SSD
+- [[Attention]] — mechanism replaced by Mamba's recurrent form
+- [[KV cache]] — Transformer inference bottleneck Mamba avoids
+- [[Jamba]] — production hybrid Mamba-2 + Attention model
+- [[RWKV]], [[xLSTM]], [[RetNet]], [[Griffin]] — concurrent linear recurrence alternatives
+- [[speculative decoding]] — complementary inference optimization
+- [[HBM]] / [[Memory hierarchy]] — GPU memory design principles
