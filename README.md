@@ -227,20 +227,20 @@ Notes grouped by theme in the **By Theme** tab:
 
 | Paper | Year | ~Citations | arXiv |
 |-------|------|-----------|-------|
-| Attention Is All You Need | 2017 | ~100,000 | 1706.03762 |
-| LLaMA 2 | 2023 | ~10,000 | 2307.09288 |
+| Attention Is All You Need | 2017 | ~100,000 | [arXiv:1706.03762](https://arxiv.org/abs/1706.03762) |
+| LLaMA 2 | 2023 | ~10,000 | [arXiv:2307.09288](https://arxiv.org/abs/2307.09288) |
 
 #### Efficient Sequence Modeling
 
 | Paper | Year | ~Citations | arXiv |
 |-------|------|-----------|-------|
-| S4: Structured State Spaces | 2022 | ~3,000 | 2111.00396 |
-| RWKV | 2023 | ~2,000 | 2305.13048 |
-| RetNet | 2023 | ~1,000 | 2307.08621 |
-| Mamba | 2023 | ~4,841 | 2312.00752 |
-| Griffin | 2024 | ~1,000 | 2402.19427 |
-| Transformers are SSMs (Mamba-2) | 2024 | ~1,200 | 2405.21060 |
-| xLSTM | 2024 | ~800 | 2405.04517 |
+| S4: Structured State Spaces | 2022 | ~3,000 | [arXiv:2111.00396](https://arxiv.org/abs/2111.00396) |
+| RWKV | 2023 | ~2,000 | [arXiv:2305.13048](https://arxiv.org/abs/2305.13048) |
+| RetNet | 2023 | ~1,000 | [arXiv:2307.08621](https://arxiv.org/abs/2307.08621) |
+| Mamba | 2023 | ~4,841 | [arXiv:2312.00752](https://arxiv.org/abs/2312.00752) |
+| Griffin | 2024 | ~1,000 | [arXiv:2402.19427](https://arxiv.org/abs/2402.19427) |
+| Transformers are SSMs (Mamba-2) | 2024 | ~1,200 | [arXiv:2405.21060](https://arxiv.org/abs/2405.21060) |
+| xLSTM | 2024 | ~800 | [arXiv:2405.04517](https://arxiv.org/abs/2405.04517) |
 
 #### Scaling / Parameter Efficiency
 
@@ -252,18 +252,18 @@ Notes grouped by theme in the **By Theme** tab:
 
 | Paper | Year | ~Citations | arXiv |
 |-------|------|-----------|-------|
-| FlashAttention | 2022 | ~8,000 | 2205.14135 |
-| FlashAttention-2 | 2023 | ~4,000 | 2307.08691 |
-| Hardware Acceleration for Neural Networks | 2025 | ~120 | 2512.23914 |
+| FlashAttention | 2022 | ~8,000 | [arXiv:2205.14135](https://arxiv.org/abs/2205.14135) |
+| FlashAttention-2 | 2023 | ~4,000 | [arXiv:2307.08691](https://arxiv.org/abs/2307.08691) |
+| Hardware Acceleration for Neural Networks | 2025 | ~120 | [arXiv:2512.23914](https://arxiv.org/abs/2512.23914) |
 
 #### Inference Optimization
 
 | Paper | Year | ~Citations | arXiv |
 |-------|------|-----------|-------|
-| Medusa | 2024 | ~1,500 | 2401.10774 |
-| EAGLE | 2024 | ~1,200 | 2401.15077 |
-| Speculative Decoding | 2025 | ~600 | 2601.11580 |
-| KV Cache Optimization | 2026 | ~200 | 2603.20397 |
+| Medusa | 2024 | ~1,500 | [arXiv:2401.10774](https://arxiv.org/abs/2401.10774) |
+| EAGLE | 2024 | ~1,200 | [arXiv:2401.15077](https://arxiv.org/abs/2401.15077) |
+| Speculative Decoding | 2025 | ~600 | [arXiv:2601.11580](https://arxiv.org/abs/2601.11580) |
+| KV Cache Optimization | 2026 | ~200 | [arXiv:2603.20397](https://arxiv.org/abs/2603.20397) |
 
 #### Modern Synthesis
 
