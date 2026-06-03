@@ -345,7 +345,7 @@ https://MuhammadSaqlainAslam.github.io/my-llm-wiki
 
 The wiki has an autonomous research agent (`agent.py`) that automatically finds, evaluates, and adds new content from multiple sources using Claude as the decision-making brain.
 
-### Three Modes
+### Four Modes
 
 **1. Topic search — add content about a specific topic:**
 ```bash
@@ -365,6 +365,12 @@ Queries Semantic Scholar API for papers with 100+ citations that cite existing w
 python3 agent.py daily
 ```
 Searches arXiv (cs.LG, cs.CL, cs.AI), checks GitHub repos for updates, fetches blog posts. Run this once a week for a broad update.
+
+**4. Update citation counts — refresh from Semantic Scholar:**
+```bash
+python3 agent.py update-citations
+```
+Queries the Semantic Scholar batch API for every note that has an arXiv ID in its frontmatter, updates `citation_count` in the YAML, rebuilds the web demo, and commits + pushes automatically. This is a deterministic API call (no LLM), so it's fast and cheap. Run monthly to keep counts current.
 
 ### Sources the Agent Monitors
 

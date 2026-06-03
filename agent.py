@@ -429,10 +429,155 @@ def _make_system(mode: str, extra: str, existing: list[str]) -> list[dict]:
     return [{"type": "text", "text": text, "cache_control": {"type": "ephemeral"}}]
 
 
+# ── Citation refresh (Semantic Scholar) ─────────────────────────────────────
+
+def fetch_citations_bulk() -> dict:
+    """Fetch current citation counts from the Semantic Scholar batch API for every
+    wiki note that has an arXiv ID in its frontmatter. Free, no key required.
+
+    Returns {filename: {arxiv_id, citation_count, title}}.
+    """
+    # Collect notes that have an arXiv ID in their YAML frontmatter ONLY.
+    # (Searching the whole file would wrongly match body lines like
+    # "arXiv: 2312.00752 | Authors: …" in meta notes such as Citation Map.md.)
+    papers = {}
+    for filename in sorted(os.listdir(WIKI)):
+        if not filename.endswith(".md"):
+            continue
+        content = (WIKI / filename).read_text(encoding="utf-8")
+        if not content.startswith("---"):
+            continue
+        fm_end = content.find("\n---", 3)
+        if fm_end == -1:
+            continue
+        frontmatter = content[3:fm_end]
+        m = re.search(
+            r'^arxiv(?:_id)?:\s*["\']?(\d{4}\.\d{4,5})["\']?',
+            frontmatter, re.MULTILINE | re.IGNORECASE,
+        )
+        if m:
+            cc = re.search(r"^citation_count:\s*(\d+)", frontmatter, re.MULTILINE)
+            papers[filename] = (m.group(1), int(cc.group(1)) if cc else 0)
+
+    # Dedup notes that share an arXiv ID (e.g. a paper note + a same-titled stub):
+    # keep only the canonical one (highest current citation_count) so we never
+    # write the same count into two notes and create duplicate explorer entries.
+    by_arxiv = {}
+    for filename, (aid, cur) in papers.items():
+        if aid not in by_arxiv or cur > by_arxiv[aid][1]:
+            by_arxiv[aid] = (filename, cur)
+    papers = {fname: aid for aid, (fname, _) in by_arxiv.items()}
+
+    print(f"Found {len(papers)} unique papers with arXiv IDs")
+
+    results = {}
+    errors = []
+    items = list(papers.items())
+    batch_size = 10
+
+    for i in range(0, len(items), batch_size):
+        batch = items[i:i + batch_size]
+        paper_ids = [f"ArXiv:{aid}" for _, aid in batch]
+        try:
+            payload = json.dumps({"ids": paper_ids}).encode("utf-8")
+            url = ("https://api.semanticscholar.org/graph/v1/paper/batch"
+                   "?fields=citationCount,title,year")
+            req = urllib.request.Request(
+                url, data=payload,
+                headers={"Content-Type": "application/json",
+                         "User-Agent": "LLMWikiAgent/1.0"},
+                method="POST",
+            )
+            with urllib.request.urlopen(req, timeout=20) as r:
+                response = json.loads(r.read())
+
+            for (filename, aid), entry in zip(batch, response):
+                if not entry:
+                    continue  # null = paper not found on Semantic Scholar
+                count = entry.get("citationCount")
+                if count is None:
+                    continue
+                title = entry.get("title", filename)
+                results[filename] = {
+                    "arxiv_id": aid,
+                    "citation_count": int(count),
+                    "title": title,
+                }
+                print(f"  {title[:40]:40} → {int(count):,}")
+
+            if i + batch_size < len(items):
+                time.sleep(2)  # be polite to the unauthenticated rate limit
+        except Exception as e:
+            errors.append(f"batch@{i}: {e}")
+            print(f"  ⚠️  batch error: {e}")
+            time.sleep(5)
+
+    if errors:
+        print(f"\nErrors ({len(errors)}): {errors}")
+    return results
+
+
+def update_citations_in_wiki(citation_data: dict) -> dict:
+    """Write fresh citation_count values into wiki note frontmatter.
+    Returns {updated: [...], unchanged: int, total: int}."""
+    updated = []
+    unchanged = 0
+
+    for filename, data in citation_data.items():
+        path = WIKI / filename
+        if not path.exists():
+            continue
+        content = path.read_text(encoding="utf-8")
+        new_count = data["citation_count"]
+
+        m = re.search(r"^citation_count:\s*(\d+)\s*$", content, re.MULTILINE)
+        if m:
+            current = int(m.group(1))
+            if current == new_count:
+                unchanged += 1
+                continue
+            content = re.sub(r"^citation_count:\s*\d+\s*$",
+                             f"citation_count: {new_count}",
+                             content, count=1, flags=re.MULTILINE)
+        elif re.search(r"^tags:", content, re.MULTILINE):
+            current = 0
+            content = re.sub(r"^(tags:)", f"citation_count: {new_count}\n\\1",
+                             content, count=1, flags=re.MULTILINE)
+        else:
+            continue  # no place to put it; skip rather than corrupt the file
+
+        path.write_text(content, encoding="utf-8")
+        diff = new_count - current
+        updated.append({
+            "file": filename, "title": data["title"],
+            "old": current, "new": new_count,
+            "diff": f"{'+' if diff >= 0 else ''}{diff:,}",
+        })
+
+    return {"updated": updated, "unchanged": unchanged, "total": len(citation_data)}
+
+
 # ── Main agent loop ────────────────────────────────────────────────────────
 
 def run_agent(mode: str = "daily", topic: str = None, min_citations: int = 100) -> dict:
     existing = [f.stem for f in WIKI.glob("*.md")]
+
+    # Deterministic (non-LLM) mode: refresh citation counts from Semantic Scholar.
+    if mode == "update-citations":
+        print("Fetching latest citation counts from Semantic Scholar…")
+        citation_data = fetch_citations_bulk()
+        if not citation_data:
+            return {"mode": mode, "topic": None, "added": [], "skipped": [],
+                    "message": "No papers with arXiv IDs found (or API unreachable)",
+                    "timestamp": datetime.now().isoformat()}
+        changes = update_citations_in_wiki(citation_data)
+        print(f"\nCitation update — {len(changes['updated'])} changed, "
+              f"{changes['unchanged']} unchanged")
+        for c in changes["updated"]:
+            print(f"  {c['title'][:35]:35} {c['old']:>8,} → {c['new']:>8,} ({c['diff']})")
+        added = [f"{c['file']} ({c['diff']})" for c in changes["updated"]]
+        return {"mode": mode, "topic": None, "added": added, "skipped": [],
+                "timestamp": datetime.now().isoformat()}
 
     if mode == "topic" and topic:
         extra = f'The user wants to add content about: "{topic}". Search for the most relevant and high-quality papers, repos, or blog posts on this topic.'
@@ -559,13 +704,17 @@ if __name__ == "__main__":
     if results["added"]:
         print("\nRebuilding wiki and pushing…")
         import subprocess
-        subprocess.run(["python3", "build_wiki.py"], cwd=VAULT)
-        subprocess.run(["python3", "build.py"],      cwd=VAULT)
-        subprocess.run(["git", "add", "."],          cwd=VAULT)
-        subprocess.run(
-            ["git", "commit", "-m",
-             f"Agent ({mode}): added {len(results['added'])} item(s)"],
-            cwd=VAULT,
+        # update-citations only edits frontmatter — skip the PDF→note build so the
+        # commit stays limited to citation changes.
+        if mode != "update-citations":
+            subprocess.run(["python3", "build_wiki.py"], cwd=VAULT)
+        subprocess.run(["python3", "build.py"], cwd=VAULT)
+        subprocess.run(["git", "add", "."], cwd=VAULT)
+        commit_msg = (
+            f"Auto-update citations — {len(results['added'])} papers"
+            if mode == "update-citations"
+            else f"Agent ({mode}): added {len(results['added'])} item(s)"
         )
+        subprocess.run(["git", "commit", "-m", commit_msg], cwd=VAULT)
         subprocess.run(["git", "push", "origin", "main"], cwd=VAULT)
         print("Done — wiki updated and pushed.")
