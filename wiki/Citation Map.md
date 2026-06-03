@@ -28,7 +28,7 @@ arXiv: 2312.00752 | Authors: Gu & Dao
 |------|-------|------|-----------|-------|
 | 1 | [[VMamba]] — Visual State Space Model | 2024 | ~2,100 | Vision |
 | 2 | [[Vision Mamba]] — Bidirectional SSM for vision | 2024 | ~1,800 | Vision |
-| 3 | [[Mamba-2]] (Transformers are SSMs) | 2024 | ~1,200 | Theory |
+| 3 | [[Transformers Are SSMs|Mamba-2]] (Transformers are SSMs) | 2024 | ~1,200 | Theory |
 | 4 | [[Jamba]] — Hybrid Mamba-Transformer | 2024 | ~900 | LLM |
 | 5 | [[MoE-Mamba]] — MoE + SSM | 2024 | ~700 | Efficiency |
 | 6 | [[BlackMamba]] — MoE State Space Models | 2024 | ~500 | Efficiency |

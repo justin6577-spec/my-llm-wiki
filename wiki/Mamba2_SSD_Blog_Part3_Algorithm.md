@@ -29,7 +29,7 @@ aliases:
   - "Chunkwise SSD"
 wikilinks:
   - "[[Mamba]]"
-  - "[[Mamba-2]]"
+  - "[[Transformers Are SSMs|Mamba-2]]"
   - "[[SSM]]"
   - "[[SSD]]"
   - "[[Chunkwise recurrent]]"
@@ -58,13 +58,13 @@ wikilinks:
 
 ## TL;DR
 
-The [[SSD]] (State Space Duality) algorithm in [[Mamba-2]] rewrites the [[SSM]] sequence-mixing operation as a block-matrix decomposition of an $N$-semiseparable matrix. By splitting computation into tensor-core-friendly intra-chunk matmuls (~90% of FLOPs) and a short inter-chunk scan (on a sequence of length $T/Q$ instead of $T$), it achieves **2–6× training throughput improvement** over [[Mamba]] while unlocking state sizes of $N=64$–$128$ (vs. $N=16$ in [[Mamba]]) and enabling both sequence and tensor parallelism.
+The [[SSD]] (State Space Duality) algorithm in [[Transformers Are SSMs|Mamba-2]] rewrites the [[SSM]] sequence-mixing operation as a block-matrix decomposition of an $N$-semiseparable matrix. By splitting computation into tensor-core-friendly intra-chunk matmuls (~90% of FLOPs) and a short inter-chunk scan (on a sequence of length $T/Q$ instead of $T$), it achieves **2–6× training throughput improvement** over [[Mamba]] while unlocking state sizes of $N=64$–$128$ (vs. $N=16$ in [[Mamba]]) and enabling both sequence and tensor parallelism.
 
 ---
 
 ## Key Concepts
 
-- **[[SSD]] (State Space Duality):** The core algorithm of [[Mamba-2]]; recasts [[SSM]] computation as structured matrix multiplication over $N$-semiseparable matrices
+- **[[SSD]] (State Space Duality):** The core algorithm of [[Transformers Are SSMs|Mamba-2]]; recasts [[SSM]] computation as structured matrix multiplication over $N$-semiseparable matrices
 - **$N$-semiseparable matrix:** The $(T \times T)$ sequence-mixing matrix $M$ whose block structure drives the four-step decomposition
 - **Chunkwise decomposition:** Splitting the sequence into chunks of size $Q$; related to [[Chunkwise recurrent]] patterns in [[RetNet]] and Gated Linear Attention
 - **Tensor core utilization:** Steps 1, 2, and 4 are pure matmuls; ~90% of total FLOPs run on tensor cores vs. 0% in [[Mamba]]
@@ -73,7 +73,7 @@ The [[SSD]] (State Space Duality) algorithm in [[Mamba-2]] rewrites the [[SSM]] 
 - **[[FlashAttention]]-style HBM efficiency:** Intra-chunk blocks fit in SRAM; cross-chunk state tensors are small ($N$ elements per boundary), minimizing [[HBM]] traffic
 - **Log-space [[Exponential decay]]:** Numerically stable computation of the scalar decay $a_t$ for long sequences, preventing underflow
 - **[[Sequence parallelism]]:** Enabled by [[SSD]]'s chunkwise structure; not possible with [[Mamba]]'s monolithic scan
-- **[[Attention]] duality:** Intra-chunk computation is structurally analogous to masked [[Attention]], establishing the SSM–[[Attention]] duality of [[Mamba-2]]
+- **[[Attention]] duality:** Intra-chunk computation is structurally analogous to masked [[Attention]], establishing the SSM–[[Attention]] duality of [[Transformers Are SSMs|Mamba-2]]
 
 ---
 
@@ -146,8 +146,8 @@ This is related to [[Chunkwise recurrent]] processing patterns, and the intra-ch
 ## Why It Matters
 
 - **2–6× training throughput improvement** over [[Mamba]] on A100/H100 GPUs by routing ~90% of FLOPs through tensor cores (vs. 0% in [[Mamba]]-1's associative scan), directly translating to faster and cheaper model training at scale.
-- **State size $N$ scales from 16 to 64–128** without prohibitive compute cost, giving [[Mamba-2]] substantially higher representational capacity per layer and enabling it to match or exceed [[Transformer]] perplexity on language modeling benchmarks at equivalent parameter counts.
-- **Unlocks sequence parallelism and tensor parallelism** for [[SSM]]-based models for the first time, enabling [[Mamba-2]] to scale across multiple GPUs in the same way as [[Transformer]] training pipelines — a critical capability for training frontier-scale models.
+- **State size $N$ scales from 16 to 64–128** without prohibitive compute cost, giving [[Transformers Are SSMs|Mamba-2]] substantially higher representational capacity per layer and enabling it to match or exceed [[Transformer]] perplexity on language modeling benchmarks at equivalent parameter counts.
+- **Unlocks sequence parallelism and tensor parallelism** for [[SSM]]-based models for the first time, enabling [[Transformers Are SSMs|Mamba-2]] to scale across multiple GPUs in the same way as [[Transformer]] training pipelines — a critical capability for training frontier-scale models.
 
 ---
 
@@ -215,7 +215,7 @@ def ssd_minimal_discrete(X, A, B, C, block_len):
 ## Connections
 
 - [[Mamba]] — predecessor model whose [[Hardware-Aware Scan]] approach [[SSD]] supersedes for training
-- [[Mamba-2]] — the full model built on the [[SSD]] algorithm; combines [[SSD]] layers with multi-head structure
+- [[Transformers Are SSMs|Mamba-2]] — the full model built on the [[SSD]] algorithm; combines [[SSD]] layers with multi-head structure
 - [[SSM]] — the mathematical framework underlying [[SSD]]; [[SSD]] is the efficient algorithm for computing [[SSM]] sequence mixing
 - [[SSD]] — the State Space Duality framework connecting [[SSM]] and [[Attention]] computations
 - [[Attention]] — [[SSD]]'s intra-chunk computation is structurally equivalent to masked [[Attention]]; establishes the SSM–[[Attention]] duality

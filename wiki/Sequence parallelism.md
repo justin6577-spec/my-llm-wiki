@@ -11,7 +11,7 @@ For very long sequences, even the activations of a single Transformer block may 
 ## Where it appears
 
 - [[Transformers Are SSMs]]
-- [[Mamba-2]]
+- [[Transformers Are SSMs|Mamba-2]]
 
 ---
 

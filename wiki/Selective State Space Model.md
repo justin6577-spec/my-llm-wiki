@@ -11,7 +11,7 @@ An S4-style state-space model is **time-invariant**: the transition matrices $\m
 ## Where it appears
 
 - [[Mamba]]
-- [[Mamba-2]]
+- [[Transformers Are SSMs|Mamba-2]]
 - [[Transformers Are SSMs]]
 - [[Nemotron-3]]
 

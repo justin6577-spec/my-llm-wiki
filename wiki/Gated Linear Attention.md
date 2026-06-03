@@ -37,7 +37,7 @@ Chunkwise-parallel form (chunk size L):
 - **[[HGRN2]]**: related gated recurrent design from the same lineage.
 - **[[RetNet]]**: predecessor using a fixed exponential decay γ per head instead of learned, data-dependent gates.
 - **[[Mamba]]**: parallel selective SSM whose data-dependent gating inspired GLA.
-- **[[Mamba-2]]**: converges on a related formulation (state-space duality), validating the design space.
+- **[[Transformers Are SSMs|Mamba-2]]**: converges on a related formulation (state-space duality), validating the design space.
 
 ## Related Concepts
 [[Linear Attention]]

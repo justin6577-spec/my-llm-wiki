@@ -30,7 +30,7 @@ tldr: >
   vs. 16 in Mamba-1.
 wikilinks:
   - "[[Mamba]]"
-  - "[[Mamba-2]]"
+  - "[[Transformers Are SSMs|Mamba-2]]"
   - "[[SSM]]"
   - "[[SSD]]"
   - "[[Attention]]"
@@ -58,7 +58,7 @@ wikilinks:
 
 ## TL;DR
 
-[[Mamba-2]] introduces the **Structured State Space Duality ([[SSD]])** layer: a minimal restriction on [[Mamba]]'s diagonal-$A$ [[SSM]] — forcing $A_t$ to be scalar × identity — that simultaneously exposes a linear-[[Attention|attention]] interpretation. This duality enables training via tensor-core matrix multiplications, yielding **~2–8× faster training throughput** than [[Mamba]]'s parallel scan while supporting state sizes of $N=64$–$128$ (vs. $N=16$ in [[Mamba]]). The result is a model that is efficient as a recurrence at inference (constant-memory [[KV cache]] equivalent) and efficient as matrix operations during training.
+[[Transformers Are SSMs|Mamba-2]] introduces the **Structured State Space Duality ([[SSD]])** layer: a minimal restriction on [[Mamba]]'s diagonal-$A$ [[SSM]] — forcing $A_t$ to be scalar × identity — that simultaneously exposes a linear-[[Attention|attention]] interpretation. This duality enables training via tensor-core matrix multiplications, yielding **~2–8× faster training throughput** than [[Mamba]]'s parallel scan while supporting state sizes of $N=64$–$128$ (vs. $N=16$ in [[Mamba]]). The result is a model that is efficient as a recurrence at inference (constant-memory [[KV cache]] equivalent) and efficient as matrix operations during training.
 
 ---
 
@@ -113,7 +113,7 @@ This is the core of **State Space Duality ([[SSD]])**.
 
 ## Multi-Head Structure
 
-To handle multi-dimensional inputs, [[Mamba-2]] introduces a **multi-head** design analogous to multi-head [[Attention]]:
+To handle multi-dimensional inputs, [[Transformers Are SSMs|Mamba-2]] introduces a **multi-head** design analogous to multi-head [[Attention]]:
 
 - Inputs $X, Y$ have shape $(T, H \cdot P)$ where $H$ = heads, $P$ = head dim
 - Each head independently runs an [[SSD]] layer with its own $(A, B, C)$
@@ -125,9 +125,9 @@ This is related to Multi-Query Attention in its grouped/shared-parameter philoso
 
 ## Mamba-2 Architecture
 
-The overall [[Mamba-2]] block differs from [[Mamba]] in:
+The overall [[Transformers Are SSMs|Mamba-2]] block differs from [[Mamba]] in:
 
-| Feature | [[Mamba]] | [[Mamba-2]] |
+| Feature | [[Mamba]] | [[Transformers Are SSMs|Mamba-2]] |
 |---|---|---|
 | A structure | Diagonal (N×N) | Scalar × Identity |
 | State size N | Typically **16** | Typically **64–128** |
@@ -151,7 +151,7 @@ where $L$ is a lower-triangular mask derived from the [[Exponential decay]] $a_t
 
 Key contrasts with standard [[Transformer]] [[Attention]]:
 
-| Property | [[Transformer]] [[Attention]] | [[SSD]] / [[Mamba-2]] |
+| Property | [[Transformer]] [[Attention]] | [[SSD]] / [[Transformers Are SSMs|Mamba-2]] |
 |---|---|---|
 | Training complexity | $O(T^2)$ | $O(T^2)$ (quadratic mode) or $O(T)$ (recurrent) |
 | Inference memory | $O(T)$ [[KV cache]] | $O(N \times P)$ fixed state |
@@ -177,8 +177,8 @@ Key contrasts with standard [[Transformer]] [[Attention]]:
 
 ## Connections
 
-- [[Mamba]] — predecessor selective [[SSM]]; [[Mamba-2]] restricts its diagonal $A$ to scalar-times-identity
-- [[Mamba-2]] — the full model and architecture building on this [[SSD]] theory
+- [[Mamba]] — predecessor selective [[SSM]]; [[Transformers Are SSMs|Mamba-2]] restricts its diagonal $A$ to scalar-times-identity
+- [[Transformers Are SSMs|Mamba-2]] — the full model and architecture building on this [[SSD]] theory
 - [[SSM]] — the broader family of state space models that [[SSD]] belongs to
 - [[SSD]] — the specific algorithmic layer introduced here
 - [[Attention]] — [[SSD]]'s quadratic form is equivalent to softmax-free linear attention with decay mask
@@ -194,7 +194,7 @@ Key contrasts with standard [[Transformer]] [[Attention]]:
 
 ## Open Questions
 
-1. **Optimal head/state-size tradeoffs:** [[Mamba-2]] supports $N=64$–$128$, but the relationship between head count $H$, head dim $P$, and state size $N$ on downstream task quality is not fully characterized — how do these hyperparameters interact at scale (e.g., 7B+ parameters)?
+1. **Optimal head/state-size tradeoffs:** [[Transformers Are SSMs|Mamba-2]] supports $N=64$–$128$, but the relationship between head count $H$, head dim $P$, and state size $N$ on downstream task quality is not fully characterized — how do these hyperparameters interact at scale (e.g., 7B+ parameters)?
 2. **Beyond scalar-times-identity:** The SSD restriction ($A_t$ = scalar × identity) is sufficient for tensor-core efficiency, but are there intermediate structures (e.g., block-diagonal $A_t$) that recover more of [[Mamba]]'s expressivity while remaining matmul-friendly? The diagonal-to-scalar gap may leave modeling capacity on the table.
 3. **Long-context scaling of the fixed state:** [[SSD]]'s $O(N \times P)$ inference memory is context-length-independent, but compression quality degrades for very long sequences. Can the chunkwise recurrent algorithm be adapted for hierarchical or multi-scale state updates (cf. [[speculative decoding]] for inference efficiency) to maintain quality beyond 100K+ tokens?
 
@@ -203,7 +203,7 @@ Key contrasts with standard [[Transformer]] [[Attention]]:
 ## Related Wiki Notes
 
 - [[Mamba]] — predecessor selective [[SSM]]
-- [[Mamba-2]] — the full [[Mamba-2]] model and training results
+- [[Transformers Are SSMs|Mamba-2]] — the full [[Transformers Are SSMs|Mamba-2]] model and training results
 - [[SSM]] — broader state space model family
 - [[SSD]] — the Structured State Space Duality algorithm
 - [[Chunkwise recurrent]] — the [[SSD]] algorithm processes sequences in chunks

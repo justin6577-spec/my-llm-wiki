@@ -12,7 +12,7 @@ A matrix $M$ is $N$-semiseparable if every contiguous off-diagonal block — i.e
 
 - [[Transformers Are SSMs]]
 - [[Mamba]]
-- [[Mamba-2]]
+- [[Transformers Are SSMs|Mamba-2]]
 
 ---
 

@@ -181,7 +181,7 @@ Architectures alternate sLSTM blocks (rich state evolution) and mLSTM blocks (pa
 
 - **It rehabilitates the LSTM.** The conventional wisdom for a decade was that recurrence was dead and attention had won. xLSTM shows the recurrent family had two specific, fixable bugs — and once fixed, it competes.
 - **Matrix memory is a powerful primitive.** The covariance / outer-product update is the same idea behind Hopfield networks, kernelized attention, and Mamba-2's state structure. xLSTM is one of the cleanest demonstrations that a learned associative memory of size $d \times d$ per cell is enough to approximate attention's content-based recall.
-- **It widens the architectural design space.** Researchers now have three credible families competing at LM quality — [[Transformer]], selective SSMs ([[Mamba]] / [[Mamba-2]]), and gated recurrences (xLSTM). Hybrid systems like [[Nemotron-3]] can now consider mixing in mLSTM layers as well.
+- **It widens the architectural design space.** Researchers now have three credible families competing at LM quality — [[Transformer]], selective SSMs ([[Mamba]] / [[Transformers Are SSMs|Mamba-2]]), and gated recurrences (xLSTM). Hybrid systems like [[Nemotron-3]] can now consider mixing in mLSTM layers as well.
 
 ---
 
