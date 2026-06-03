@@ -86,5 +86,21 @@
       "Mamba.md (+2,427)"
     ],
     "skipped": []
+  },
+  {
+    "timestamp": "2026-06-03T01:02:00.038772",
+    "mode": "update-citations",
+    "topic": null,
+    "added": [
+      "Transformers Are SSMs.md (+126)",
+      "Mamba3.md (+45)",
+      "Medusa.md (-872)",
+      "RWKV.md (-1,437)",
+      "RetNet.md (-530)",
+      "S4.md (-364)",
+      "Speculative Decoding.md (-694)",
+      "xLSTM.md (-505)"
+    ],
+    "skipped": []
   }
 ]
