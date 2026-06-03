@@ -496,7 +496,7 @@ python -m http.server 8000
 
 Designed by the **Artificial Intelligence Research Center**
 
-[Hon Hai Research Institute](https://hhri.foxconn.com/en/about-us)
+[Hon Hai Research Institute](https://hhri.foxconn.com/en)
 
 ---
 
