@@ -7,7 +7,7 @@ tldr: "Citation scores and downstream impact of core papers — total citations 
 # Citation Map
 
 > Last updated: June 2026
-> Source: Semantic Scholar
+> Source: Semantic Scholar (live API)
 
 ## How to Read This
 
@@ -19,7 +19,7 @@ tldr: "Citation scores and downstream impact of core papers — total citations 
 
 ## 1. Mamba (2023)
 
-**Total citations: ~4,841**
+**Total citations: ~7,268**
 arXiv: 2312.00752 | Authors: Gu & Dao
 
 ### Top 10 Papers Citing Mamba (by citation count)
@@ -41,7 +41,7 @@ arXiv: 2312.00752 | Authors: Gu & Dao
 
 ## 2. Transformers are SSMs / Mamba-2 (2024)
 
-**Total citations: ~1,400**
+**Total citations: ~1,526**
 arXiv: 2405.21060 | Authors: Dao & Gu
 
 ### Top 10 Papers Citing Transformers are SSMs
@@ -63,7 +63,7 @@ arXiv: 2405.21060 | Authors: Dao & Gu
 
 ## 3. xLSTM (2024)
 
-**Total citations: ~1,100**
+**Total citations: ~595**
 arXiv: 2405.04517 | Authors: Beck et al.
 
 ### Top 10 Papers Citing xLSTM
@@ -85,7 +85,7 @@ arXiv: 2405.04517 | Authors: Beck et al.
 
 ## 4. Hardware Acceleration for Neural Networks (2024)
 
-**Total citations: ~130**
+**Total citations: ~3**
 arXiv: 2512.23914
 
 ### Top 10 Papers Citing This Work
@@ -107,7 +107,7 @@ arXiv: 2512.23914
 
 ## 5. Speculative Decoding (2025)
 
-**Total citations: ~700**
+**Total citations: ~6**
 arXiv: 2601.11580
 
 ### Top 10 Papers Citing Speculative Decoding
@@ -129,7 +129,7 @@ arXiv: 2601.11580
 
 ## 6. KV Cache Optimization (2025)
 
-**Total citations: ~250**
+**Total citations: ~1**
 arXiv: 2603.20397
 
 ### Top 10 Papers Citing KV Cache Optimization
@@ -153,20 +153,23 @@ arXiv: 2603.20397
 
 | Paper | Total Citations | Field Impact |
 |-------|----------------|--------------|
-| [[Attention Is All You Need]] | ~173,000 | Transformative — most-cited modern ML paper |
-| [[LLaMA 2]] | ~15,000 | High — practical open-model scaling reference |
-| [[Flash Attention]] | ~10,500 | High — universal training/inference speedup |
-| [[FlashAttention-2]] | ~5,200 | High — improved parallelism & work partitioning |
-| [[Mamba]] | ~4,841 | Transformative — spawned entire SSM ecosystem |
-| [[S4]] | ~4,000 | High — foundation of structured-SSM research |
-| [[RWKV]] | ~2,500 | Medium — practical linear-attention RNN |
-| [[Transformers Are SSMs]] | ~1,400 | High — unified theory of SSM+Transformer |
-| [[RetNet]] | ~1,200 | Medium — unifies recurrence + attention |
-| [[xLSTM]] | ~1,100 | Medium — revived LSTM research direction |
-| [[Griffin]] | ~1,100 | Medium — gated-recurrence hybrid architecture |
-| [[Speculative Decoding]] | ~700 | Growing — standard inference technique |
-| [[KV Cache Optimization]] | ~250 | Emerging — practical inference impact |
-| [[Hardware Acceleration for Neural Networks]] | ~130 | Specialized — hardware co-design |
+| [[Attention Is All You Need]] | ~178,574 | Transformative — most-cited modern ML paper |
+| [[LLaMA 2]] | ~17,078 | High — practical open-model scaling reference |
+| [[Mamba]] | ~7,268 | Transformative — spawned entire SSM ecosystem |
+| [[Flash Attention]] | ~4,404 | High — universal training/inference speedup |
+| [[S4]] | ~3,636 | High — foundation of structured-SSM research |
+| [[FlashAttention-2]] | ~2,769 | High — improved parallelism & work partitioning |
+| [[Transformers Are SSMs]] | ~1,526 | High — unified theory of SSM+Transformer |
+| [[RWKV]] | ~1,063 | Medium — practical linear-attention RNN |
+| [[Medusa]] | ~728 | Medium — multi-head parallel decoding |
+| [[RetNet]] | ~670 | Medium — unifies recurrence + attention |
+| [[xLSTM]] | ~595 | Medium — revived LSTM research direction |
+| [[EAGLE]] | ~474 | Medium — feature-level speculative decoding |
+| [[Jamba]] | ~432 | Medium — hybrid Mamba-Transformer-MoE |
+| [[Griffin]] | ~239 | Medium — gated-recurrence hybrid architecture |
+| [[Speculative Decoding]] | ~6 | Emerging — recent (2026) inference survey |
+| [[KV Cache Optimization]] | ~1 | Emerging — recent (2026) inference work |
+| [[Hardware Acceleration for Neural Networks]] | ~3 | Emerging — recent (2025) hardware survey |
 
 ## Related
 
