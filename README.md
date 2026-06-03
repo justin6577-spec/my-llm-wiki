@@ -22,7 +22,7 @@ The writing philosophy is borrowed from Andrej Karpathy: lead with the concrete 
 
 What makes this wiki distinct is a full citation intelligence layer on top of the content. Every core paper carries its real citation count from Semantic Scholar, a `cited_by_details` list of the ten most-cited downstream works, and arXiv IDs throughout. The live web demo exposes all of this through a Citation Explorer, an interactive D3 knowledge graph sized by citation count, and a full-text search interface — all from a single static site deployed automatically via GitHub Actions to GitHub Pages.
 
-> Citation counts sourced from Semantic Scholar. Last verified: June 2026.
+> Citation counts sourced from [Semantic Scholar](https://semanticscholar.org). Last verified: June 2026. Auto-updated monthly via `python3 agent.py update-citations`.
 
 The most referenced note in the wiki is "Attention Is All You Need" with 46 backlinks — reflecting its foundational role across all modern LLM research.
 
@@ -371,6 +371,15 @@ Searches arXiv (cs.LG, cs.CL, cs.AI), checks GitHub repos for updates, fetches b
 python3 agent.py update-citations
 ```
 Queries the Semantic Scholar batch API for every note that has an arXiv ID in its frontmatter, updates `citation_count` in the YAML, rebuilds the web demo, and commits + pushes automatically. This is a deterministic API call (no LLM), so it's fast and cheap. Run monthly to keep counts current.
+
+### Suggested Schedule
+
+| Command | Frequency | Purpose |
+|---------|-----------|---------|
+| `python3 agent.py update-citations` | Monthly | Keep citation counts current |
+| `python3 agent.py citations` | Monthly | Find new high-impact citing papers |
+| `python3 agent.py daily` | Weekly | Broad new-paper sweep |
+| `python3 agent.py topic "..."` | On demand | Add specific topic papers |
 
 ### Sources the Agent Monitors
 
