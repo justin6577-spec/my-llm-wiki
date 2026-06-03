@@ -3,7 +3,7 @@
 > AI research knowledge base — papers, concepts & intuitions
 > Designed by Artificial Intelligence Research Center, Hon Hai Research Institute
 
-🏛️ **Institute:** https://hhri.foxconn.com/en/about-us
+🏛️ **Institute:** https://hhri.foxconn.com/en
 🌐 **Live Demo:** https://MuhammadSaqlainAslam.github.io/my-llm-wiki
 
 [![Wiki Notes](https://img.shields.io/badge/dynamic/json?url=https://MuhammadSaqlainAslam.github.io/my-llm-wiki/notes.json&query=$.length&label=wiki+notes&color=7c3aed&style=flat)](https://MuhammadSaqlainAslam.github.io/my-llm-wiki)
