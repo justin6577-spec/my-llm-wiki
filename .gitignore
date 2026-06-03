@@ -12,6 +12,11 @@ __pycache__/
 !setup_cron.sh
 *.env
 .env*
+!.env.example
 *credentials*
 *secret*
 *api_key*
+
+# Logs — operational noise, may leak internal details
+*.log
+cron.log

@@ -21,7 +21,8 @@ import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta
 from pathlib import Path
 
-VAULT = Path("/work/HHRI-AI/Saqlain/my-wiki")
+# Wiki location: override with WIKI_VAULT env var; defaults to this file's directory.
+VAULT = Path(os.environ.get("WIKI_VAULT", Path(__file__).resolve().parent))
 RAW   = VAULT / "raw"
 WIKI  = VAULT / "wiki"
 LOG   = VAULT / "agent_log.json"
@@ -68,7 +69,7 @@ SOURCES_TO_WATCH = {
 }
 
 # ── Client (Vertex AI) ─────────────────────────────────────────────────────
-_PROJECT = os.environ.get("ANTHROPIC_VERTEX_PROJECT_ID", "ceo-proj-foxbrain-prod")
+_PROJECT = os.environ.get("ANTHROPIC_VERTEX_PROJECT_ID", "your-gcp-project-id")
 _REGION  = os.environ.get("VERTEX_REGION_CLAUDE_4_6_SONNET", "europe-west1")
 _MODEL   = os.environ.get("ANTHROPIC_DEFAULT_SONNET_MODEL", "claude-sonnet-4-6")
 

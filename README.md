@@ -428,9 +428,31 @@ python3 agent.py citations
 
 ## How to Run Locally
 
+### 1. Configure environment variables
+
+Copy `.env.example` and fill in your own values — **never commit real keys**:
+
+```bash
+cp .env.example .env
+# then edit .env, or export the variables in your shell
+```
+
+```bash
+# Option 1 — Anthropic public API
+export ANTHROPIC_API_KEY="sk-ant-..."
+
+# Option 2 — Google Vertex AI (enterprise)
+export ANTHROPIC_VERTEX_PROJECT_ID="your-gcp-project-id"
+export VERTEX_REGION_CLAUDE_4_6_SONNET="europe-west1"
+
+# Wiki location (optional — defaults to the repo directory)
+export WIKI_VAULT="/path/to/your/wiki"
+```
+
+### 2. Build and preview
+
 ```bash
 pip install anthropic pymupdf markdown pyyaml
-export ANTHROPIC_API_KEY="sk-ant-..."
 python build_wiki.py   # process new PDFs → wiki/*.md
 python build.py        # regenerate docs/ from wiki/
 open docs/index.html   # preview in browser

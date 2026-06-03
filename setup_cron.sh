@@ -1,11 +1,17 @@
 #!/bin/bash
 # setup_cron.sh — Install daily cron job for the wiki ingestion agent
-VAULT=/work/HHRI-AI/Saqlain/my-wiki
-CONDA=/work/HHRI-AI/anaconda/etc/profile.d/conda.sh
-LOG=$VAULT/cron.log
+#
+# Configure via environment variables (sensible defaults shown):
+#   WIKI_VAULT  — path to the wiki repo   (default: this script's directory)
+#   CONDA_SH    — path to conda's profile.d/conda.sh
+#   CONDA_ENV   — conda environment name to activate
+VAULT="${WIKI_VAULT:-$(cd "$(dirname "$0")" && pwd)}"
+CONDA="${CONDA_SH:-$HOME/anaconda3/etc/profile.d/conda.sh}"
+CONDA_ENV="${CONDA_ENV:-base}"
+LOG="$VAULT/cron.log"
 
 # Build the cron command: source conda, activate env, then run agent
-CRON_CMD="0 8 * * * source $CONDA && conda activate saqlain_vllm && cd $VAULT && python3 agent.py daily >> $LOG 2>&1"
+CRON_CMD="0 8 * * * source $CONDA && conda activate $CONDA_ENV && cd $VAULT && python3 agent.py daily >> $LOG 2>&1"
 
 # Append only if not already present
 if crontab -l 2>/dev/null | grep -q "agent.py daily"; then

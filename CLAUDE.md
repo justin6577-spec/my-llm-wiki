@@ -8,13 +8,13 @@ An Obsidian-based knowledge wiki covering LLM architecture — written in the st
 
 ## Environment Setup
 
-To activate the Conda environment and Azure Foundry integration before running Claude Code:
+Copy `.env.example` to `.env` and provide your own credentials (Anthropic API key, or
+Google Vertex AI project/region). See **How to Run Locally** in `README.md` for details.
+Credentials must come from environment variables — never hardcode keys in tracked files.
 
 ```bash
-source activate_claude_w_Azure_API.sh
+cp .env.example .env   # then fill in your values
 ```
-
-This activates the `saqlain_vllm` Conda environment and sets `CLAUDE_CODE_USE_FOUNDRY=1` with Azure endpoints.
 
 ## Content Structure
 
