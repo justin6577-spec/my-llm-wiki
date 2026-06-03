@@ -68,5 +68,23 @@
       "RetNet \u2013 already in wiki",
       "Mamba (v1) \u2013 already in wiki as 'Mamba'"
     ]
+  },
+  {
+    "timestamp": "2026-06-03T01:00:19.154795",
+    "mode": "update-citations",
+    "topic": null,
+    "added": [
+      "Transformer.md (+5,574)",
+      "EAGLE.md (-826)",
+      "Flash Attention.md (-6,096)",
+      "FlashAttention-2.md (-2,431)",
+      "Griffin.md (-861)",
+      "Hardware Acceleration for Neural Networks.md (-127)",
+      "Jamba.md (-568)",
+      "KV Cache Optimization.md (-249)",
+      "LLaMA 2.md (+2,078)",
+      "Mamba.md (+2,427)"
+    ],
+    "skipped": []
   }
 ]

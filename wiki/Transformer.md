@@ -4,7 +4,7 @@ authors: "Vaswani et al."
 year: 2017
 arxiv: "1706.03762"
 venue: NeurIPS
-citation_count: 173000
+citation_count: 178574
 tags: [foundational, attention, architecture, parallelism]
 tldr: "Self-attention replaces recurrence; any two tokens connect in one step, enabling parallel training and O(1) path length between positions."
 theme: foundations
