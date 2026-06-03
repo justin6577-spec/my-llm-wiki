@@ -22,6 +22,8 @@ The writing philosophy is borrowed from Andrej Karpathy: lead with the concrete 
 
 What makes this wiki distinct is a full citation intelligence layer on top of the content. Every core paper carries its real citation count from Semantic Scholar, a `cited_by_details` list of the ten most-cited downstream works, and arXiv IDs throughout. The live web demo exposes all of this through a Citation Explorer, an interactive D3 knowledge graph sized by citation count, and a full-text search interface — all from a single static site deployed automatically via GitHub Actions to GitHub Pages.
 
+> Citation counts sourced from Semantic Scholar. Last verified: June 2026.
+
 The most referenced note in the wiki is "Attention Is All You Need" with 46 backlinks — reflecting its foundational role across all modern LLM research.
 
 ---

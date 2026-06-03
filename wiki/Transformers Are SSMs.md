@@ -6,7 +6,7 @@ tags: [ssm, mamba, attention, ssd, efficiency, mamba-2, linear-attention]
 tldr: "Attention and selective SSMs are two faces of the same object — a structured semiseparable matrix. The Structured State Space Duality (SSD) framework makes the equivalence precise and unlocks Mamba-2: a refined selective SSM whose core layer runs 2–8× faster than Mamba while matching or beating Transformers on language modeling."
 aliases: [Mamba-2, SSD, Structured State Space Duality]
 theme: efficiency
-citation_count: 1200
+citation_count: 1400
 arxiv: "2405.21060"
 cited_by_top: ["Mamba-3", "Falcon Mamba", "RWKV-7", "Samba", "Hymba", "DenseMamba", "PlainMamba", "MambaND", "Mamba Drafters", "LocalMamba"]
 ---
