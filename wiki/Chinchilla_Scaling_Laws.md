@@ -43,5 +43,5 @@ where E is irreducible entropy, α ≈ 0.34, β ≈ 0.28.
 [[Scaling Laws]]
 [[Compute-Optimal Training]]
 [[Kaplan Scaling Laws]]
-[[Training Token Budget]]
+[[Compute-Optimal Training|Training Token Budget]]
 [[Speculative Decoding|Inference Efficiency]]

@@ -195,7 +195,7 @@ Both released with optimized CUDA training + inference kernels at https://github
 
 ### Addresses limitations diagnosed by:
 - Grazzi et al. 2025 — showed Mamba-2 fails state-tracking
-- [[Sarrof et al. 2024]] — proved theoretical limits of real-valued SSMs on parity tasks
+- Sarrof et al. 2024 — proved theoretical limits of real-valued SSMs on parity tasks
 
 ---
 

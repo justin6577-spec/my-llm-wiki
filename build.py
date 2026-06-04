@@ -40,8 +40,18 @@ def parse_frontmatter(text):
 
 
 def extract_wikilinks(text):
-    """Return list of note IDs referenced via [[NoteTitle]] or ![[NoteTitle]] syntax."""
-    raw = re.findall(r"!?\[\[([^\]|#]+?)(?:[|#][^\]]*)?\]\]", text)
+    """Return list of note IDs referenced via [[NoteTitle]] or ![[NoteTitle]] syntax.
+
+    Skips wikilinks inside inline-code spans (`...`) and fenced code blocks so
+    template placeholders like `[[${name}]]` or prose like `[[linked]]` in
+    documentation text are not treated as real links.
+    """
+    # Strip inline code spans before scanning (replace with same-length whitespace
+    # so that character positions stay consistent; we only need the [[...]] matches).
+    cleaned = re.sub(r"`[^`\n]+`", lambda m: " " * len(m.group()), text)
+    # Also strip fenced code blocks (``` ... ```)
+    cleaned = re.sub(r"```.*?```", lambda m: " " * len(m.group()), cleaned, flags=re.DOTALL)
+    raw = re.findall(r"!?\[\[([^\]|#]+?)(?:[|#][^\]]*)?\]\]", cleaned)
     ids = []
     for r in raw:
         note_id = r.strip().replace(" ", "-")
@@ -334,8 +344,13 @@ def build():
     # Normalize everything to lowercase-with-hyphens for comparison.
     note_id_norm  = {re.sub(r"[\s_]", "-", n["id"].lower()) for n in notes}
     note_ttl_norm = {n.get("title", "").lower() for n in notes}
+    # Notes whose broken links are intentional external references (e.g. Citation Map's
+    # "Top 10 citing papers" rows point to papers not in the wiki by design).
+    INTENTIONAL_EXTERNAL_SOURCES = {"Citation-Map"}
     broken_links = []
     for n in notes:
+        if n["id"] in INTENTIONAL_EXTERNAL_SOURCES:
+            continue
         for link_id in n.get("links", []):
             clean = re.sub(r"[\s_]", "-", link_id.lower())
             if clean not in note_id_norm and link_id.lower() not in note_ttl_norm:

@@ -44,5 +44,5 @@ Chunkwise-parallel form (chunk size L):
 [[Mamba]]
 [[RetNet]]
 [[RWKV]]
-[[State Space Model (SSM)]]
+[[State Space Model|State Space Model (SSM)]]
 [[FlashAttention]]

@@ -260,7 +260,11 @@ def check_broken_links() -> dict:
     broken: list[str] = []
     for f in sorted(WIKI.glob("*.md")):
         txt = f.read_text(encoding="utf-8")
-        for m in re.finditer(r"\[\[([^\]]+)\]\]", txt):
+        # Skip inline code spans and fenced blocks so template placeholders
+        # like `[[${name}]]` are not counted as broken wikilinks.
+        cleaned = re.sub(r"`[^`\n]+`", lambda m: " " * len(m.group()), txt)
+        cleaned = re.sub(r"```.*?```", lambda m: " " * len(m.group()), cleaned, flags=re.DOTALL)
+        for m in re.finditer(r"\[\[([^\]]+)\]\]", cleaned):
             target = m.group(1).split("|")[0].split("#")[0].strip()
             key = re.sub(r"[\s_]", "-", target.lower())
             if key not in note_index:
