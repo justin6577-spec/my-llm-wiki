@@ -306,8 +306,30 @@ Quantitative comparisons across frontier models on knowledge, long context, and 
 | Note | Coverage | Year | TL;DR |
 |---|---|---|---|
 | [[LLM Benchmarks]] | DS-V4-Pro, DS-V4-Flash, K2.6, GLM-5.1, Opus-4.6, GPT-5.4, Gemini-3.1-Pro — 22 benchmarks | 2025 | Gemini leads knowledge, Opus-4.6 leads long context, agentic tasks split across GPT-5.4 / Opus-4.6 / K2.6; DS-V4-Pro is strongest open model. |
+| [[Opus 4.8 Benchmarks]] | Opus 4.8 vs Opus 4.7, GPT-5.5, Gemini 3.1 Pro — 7 benchmarks | 2026 | Opus 4.8 leads SWE-bench Pro (69.2%), OSWorld (83.4%), GDPval-AA (1890 Elo); GPT-5.5 wins Terminal-Bench 2.1. |
+| [[SWE-bench]] | Real GitHub issue resolution across 300 repos | 2023 | 12.3% resolved by best model at release; now exceeded 80%+ by frontier models. |
+| [[SWE-bench Pro]] | Harder enterprise coding tasks, less contamination | 2025 | More realistic multi-file tasks; Opus 4.8 scores 69.2% Pass@1. |
+| [[OSWorld]] | GUI agent on real desktop OS (Ubuntu/Windows/macOS) | 2024 | 369 computer tasks; frontier models reach 80%+ on verified subset. |
+| [[Humanity's Last Exam]] | 2,500 expert PhD-level questions | 2025 | Designed to resist saturation; GPT-4o scored <10% at launch. |
+| [[MCP-Atlas]] | LLM tool use via real MCP servers | 2026 | Tests actual MCP protocol tool invocations across diverse server types. |
+| [[OSWorld-MCP]] | MCP tools integrated into computer-use agents | 2025 | Extends OSWorld with structured MCP tool access. |
+| [[ToolLLM]] | 16,464 real-world APIs from RapidAPI | 2023 | Evaluates tool planning, selection, and chained API calls. |
 
 **Tags:** `benchmarks` `evaluation` `llm-comparison`
+
+---
+
+## 🔧 Tool Use & Agentic Benchmarks
+
+Evaluates LLM ability to use external tools, APIs, and computer interfaces.
+
+| Paper | Year | What it measures |
+|-------|------|-----------------|
+| [[ToolLLM]] | 2023 | 16,464 real-world APIs — tool planning and chaining |
+| [[OSWorld]] | 2024 | GUI desktop control via mouse/keyboard on real OS |
+| [[SWE-bench Pro]] | 2025 | Enterprise agentic coding across multi-file repos |
+| [[OSWorld-MCP]] | 2025 | MCP tool invocation within computer-use agents |
+| [[MCP-Atlas]] | 2026 | Real MCP server tool use across diverse task types |
 
 ---
 

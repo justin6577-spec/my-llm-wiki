@@ -99,3 +99,21 @@ No single model wins everywhere. Gemini-3.1-Pro High dominates Knowledge & Reaso
 ## Related Concepts
 
 [[DeepSeek_V4]] · [[KV cache]] · [[Speculative Decoding]] · [[GQA]] · [[RLVR]] · [[LLM evaluation]]
+
+---
+
+## Claude Opus 4.8 (May 2026)
+
+> Source: Anthropic, May 28 2026. See [[Opus 4.8 Benchmarks]] for full analysis.
+
+| Benchmark | Opus 4.8 | Opus 4.7 | GPT-5.5 | Gemini 3.1 Pro |
+|-----------|----------|----------|---------|----------------|
+| **SWE-Bench Pro** (Pass@1) | **69.2%** | 64.3% | 58.6% | 54.2% |
+| **Terminal-Bench 2.1** (Pass@1) | 74.6% | 66.1% | **78.2%** | 70.3% |
+| **HLE** — no tools (Pass@1) | **49.8%** | 46.9% | 41.4% | 44.4% |
+| **HLE** — with tools (Pass@1) | **57.9%** | 54.7% | 52.2% | 51.4% |
+| **OSWorld-Verified** (Pass@1) | **83.4%** | 82.8% | 78.7% | 76.2% |
+| **GDPval-AA** (Elo) | **1890** | 1753 | 1769 | 1314 |
+| **Finance Agent v2** (Pass@1) | **53.9%** | 51.5% | 51.8% | 43.0% |
+
+*Bold = best score in row. Opus 4.8 leads 5 of 7; GPT-5.5 wins Terminal-Bench 2.1.*
