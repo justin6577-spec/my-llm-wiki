@@ -67,8 +67,15 @@ Claude Opus 4.8 (released May 28, 2026) leads on most agentic benchmarks — SWE
 - [[OSWorld]] — computer use benchmark (arXiv:2404.07972)
 - [[Humanity's Last Exam]] — expert reasoning benchmark (arXiv:2501.14249)
 - [[MCP-Atlas]] — tool use with MCP servers (arXiv:2602.00933)
-- [[LLM Benchmarks]] — broader frontier model comparison table
+- [[LLM Benchmarks]] — broader frontier model comparison including Opus 4.6
+
+## Data Quality Note
+
+> Scores sourced from Anthropic official announcement (May 2026).
+> Terminal-Bench 2.1 uses different harnesses across models (Codex CLI for GPT-5.5; Terminus-2 for others) — not directly comparable.
+> OSWorld harness was updated between Opus 4.6 and 4.8 — part of the OSWorld gain is methodology.
+> See [[Data Quality Standards]] for details on discrepancies and verification sources.
 
 ## Related Concepts
 
-[[LLM Benchmarks]] · [[LLM evaluation]] · [[SWE-bench]] · [[OSWorld]] · [[Humanity's Last Exam]] · [[MCP-Atlas]] · [[RLHF]] · [[RLVR]]
+[[LLM Benchmarks]] · [[Data Quality Standards]] · [[LLM evaluation]] · [[SWE-bench]] · [[OSWorld]] · [[Humanity's Last Exam]] · [[MCP-Atlas]] · [[RLHF]] · [[RLVR]]

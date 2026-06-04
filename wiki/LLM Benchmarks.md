@@ -1,17 +1,96 @@
 ---
 title: "LLM Benchmarks"
-tags: [benchmarks, evaluation, llm-comparison, deepseek, claude, gpt, gemini]
-year: "2025"
-tldr: "Benchmark comparison across DS-V4-Pro, DS-V4-Flash, K2.6, GLM-5.1, Opus-4.6, GPT-5.4, Gemini-3.1-Pro on knowledge, long context, and agentic tasks"
+tags: [benchmarks, evaluation, llm-comparison, claude, gpt, gemini, agentic]
+year: "2026"
+tldr: "Verified benchmark scores for frontier LLMs across coding, reasoning, long-context, and agentic tasks. Sourced from official system cards and independent evaluators. Last updated June 2026."
+citation_count: 0
 ---
 
 # LLM Benchmarks
 
-> A side-by-side comparison of seven frontier models on 22 benchmarks spanning knowledge, long context, and agentic capability. Scores collected at each model's highest-compute serving tier.
+> ⚠️ All scores are vendor self-reported unless marked **(independent)**.
+> Where vendor and independent sources disagree, both are shown.
+> Last updated: June 2026.
 
 ---
 
-## Models
+## Claude Opus 4.8 (May 28, 2026)
+
+Source: Anthropic official announcement (May 2026).
+See [[Opus 4.8 Benchmarks]] for full analysis.
+
+### Agentic & Coding
+
+| Benchmark | Opus 4.8 | Opus 4.7 | GPT-5.5 | Gemini 3.1 Pro |
+|-----------|----------|----------|---------|----------------|
+| **SWE-Bench Pro** (Pass@1) | **69.2%** | 64.3% | 58.6% | 54.2% |
+| **Terminal-Bench 2.1** (Pass@1) | 74.6% | 66.1% | **78.2%** | 70.3% |
+| **OSWorld-Verified** (Pass@1) | **83.4%** | 82.8% | 78.7% | 76.2% |
+| **Finance Agent v2** (Pass@1) | **53.9%** | 51.5% | 51.8% | 43.0% |
+
+### Reasoning
+
+| Benchmark | Opus 4.8 | Opus 4.7 | GPT-5.5 | Gemini 3.1 Pro |
+|-----------|----------|----------|---------|----------------|
+| **HLE** — no tools (Pass@1) | **49.8%** | 46.9% | 41.4% | 44.4% |
+| **HLE** — with tools (Pass@1) | **57.9%** | 54.7% | 52.2% | 51.4% |
+| **GDPval-AA** (Elo) **(independent)** | **1890** | 1753 | 1769 | 1314 |
+
+**Notes:**
+- Terminal-Bench 2.1: GPT-5.5 uses Codex CLI harness; other models use Terminus-2 harness — not directly comparable.
+- OSWorld uses updated harness in 4.8 — part of the gain is methodology, not pure model improvement.
+- 4× improvement in unflagged code flaws (internal honesty metric; not independently verified).
+
+*Bold = best score in row.*
+
+---
+
+## Claude Opus 4.6 (February 5, 2026)
+
+Source: Anthropic official system card (February 2026).
+
+### Long Context
+
+| Benchmark | Opus 4.6 | Sonnet 4.5 | GPT-5.2 | Gemini 3 Pro |
+|-----------|----------|------------|---------|--------------|
+| MRCR v2 1M 8-needle (MMR) | **76%** | 18.5% | 18.5% | 26.3% |
+| MRCR v2 256k 8-needle (MMR) | **~77%** | — | — | 77% |
+
+> **MRCR = Multi-Round Coreference Resolution.** 8-needle = hardest setting; 1M = prompts with (524k, 1024k] tokens. Score = Mean Match Ratio. Opus 4.6 leads all models as of June 2026 — Opus 4.7 regressed on this benchmark.
+
+> ⚠️ **Score discrepancy:** The broader model comparison table below (from an internal image) shows Opus-4.6 MRCR 1M at **92.9**. The official system card shows **76%** (MRCR v2, 8-needle hardest variant). Likely causes: different MRCR variant (v1 vs v2), different needle count, or different context-length bin. **Use 76% when citing from the official system card.**
+
+### Core Benchmarks
+
+| Benchmark | Score | Notes |
+|-----------|-------|-------|
+| SWE-bench Verified (Resolved) | 80.84% | |
+| SWE-bench Pro (Resolved) | 57.3% | |
+| Terminal-Bench 2.0 (Acc) | 65.4% | State-of-the-art at release |
+| OSWorld-Verified (Pass@1) | 72.7% | |
+| ARC-AGI-2 (Pass@1) | 68.8% | |
+| GPQA Diamond (Pass@1) | 91.3% | |
+| HLE with tools (Pass@1) | 53.0% | Updated Feb 23 2026 after cheating-detection improvement |
+| HLE without tools (Pass@1) | ~40.0% | |
+| GDPval-AA (Elo) **(independent)** | 1,606 | 144 pts ahead of GPT-5.2 at evaluation date |
+| BrowseComp (Pass@1) | SOTA | Leads all frontier models |
+
+> ⚠️ **GDPval-AA discrepancy:** The broader comparison table below shows 1,619 Elo; the official system card shows 1,606. Difference of 13 points — likely different evaluation date or Elo pool. Use 1,606 from the official system card.
+
+**Key facts:**
+- Released February 5, 2026; pricing $5/$25 per 1M tokens.
+- First Opus with 1M token context (beta, premium pricing above 200k tokens).
+- Best long-context model of 2026 — Opus 4.7 regressed on MRCR v2.
+- HLE with tools updated from 53.1% to 53.0% on February 23 2026 after cheating-detection pipeline improvement.
+
+---
+
+## Broader Model Comparison (early 2026)
+
+Source: internal comparison image shared by HHRI-AI Research team.
+⚠️ Primary source unknown for several scores — cross-check against official cards before citing.
+
+### Models
 
 | Short name | Full name | Provider |
 |---|---|---|
@@ -22,10 +101,6 @@ tldr: "Benchmark comparison across DS-V4-Pro, DS-V4-Flash, K2.6, GLM-5.1, Opus-4
 | Opus-4.6 | Claude Opus 4.6 Max | Anthropic |
 | GPT-5.4 | GPT-5.4 xHigh | OpenAI |
 | Gem-3.1-Pro | Gemini-3.1-Pro High | Google DeepMind |
-
----
-
-## Benchmark Scores
 
 ### Knowledge & Reasoning
 
@@ -47,8 +122,10 @@ tldr: "Benchmark comparison across DS-V4-Pro, DS-V4-Flash, K2.6, GLM-5.1, Opus-4
 
 | Benchmark | DS-V4-Pro | DS-V4-Flash | K2.6 | GLM-5.1 | Opus-4.6 | GPT-5.4 | Gem-3.1-Pro |
 |---|---|---|---|---|---|---|---|
-| MRCR 1M (MMR) | 83.5 | 78.7 | — | — | **92.9** | — | 76.3 |
-| CorpusQA 1M (ACC) | 62.0 | 60.5 | — | — | **71.7** | — | 53.8 |
+| MRCR 1M (MMR) | 83.5 | 78.7 | — | — | 92.9† | — | 76.3 |
+| CorpusQA 1M (ACC) | 62.0 | 60.5 | — | — | 71.7 | — | 53.8 |
+
+> †Opus-4.6 MRCR 1M score of **92.9** is from this comparison image (source unknown). Official Anthropic system card reports **76%** using MRCR v2 8-needle. These likely measure different variants — see the discrepancy note in the Opus 4.6 section above.
 
 ### Agentic
 
@@ -59,10 +136,12 @@ tldr: "Benchmark comparison across DS-V4-Pro, DS-V4-Flash, K2.6, GLM-5.1, Opus-4
 | SWE Pro (Resolved) | 55.4 | 52.6 | **58.6** | 58.4 | 57.3 | 57.7 | 54.2 |
 | SWE Multilingual (Resolved) | 76.2 | 73.3 | 76.7 | 73.3 | **77.5** | — | — |
 | BrowseComp (Pass@1) | 83.4 | 73.2 | 83.2 | 79.3 | 83.7 | 82.7 | **85.9** |
-| HLE w/tools (Pass@1) | 48.2 | 45.1 | **54.0** | 50.4 | 53.1 | 52.0 | 51.6 |
-| GDPval-AA (Elo) | 1554 | 1395 | 1482 | 1535 | 1619 | **1674** | 1314 |
+| HLE w/tools (Pass@1) | 48.2 | 45.1 | **54.0** | 50.4 | 53.0† | 52.0 | 51.6 |
+| GDPval-AA (Elo) **(independent)** | 1554 | 1395 | 1482 | 1535 | 1619† | **1674** | 1314 |
 | MCPAtlas Public (Pass@1) | 73.6 | 69.0 | 66.6 | 71.6 | **73.8** | 67.2 | 69.2 |
 | Toolathlon (Pass@1) | 51.8 | 47.8 | 50.0 | 40.7 | 47.2 | **54.6** | 48.8 |
+
+> †HLE w/tools: image shows 53.1; official system card shows 53.0% (updated Feb 23 2026). †GDPval-AA: image shows 1,619 Elo; official system card shows 1,606. Both marked with † for cross-check.
 
 *Bold = best score in row. — = not reported.*
 
@@ -70,50 +149,47 @@ tldr: "Benchmark comparison across DS-V4-Pro, DS-V4-Flash, K2.6, GLM-5.1, Opus-4
 
 ## TL;DR
 
-No single model wins everywhere. Gemini-3.1-Pro High dominates Knowledge & Reasoning — it leads on MMLU-Pro, SimpleQA, Chinese-SimpleQA, GPQA Diamond, HLE, and the punishing Apex benchmark by a wide margin, suggesting Google's data mixture and post-training have a structural edge on factual recall and breadth. Opus-4.6 Max is the clear long-context champion, beating every other model by 9–18 points on MRCR and CorpusQA at 1M tokens — a direct consequence of [[KV cache]] and attention architecture choices. Agentic tasks are the most fragmented category: GPT-5.4 xHigh leads on GDPval-AA Elo and Terminal Bench; Gemini-3.1-Pro edges BrowseComp; K2.6 Thinking takes SWE Pro and HLE-with-tools; Opus-4.6 wins SWE Verified, SWE Multilingual, and MCPAtlas. DS-V4-Pro is the strongest open model, especially in code (Codeforces 3206, LiveCodeBench 93.5), and competitive across nearly every benchmark despite being open-weight. The biggest surprise is GLM-5.1's near-collapse on Apex (11.5 vs Gemini's 60.9) — a 5× gap that doesn't appear elsewhere, hinting at a sharp reasoning ceiling for that model family on frontier difficulty.
+No single model wins everywhere. Gemini-3.1-Pro High dominates Knowledge & Reasoning. Opus-4.6 Max leads long-context (76% MRCR v2 8-needle per official system card). Agentic tasks are fragmented: GPT-5.4 leads GDPval-AA and Terminal Bench; K2.6 leads SWE Pro and HLE-with-tools; Opus-4.6 leads SWE Verified, SWE Multilingual, and MCPAtlas. DS-V4-Pro is the strongest open model. Opus 4.8 (May 2026) leads on SWE-bench Pro (69.2%), OSWorld (83.4%), GDPval-AA (1890 Elo), and HLE (57.9% with tools).
 
 ---
 
-## Key Takeaways
+## Benchmark Descriptions
 
-- **Knowledge & Reasoning leader:** Gemini-3.1-Pro High — top score on 6 of 11 benchmarks including the hardest (Apex, GPQA Diamond, HLE).
-- **Long Context leader:** Opus-4.6 Max — 92.9 MRCR and 71.7 CorpusQA at 1M tokens, beating second-place by 9+ points.
-- **Agentic leader:** No clear single winner; GPT-5.4 leads GDPval-AA Elo and Terminal Bench, Opus-4.6 leads SWE Verified/Multilingual/MCPAtlas, K2.6 leads SWE Pro and HLE-with-tools.
-- **Biggest gap:** Apex (Pass@1) — Gemini-3.1-Pro at 60.9 vs GLM-5.1 at 11.5, a 49.4-point spread on the same benchmark.
-- **Most surprising result:** DS-V4-Flash Max (the lighter/cheaper DeepSeek variant) scores within 1–3 points of DS-V4-Pro on most benchmarks, and achieves 3052 Codeforces rating — competitive with GPT-5.4's 3168. The cost-to-performance ratio for Flash looks exceptional.
+### [[SWE-bench]] / SWE-bench Pro
+Real GitHub issue resolution. Pro uses harder enterprise codebases.
+arXiv: [2310.06770](https://arxiv.org/abs/2310.06770) · [2509.16941](https://arxiv.org/abs/2509.16941)
+
+### MRCR v2 (Multi-Round Coreference Resolution)
+Tests retrieval of specific information buried in massive contexts.
+8-needle = hardest variant; 1M = (524k, 1024k] token prompts. Score = Mean Match Ratio.
+
+### [[Humanity's Last Exam]] (HLE)
+2,500 expert-level questions across math, science, humanities.
+arXiv: [2501.14249](https://arxiv.org/abs/2501.14249)
+
+### [[OSWorld]]
+GUI agent controlling real desktop OS (Ubuntu/Windows/macOS), 369 tasks.
+arXiv: [2404.07972](https://arxiv.org/abs/2404.07972)
+
+### GDPval-AA (independent)
+Economically valuable knowledge-work tasks. Elo-style rating by Artificial Analysis.
+Not vendor self-reported — comparisons here are more trustworthy.
 
 ---
 
-## Model Notes
+## Sources
 
-- **DS-V4-Pro Max:** Strongest open-weight model. Best-in-class on LiveCodeBench (93.5) and Codeforces (3206); competitive everywhere. Weakness: factual recall (SimpleQA 57.9 vs Gemini's 75.6) and Apex reasoning ceiling.
-- **DS-V4-Flash Max:** Remarkably close to Pro across the board at presumably much lower cost. Weakness: long context not reported; BrowseComp and agentic benchmarks noticeably trail Pro.
-- **K2.6 Thinking:** Surprise leader on SWE Pro (58.6) and HLE-with-tools (54.0); strong BrowseComp (83.2). Weakness: Apex collapses (24.0); long context not evaluated.
-- **GLM-5.1 Thinking:** Solid mid-tier on most benchmarks. Severe weakness on Apex (11.5) — by far the lowest score of any model — suggesting hard limits on frontier reasoning difficulty. Long context not evaluated.
-- **Opus-4.6 Max:** Dominant on long context; top-tier agentic (SWE Verified, SWE Multilingual, MCPAtlas). Weakness: math olympiad ceiling (IMOAnswerBench 75.3 vs GPT-5.4's 91.4); Apex not at the top.
-- **GPT-5.4 xHigh:** Best on HMMT (97.7), IMOAnswerBench (91.4), Terminal Bench (75.1), GDPval-AA Elo (1674), Toolathlon (54.6). Weakness: long context not evaluated; Apex Shortlist trails DS-V4-Pro by 12 points.
-- **Gemini-3.1-Pro High:** Broadest knowledge lead — top on MMLU-Pro, SimpleQA, GPQA Diamond, HLE, Apex (60.9). Weakness: GDPval-AA Elo (1314, lowest of all); MRCR long context (76.3 vs Opus's 92.9); SWE Pro (54.2, weakest evaluated model).
+| Source | Type | Notes |
+|--------|------|-------|
+| Anthropic system card (Opus 4.6, Feb 2026) | Vendor | Official methodology; use for MRCR and GDPval |
+| Anthropic announcement (Opus 4.8, May 2026) | Vendor | Official; harness notes apply |
+| Internal comparison image (HHRI-AI team) | Internal | Source of broader 7-model table; primary origin unknown |
+| Artificial Analysis GDPval-AA | Independent | Most trustworthy for Elo comparisons |
+| HLE leaderboard (agi.safe.ai) | Independent | Verified HLE scores |
+| SWE-bench leaderboard (swebench.com) | Independent | Verified SWE scores |
 
 ---
 
 ## Related Concepts
 
-[[DeepSeek_V4]] · [[KV cache]] · [[Speculative Decoding]] · [[GQA]] · [[RLVR]] · [[LLM evaluation]]
-
----
-
-## Claude Opus 4.8 (May 2026)
-
-> Source: Anthropic, May 28 2026. See [[Opus 4.8 Benchmarks]] for full analysis.
-
-| Benchmark | Opus 4.8 | Opus 4.7 | GPT-5.5 | Gemini 3.1 Pro |
-|-----------|----------|----------|---------|----------------|
-| **SWE-Bench Pro** (Pass@1) | **69.2%** | 64.3% | 58.6% | 54.2% |
-| **Terminal-Bench 2.1** (Pass@1) | 74.6% | 66.1% | **78.2%** | 70.3% |
-| **HLE** — no tools (Pass@1) | **49.8%** | 46.9% | 41.4% | 44.4% |
-| **HLE** — with tools (Pass@1) | **57.9%** | 54.7% | 52.2% | 51.4% |
-| **OSWorld-Verified** (Pass@1) | **83.4%** | 82.8% | 78.7% | 76.2% |
-| **GDPval-AA** (Elo) | **1890** | 1753 | 1769 | 1314 |
-| **Finance Agent v2** (Pass@1) | **53.9%** | 51.5% | 51.8% | 43.0% |
-
-*Bold = best score in row. Opus 4.8 leads 5 of 7; GPT-5.5 wins Terminal-Bench 2.1.*
+[[Opus 4.8 Benchmarks]] · [[SWE-bench]] · [[OSWorld]] · [[Humanity's Last Exam]] · [[MCP-Atlas]] · [[DeepSeek_V4]] · [[KV cache]] · [[Speculative Decoding]] · [[GQA]] · [[RLVR]] · [[LLM evaluation]]
