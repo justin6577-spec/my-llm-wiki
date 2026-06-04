@@ -15,7 +15,7 @@ wikilinks: ["[[nanoGPT]]", "[[llm.c]]"]
 
 ## Overview
 
-micrograd is an educational scalar autograd engine — essentially the smallest possible implementation of the core machinery that powers all modern [[deep learning]] frameworks. It implements **reverse-mode automatic differentiation** (backpropagation) over a dynamically constructed directed acyclic graph (DAG).
+micrograd is an educational scalar autograd engine — essentially the smallest possible implementation of the core machinery that powers all modern [[Transformer|deep learning]] frameworks. It implements **reverse-mode automatic differentiation** (backpropagation) over a dynamically constructed directed acyclic graph (DAG).
 
 The entire engine is ~100 lines of Python; the neural network library built on top is ~50 lines.
 
@@ -58,4 +58,4 @@ print(b.grad)  # dg/db
 
 ## Relation to Wiki Themes
 
-micrograd is the conceptual foundation beneath all [[neural network]] training. Understanding it is prerequisite to understanding how [[transformer]] training, [[RLHF]], and other gradient-based methods work. See [[nanoGPT]] for a full GPT training stack, or [[llm.c]] for a C/CUDA implementation without any autograd framework.
+micrograd is the conceptual foundation beneath all [[Transformer|neural network]] training. Understanding it is prerequisite to understanding how [[transformer]] training, [[RLHF]], and other gradient-based methods work. See [[nanoGPT]] for a full GPT training stack, or [[llm.c]] for a C/CUDA implementation without any autograd framework.

@@ -14,7 +14,7 @@ wikilinks: ["[[nanoGPT]]", "[[llm.c]]", "[[Inference optimization]]"]
 
 ## Overview
 
-minbpe provides the cleanest possible reference implementation of **Byte Pair Encoding (BPE)** tokenization, the algorithm at the heart of virtually every modern large [[language model]] tokenizer (GPT, Llama, Mistral, Claude, etc.).
+minbpe provides the cleanest possible reference implementation of **Byte Pair Encoding (BPE)** tokenization, the algorithm at the heart of virtually every modern large [[Transformer|language model]] tokenizer (GPT, Llama, Mistral, Claude, etc.).
 
 BPE was introduced for NLP by Sennrich et al. (2015) and popularised for LLMs by the GPT-2 paper. It operates on UTF-8 bytes, iteratively merging the most frequent adjacent token pairs to build a vocabulary.
 
@@ -60,4 +60,4 @@ assert enc.encode(text) == tok.encode(text)  # ✓ identical
 
 ## Relation to Wiki Themes
 
-Tokenization is the first stage of any LLM pipeline and directly affects [[KV cache]] size (fewer tokens = smaller cache), [[speculative decoding]] draft quality, and vocabulary-level [[scaling]] decisions. minbpe makes the BPE mechanics transparent and hackable, complementing [[nanoGPT]] (training) and [[llm.c]] (C/CUDA inference).
+Tokenization is the first stage of any LLM pipeline and directly affects [[KV cache]] size (fewer tokens = smaller cache), [[speculative decoding]] draft quality, and vocabulary-level [[Scaling Laws|scaling]] decisions. minbpe makes the BPE mechanics transparent and hackable, complementing [[nanoGPT]] (training) and [[llm.c]] (C/CUDA inference).

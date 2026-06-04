@@ -180,18 +180,18 @@ Both released with optimized CUDA training + inference kernels at https://github
 ## Connections to Other Work
 
 ### Builds directly on:
-- [[Mamba-2 (Dao and Gu 2024)]] — SSD framework, scalar-diagonal state transition, hardware-efficient SSM
-- [[Mamba-1 (Gu and Dao 2024)]] — selective SSM, whose ZOH discretization is now formalized as "exponential-Euler" in Mamba-3's framework
-- [[RoPE (Su et al. 2023)]] — the complex-valued state update is shown equivalent to data-dependent rotary embeddings, enabling efficient computation
+- [[Transformers Are SSMs|Mamba-2]] — SSD framework, scalar-diagonal state transition, hardware-efficient SSM
+- [[Mamba|Mamba-1]] — selective SSM, whose ZOH discretization is now formalized as "exponential-Euler" in Mamba-3's framework
+- [[RoPE]] — the complex-valued state update is shown equivalent to data-dependent rotary embeddings, enabling efficient computation
 
 ### Competes with:
 - [[Gated DeltaNet (Yang et al. 2025)]] — current strongest linear model baseline; Mamba-3 SISO beats it by +0.6pp, MIMO by +1.8pp
-- [[Linear Attention (Katharopoulos et al. 2020)]] — simplest SSD instance; Mamba-3 significantly outperforms
+- [[Linear attention|Linear Attention]] — simplest SSD instance; Mamba-3 significantly outperforms
 - [[HGRN2]], [[RetNet]], [[Gated Linear Attention]] — other sub-quadratic recurrent models on the quality-efficiency frontier
 
 ### Enables / appears in:
-- [[Hybrid SSM-Transformer models]] — Mamba-2 layers were incorporated into Kimi Team 2025, NVIDIA 2025 (Hymba), Hunyuan 2025, Qwen 2025 hybrid models; Mamba-3 layers are drop-in improvements
-- [[State-Space Duality (SSD)]] — Mamba-3's mask is proven to be a valid SSD instance, enabling the same parallel training algorithms
+- [[Jamba|Hybrid SSM-Transformer]] — Mamba-2 layers were incorporated into Kimi Team 2025, NVIDIA 2025 (Hymba), Hunyuan 2025, Qwen 2025 hybrid models; Mamba-3 layers are drop-in improvements
+- [[Transformers Are SSMs|State-Space Duality (SSD)]] — Mamba-3's mask is proven to be a valid SSD instance, enabling the same parallel training algorithms
 
 ### Addresses limitations diagnosed by:
 - Grazzi et al. 2025 — showed Mamba-2 fails state-tracking

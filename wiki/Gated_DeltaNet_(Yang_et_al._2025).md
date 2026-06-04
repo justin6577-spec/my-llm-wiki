@@ -39,6 +39,6 @@ The term `S_{t-1} k_t` retrieves the currently stored value at key `k_t`; subtra
 ## Related Concepts
 [[DeltaNet]]
 [[Linear Attention]]
-[[State Space Models]]
+[[State Space Model|State Space Models]]
 [[Mamba]]
 [[Associative Memory]]

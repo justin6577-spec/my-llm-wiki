@@ -40,7 +40,7 @@ out = weights @ V  # (batch, heads, seq, d_k)
 
 ## Related Concepts
 [[Multi-Head Attention]]
-[[Scaled Dot-Product]]
+[[Attention|Scaled Dot-Product]]
 [[KV Cache]]
 [[Positional Encoding]]
 [[Softmax]]

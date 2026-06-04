@@ -120,22 +120,22 @@ Mamba-2 matches or exceeds Transformers on the difficult MQAR task (Arora et al.
 ## Connections to Other Work
 
 ### Builds On
-- [[Mamba - Linear-Time Sequence Modeling with Selective State Spaces]] — Mamba-2 is a direct refinement of Mamba-1's selective SSM layer
-- [[S4 - Efficiently Modeling Long Sequences with Structured State Spaces]] — foundational SSM work, diagonal A matrix structure
-- [[Linear Attention (Transformers are RNNs)]] — Katharopoulos et al. 2020, first showed attention-RNN duality; SSD significantly generalizes this
+- [[Mamba]] — Mamba-2 is a direct refinement of Mamba-1's selective SSM layer
+- [[S4]] — foundational SSM work, diagonal A matrix structure
+- [[Linear attention|Linear Attention]] — Katharopoulos et al. 2020, first showed attention-RNN duality; SSD significantly generalizes this
 - [[FlashAttention-2]] — the hardware-efficient attention baseline SSD competes with and outperforms at long sequences
 
 ### Competes With
-- [[Transformer++ / Llama]] — Mamba-2 matches quality with better scaling efficiency
+- [[LLaMA 2|Transformer++ / Llama]] — Mamba-2 matches quality with better scaling efficiency
 - [[Pythia]] — direct comparison baseline on Pile
 - [[RWKV]] — another linear-complexity sequence model with recurrent form
 - [[RetNet]] — retention mechanism, also attempts SSM-attention unification
 - [[Gated Linear Attention]] — related gated linear attention work in the SMA family
 
 ### Enables
-- [[Hybrid SSM-Attention Architectures]] — SSD framework makes mixing SSM and attention layers principled
-- [[Long-Context Language Models]] — 6× speedup at 16K enables practical very long sequence training
-- [[Sequence Parallelism for SSMs]] — directly described in the paper
+- [[Jamba|Hybrid SSM-Attention]] — SSD framework makes mixing SSM and attention layers principled
+- [[KV Cache Optimization|Long-Context Language Models]] — 6× speedup at 16K enables practical very long sequence training
+- [[Sequence parallelism|Sequence Parallelism]] — directly described in the paper
 
 ## Limitations
 
@@ -154,15 +154,15 @@ Mamba-2 matches or exceeds Transformers on the difficult MQAR task (Arora et al.
 3. **Hybrid architectures via SSD**: Since SSD reveals SSMs and attention as dual, can we design layers that *dynamically* choose between the recurrent and quadratic form at inference time based on sequence length or content — a truly unified sequence model?
 
 ## Related Concepts
-[[Semiseparable Matrices]]
+[[Semiseparable matrix|Semiseparable Matrices]]
 [[Linear Attention]]
-[[Structured State Space Models]]
-[[Selective State Space Models]]
+[[State Space Model|Structured State Space Models]]
+[[Selective State Space Model|Selective State Space Models]]
 [[Tensor Parallelism]]
 [[Sequence Parallelism]]
-[[Hardware-Aware Algorithm Design]]
-[[Recurrent Neural Networks]]
-[[Matrix Decomposition for Sequence Models]]
+[[Hardware-aware algorithms|Hardware-Aware Algorithm Design]]
+[[LSTM|Recurrent Neural Networks]]
+[[Semiseparable matrix|Semiseparable Matrix Decomposition]]
 [[Chinchilla Scaling Laws]]
 [[Multi-Head Attention]]
 [[FlashAttention]]

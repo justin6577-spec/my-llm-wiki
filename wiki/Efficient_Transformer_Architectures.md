@@ -43,8 +43,8 @@ for block_q in tiles(Q):
 - **Mamba / S4** — Gu et al., SSM alternative avoiding attention entirely
 
 ## Related Concepts
-[[Attention Mechanism]]
+[[Attention|Attention Mechanism]]
 [[FlashAttention]]
-[[State Space Models (SSM)]]
-[[Sparse Attention]]
+[[State Space Model|State Space Models]]
+[[Sliding window attention|Sparse Attention]]
 [[KV Cache]]

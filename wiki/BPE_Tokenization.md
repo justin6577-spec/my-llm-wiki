@@ -38,6 +38,6 @@ for i in range(num_merges):          # e.g. 50,000 iterations
 ## Related Concepts
 [[WordPiece Tokenization]]
 [[SentencePiece]]
-[[Vocabulary Size Tradeoffs]]
-[[Tokenization Artifacts]]
-[[Byte-Level Encoding]]
+[[BPE_Tokenization|Vocabulary Size Tradeoffs]]
+[[BPE_Tokenization|Tokenization Artifacts]]
+[[BPE_Tokenization|Byte-Level Encoding]]

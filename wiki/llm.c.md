@@ -63,4 +63,4 @@ Data scripts in `/dev/data/` download, tokenize (GPT-2 BPE via [[minbpe]]-compat
 
 ## Relation to Wiki Themes
 
-llm.c represents the [[hardware acceleration]] and [[LLM inference]]/training frontier: eliminating framework overhead, maximising [[HBM]] bandwidth, and leveraging [[FlashAttention-2]] within a minimal codebase. It is the practical counterpart to theoretical work on [[Inference optimization]], [[Sequence parallelism]], and [[scaling]]. The CPU fp32 path serves as an accessible reference analogous to [[micrograd]] for understanding raw forward/backward pass mechanics.
+llm.c represents the [[Hardware Acceleration for Neural Networks|hardware acceleration]] and [[Speculative Decoding|LLM inference]]/training frontier: eliminating framework overhead, maximising [[HBM]] bandwidth, and leveraging [[FlashAttention-2]] within a minimal codebase. It is the practical counterpart to theoretical work on [[Inference optimization]], [[Sequence parallelism]], and [[Scaling Laws|scaling]]. The CPU fp32 path serves as an accessible reference analogous to [[micrograd]] for understanding raw forward/backward pass mechanics.

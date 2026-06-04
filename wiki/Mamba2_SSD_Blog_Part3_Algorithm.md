@@ -30,7 +30,7 @@ aliases:
 wikilinks:
   - "[[Mamba]]"
   - "[[Transformers Are SSMs|Mamba-2]]"
-  - "[[SSM]]"
+  - "[[State Space Model|SSM]]"
   - "[[SSD]]"
   - "[[Chunkwise recurrent]]"
   - "[[Hardware-Aware Scan]]"
@@ -58,13 +58,13 @@ wikilinks:
 
 ## TL;DR
 
-The [[SSD]] (State Space Duality) algorithm in [[Transformers Are SSMs|Mamba-2]] rewrites the [[SSM]] sequence-mixing operation as a block-matrix decomposition of an $N$-semiseparable matrix. By splitting computation into tensor-core-friendly intra-chunk matmuls (~90% of FLOPs) and a short inter-chunk scan (on a sequence of length $T/Q$ instead of $T$), it achieves **2–6× training throughput improvement** over [[Mamba]] while unlocking state sizes of $N=64$–$128$ (vs. $N=16$ in [[Mamba]]) and enabling both sequence and tensor parallelism.
+The [[SSD]] (State Space Duality) algorithm in [[Transformers Are SSMs|Mamba-2]] rewrites the [[State Space Model|SSM]] sequence-mixing operation as a block-matrix decomposition of an $N$-semiseparable matrix. By splitting computation into tensor-core-friendly intra-chunk matmuls (~90% of FLOPs) and a short inter-chunk scan (on a sequence of length $T/Q$ instead of $T$), it achieves **2–6× training throughput improvement** over [[Mamba]] while unlocking state sizes of $N=64$–$128$ (vs. $N=16$ in [[Mamba]]) and enabling both sequence and tensor parallelism.
 
 ---
 
 ## Key Concepts
 
-- **[[SSD]] (State Space Duality):** The core algorithm of [[Transformers Are SSMs|Mamba-2]]; recasts [[SSM]] computation as structured matrix multiplication over $N$-semiseparable matrices
+- **[[SSD]] (State Space Duality):** The core algorithm of [[Transformers Are SSMs|Mamba-2]]; recasts [[State Space Model|SSM]] computation as structured matrix multiplication over $N$-semiseparable matrices
 - **$N$-semiseparable matrix:** The $(T \times T)$ sequence-mixing matrix $M$ whose block structure drives the four-step decomposition
 - **Chunkwise decomposition:** Splitting the sequence into chunks of size $Q$; related to [[Chunkwise recurrent]] patterns in [[RetNet]] and Gated Linear Attention
 - **Tensor core utilization:** Steps 1, 2, and 4 are pure matmuls; ~90% of total FLOPs run on tensor cores vs. 0% in [[Mamba]]
@@ -86,7 +86,7 @@ The [[SSD]] (State Space Duality) algorithm in [[Transformers Are SSMs|Mamba-2]]
 | A100 | 312 | 19 | 16× |
 | H100 | 989 | 67 | ~15× |
 
-[[Mamba]] was limited to state size $N=16$ because larger states made the scan prohibitively slow. **The [[SSD]] algorithm fixes this** by recasting the [[SSM]] computation primarily as matrix multiplications, routing ~90% of FLOPs through tensor cores.
+[[Mamba]] was limited to state size $N=16$ because larger states made the scan prohibitively slow. **The [[SSD]] algorithm fixes this** by recasting the [[State Space Model|SSM]] computation primarily as matrix multiplications, routing ~90% of FLOPs through tensor cores.
 
 ---
 
@@ -147,7 +147,7 @@ This is related to [[Chunkwise recurrent]] processing patterns, and the intra-ch
 
 - **2–6× training throughput improvement** over [[Mamba]] on A100/H100 GPUs by routing ~90% of FLOPs through tensor cores (vs. 0% in [[Mamba]]-1's associative scan), directly translating to faster and cheaper model training at scale.
 - **State size $N$ scales from 16 to 64–128** without prohibitive compute cost, giving [[Transformers Are SSMs|Mamba-2]] substantially higher representational capacity per layer and enabling it to match or exceed [[Transformer]] perplexity on language modeling benchmarks at equivalent parameter counts.
-- **Unlocks sequence parallelism and tensor parallelism** for [[SSM]]-based models for the first time, enabling [[Transformers Are SSMs|Mamba-2]] to scale across multiple GPUs in the same way as [[Transformer]] training pipelines — a critical capability for training frontier-scale models.
+- **Unlocks sequence parallelism and tensor parallelism** for [[State Space Model|SSM]]-based models for the first time, enabling [[Transformers Are SSMs|Mamba-2]] to scale across multiple GPUs in the same way as [[Transformer]] training pipelines — a critical capability for training frontier-scale models.
 
 ---
 
@@ -156,7 +156,7 @@ This is related to [[Chunkwise recurrent]] processing patterns, and the intra-ch
 - **[[RetNet]] "chunkwise" mode:** a special case of [[SSD]] where the decay mask $L$ is a fixed geometric sequence (constant decay per position), rather than data-dependent decays; recovers [[RetNet]]'s recurrent chunk computation exactly
 - **Gated Linear Attention (GLA):** another [[Chunkwise recurrent]] formulation, but derived from a different motivation; [[SSD]] subsumes GLA as a special case under the semiseparable matrix framework
 - **[[FlashAttention]]:** [[SSD]] adopts the same HBM-minimization philosophy as [[FlashAttention]] and [[FlashAttention-2|FlashAttention-2]], tiling computation to fit in SRAM and avoiding large intermediate materialization in [[HBM]]
-- **[[Jamba]]:** a hybrid [[SSM]]/[[Transformer]] architecture that interleaves [[Mamba]] and [[Attention]] layers — the [[SSD]] algorithm's [[Attention]] duality makes such hybrid designs more architecturally coherent
+- **[[Jamba]]:** a hybrid [[State Space Model|SSM]]/[[Transformer]] architecture that interleaves [[Mamba]] and [[Attention]] layers — the [[SSD]] algorithm's [[Attention]] duality makes such hybrid designs more architecturally coherent
 - SSD's derivation from block matrix decomposition makes parallelization more explicit than prior chunkwise methods
 
 ---
@@ -171,7 +171,7 @@ Like [[FlashAttention]], the [[SSD]] algorithm is designed to minimize reads/wri
 
 ### Numerical Stability
 - The [[Exponential decay]] scalar $a_t$ can underflow for long sequences → log-space computation
-- Discretization of continuous-time [[SSM]] parameters follows standard ZOH (zero-order hold)
+- Discretization of continuous-time [[State Space Model|SSM]] parameters follows standard ZOH (zero-order hold)
 
 ### Chunk Size Selection
 - $Q$ (chunk size) trades off intra-chunk matmul efficiency vs. scan frequency
@@ -206,9 +206,9 @@ def ssd_minimal_discrete(X, A, B, C, block_len):
 
 1. **Optimal chunk size $Q$ selection:** Is there a principled way to choose $Q$ dynamically based on sequence length, state size $N$, and hardware (A100 vs. H100 SRAM capacities), rather than fixing it as a hyperparameter? Could learned or adaptive chunking recover additional throughput?
 
-2. **Data-dependent decay and numerical precision:** The log-space trick stabilizes scalar [[Exponential decay]] $a_t$, but as [[SSM]] state sizes grow toward $N=256+$ and sequence lengths reach 1M+ tokens, are there further numerical failure modes — particularly with matrix-valued (non-scalar) $A$ generalizations — and how should they be addressed?
+2. **Data-dependent decay and numerical precision:** The log-space trick stabilizes scalar [[Exponential decay]] $a_t$, but as [[State Space Model|SSM]] state sizes grow toward $N=256+$ and sequence lengths reach 1M+ tokens, are there further numerical failure modes — particularly with matrix-valued (non-scalar) $A$ generalizations — and how should they be addressed?
 
-3. **[[SSD]] in hybrid architectures:** Given that [[Jamba]] and similar hybrid models interleave [[SSM]] and [[Attention]] layers, can the [[SSD]] algorithm's block decomposition be co-designed with [[FlashAttention]] kernels to share SRAM tiling strategies and reduce end-to-end memory traffic across the full hybrid forward pass?
+3. **[[SSD]] in hybrid architectures:** Given that [[Jamba]] and similar hybrid models interleave [[State Space Model|SSM]] and [[Attention]] layers, can the [[SSD]] algorithm's block decomposition be co-designed with [[FlashAttention]] kernels to share SRAM tiling strategies and reduce end-to-end memory traffic across the full hybrid forward pass?
 
 ---
 
@@ -216,17 +216,17 @@ def ssd_minimal_discrete(X, A, B, C, block_len):
 
 - [[Mamba]] — predecessor model whose [[Hardware-Aware Scan]] approach [[SSD]] supersedes for training
 - [[Transformers Are SSMs|Mamba-2]] — the full model built on the [[SSD]] algorithm; combines [[SSD]] layers with multi-head structure
-- [[SSM]] — the mathematical framework underlying [[SSD]]; [[SSD]] is the efficient algorithm for computing [[SSM]] sequence mixing
-- [[SSD]] — the State Space Duality framework connecting [[SSM]] and [[Attention]] computations
+- [[State Space Model|SSM]] — the mathematical framework underlying [[SSD]]; [[SSD]] is the efficient algorithm for computing [[State Space Model|SSM]] sequence mixing
+- [[SSD]] — the State Space Duality framework connecting [[State Space Model|SSM]] and [[Attention]] computations
 - [[Attention]] — [[SSD]]'s intra-chunk computation is structurally equivalent to masked [[Attention]]; establishes the SSM–[[Attention]] duality
-- [[FlashAttention]] — systems design inspiration for HBM-efficient tiling; [[SSD]] applies analogous principles to [[SSM]] computation
+- [[FlashAttention]] — systems design inspiration for HBM-efficient tiling; [[SSD]] applies analogous principles to [[State Space Model|SSM]] computation
 - [[RetNet]] — [[SSD]] generalizes [[RetNet]]'s chunkwise mode by allowing data-dependent (non-constant) decay
 - [[Chunkwise recurrent]] — the key computational pattern; [[SSD]] is the canonical hardware-aware realization
-- [[KV cache]] — [[SSM]] recurrent state at inference time plays an analogous role to the [[KV cache]] in [[Transformer]]s; [[SSD]]'s fixed-size state ($N \times d$) makes this cache constant regardless of sequence length
-- [[Jamba]] — hybrid [[SSM]]/[[Transformer]] architecture whose design is informed by the [[SSD]]–[[Attention]] duality
+- [[KV cache]] — [[State Space Model|SSM]] recurrent state at inference time plays an analogous role to the [[KV cache]] in [[Transformer]]s; [[SSD]]'s fixed-size state ($N \times d$) makes this cache constant regardless of sequence length
+- [[Jamba]] — hybrid [[State Space Model|SSM]]/[[Transformer]] architecture whose design is informed by the [[SSD]]–[[Attention]] duality
 - [[Hardware-Aware Scan]] — [[Mamba]]-1's approach, replaced by [[SSD]] for training; still relevant for understanding the scan step (Step 3)
 - [[HBM]] / [[Memory hierarchy]] — hardware considerations central to [[SSD]]'s design
 - [[Systolic array]] / [[Thread block]] — GPU primitives leveraged by the matmul-heavy steps
-- [[Sequence parallelism]] — now applicable to [[SSM]]s via [[SSD]]'s chunkwise structure
-- [[Diagonal recurrence]] — the [[SSM]] recurrence form that [[SSD]] block-decomposes
+- [[Sequence parallelism]] — now applicable to [[State Space Model|SSM]]s via [[SSD]]'s chunkwise structure
+- [[Diagonal recurrence]] — the [[State Space Model|SSM]] recurrence form that [[SSD]] block-decomposes
 - [[Exponential decay]] — role of scalar $a_t$ as decay; requires log-space handling for long sequences

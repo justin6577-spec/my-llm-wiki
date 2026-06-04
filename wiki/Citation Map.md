@@ -153,7 +153,7 @@ arXiv: 2603.20397
 
 | Paper | Total Citations | Field Impact |
 |-------|----------------|--------------|
-| [[Transformer\|Attention Is All You Need]] | ~178,574 | Transformative — most-cited modern ML paper |
+| [[Transformer]] — Attention Is All You Need | ~178,574 | Transformative — most-cited modern ML paper |
 | [[LLaMA 2]] | ~17,078 | High — practical open-model scaling reference |
 | [[Mamba]] | ~7,268 | Transformative — spawned entire SSM ecosystem |
 | [[Flash Attention]] | ~4,404 | High — universal training/inference speedup |

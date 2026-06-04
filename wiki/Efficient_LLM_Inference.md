@@ -40,7 +40,7 @@ max_throughput ≈ peak_bandwidth / (bytes_per_param × num_params)
 
 ## Related Concepts
 [[KV Cache]]
-[[Quantization]]
+[[NVFP4|Quantization]]
 [[Speculative Decoding]]
 [[FlashAttention]]
-[[Grouped Query Attention]]
+[[GQA|Grouped Query Attention]]

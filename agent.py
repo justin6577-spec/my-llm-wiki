@@ -245,6 +245,32 @@ def write_content_note(filename: str, content: str) -> dict:
     return {"status": "written", "path": str(out_path)}
 
 
+def check_broken_links() -> dict:
+    """Scan wiki/ for broken [[wikilinks]] using exact-match only.
+    Reports counts; does not auto-fix (auto-fix is a human decision).
+    """
+    note_index: set[str] = set()
+    for f in WIKI.glob("*.md"):
+        note_index.add(re.sub(r"[\s_]", "-", f.stem.lower()))
+        txt = f.read_text(encoding="utf-8")
+        m = re.search(r"^title:\s*[\"']?(.+?)[\"']?\s*$", txt, re.MULTILINE | re.IGNORECASE)
+        if m:
+            note_index.add(re.sub(r"[\s_]", "-", m.group(1).strip().lower()))
+
+    broken: list[str] = []
+    for f in sorted(WIKI.glob("*.md")):
+        txt = f.read_text(encoding="utf-8")
+        for m in re.finditer(r"\[\[([^\]]+)\]\]", txt):
+            target = m.group(1).split("|")[0].split("#")[0].strip()
+            key = re.sub(r"[\s_]", "-", target.lower())
+            if key not in note_index:
+                broken.append(f"{f.name} → [[{target}]]")
+
+    if broken:
+        print(f"  ⚠️  {len(broken)} broken wikilinks detected (run link audit to fix)")
+    return {"broken": len(broken)}
+
+
 def log_agent_run(results: dict):
     """Append a run record to agent_log.json."""
     log = []
@@ -718,3 +744,4 @@ if __name__ == "__main__":
         subprocess.run(["git", "commit", "-m", commit_msg], cwd=VAULT)
         subprocess.run(["git", "push", "origin", "main"], cwd=VAULT)
         print("Done — wiki updated and pushed.")
+        check_broken_links()  # report link health after every successful agent run

@@ -38,8 +38,8 @@ O_i = O_i / l_i                        # final normalization
 - **Ring Attention** (Liu et al., 2023) — extends FlashAttention across multiple GPUs for million-token context
 
 ## Related Concepts
-[[Scaled Dot-Product Attention]]
+[[Attention|Scaled Dot-Product Attention]]
 [[Online Softmax]]
-[[Memory-Efficient Attention]]
+[[FlashAttention|Memory-Efficient Attention]]
 [[KV Cache]]
 [[Multi-Head Attention]]

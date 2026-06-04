@@ -31,7 +31,7 @@ tldr: >
 wikilinks:
   - "[[Mamba]]"
   - "[[Transformers Are SSMs|Mamba-2]]"
-  - "[[SSM]]"
+  - "[[State Space Model|SSM]]"
   - "[[SSD]]"
   - "[[Attention]]"
   - "[[FlashAttention]]"
@@ -58,7 +58,7 @@ wikilinks:
 
 ## TL;DR
 
-[[Transformers Are SSMs|Mamba-2]] introduces the **Structured State Space Duality ([[SSD]])** layer: a minimal restriction on [[Mamba]]'s diagonal-$A$ [[SSM]] — forcing $A_t$ to be scalar × identity — that simultaneously exposes a linear-[[Attention|attention]] interpretation. This duality enables training via tensor-core matrix multiplications, yielding **~2–8× faster training throughput** than [[Mamba]]'s parallel scan while supporting state sizes of $N=64$–$128$ (vs. $N=16$ in [[Mamba]]). The result is a model that is efficient as a recurrence at inference (constant-memory [[KV cache]] equivalent) and efficient as matrix operations during training.
+[[Transformers Are SSMs|Mamba-2]] introduces the **Structured State Space Duality ([[SSD]])** layer: a minimal restriction on [[Mamba]]'s diagonal-$A$ [[State Space Model|SSM]] — forcing $A_t$ to be scalar × identity — that simultaneously exposes a linear-[[Attention|attention]] interpretation. This duality enables training via tensor-core matrix multiplications, yielding **~2–8× faster training throughput** than [[Mamba]]'s parallel scan while supporting state sizes of $N=64$–$128$ (vs. $N=16$ in [[Mamba]]). The result is a model that is efficient as a recurrence at inference (constant-memory [[KV cache]] equivalent) and efficient as matrix operations during training.
 
 ---
 
@@ -73,7 +73,7 @@ Despite [[Mamba]]'s strong results, two key problems remained:
 
 ## Key Concepts
 
-- **[[SSD]] (Structured State Space Duality):** The central contribution — a layer that is simultaneously a linear recurrence ([[SSM]]) and a form of linear [[Attention]], enabling both efficient inference and tensor-core training.
+- **[[SSD]] (Structured State Space Duality):** The central contribution — a layer that is simultaneously a linear recurrence ([[State Space Model|SSM]]) and a form of linear [[Attention]], enabling both efficient inference and tensor-core training.
 - **Scalar-times-identity $A_t$:** The key structural restriction over [[Mamba]]'s diagonal $A_t$; reduces the $N\times N$ matrix to a single scalar per timestep, enabling the attention-mode interpretation.
 - **[[Diagonal recurrence]]:** The recurrence type $h_t = a_t \cdot h_{t-1} + B_t x_t$ used in [[SSD]], where $a_t \in \mathbb{R}$ is a scalar [[Exponential decay]].
 - **[[Chunkwise recurrent]] algorithm:** [[SSD]] processes sequences in chunks, combining intra-chunk matmuls (quadratic/attention mode) with inter-chunk recurrence (linear mode) — analogous to [[FlashAttention]]'s tiling strategy.
@@ -104,7 +104,7 @@ $$h_t = A_t h_{t-1} + B_t x_t, \qquad y_t = C_t^\top h_t$$
 This means $A_t$ has shape $(T,)$ — a single scalar per timestep — giving a [[Diagonal recurrence]] of the form $h_t = a_t \cdot h_{t-1} + B_t x_t$.
 
 This tiny change has outsized consequences: the [[SSD]] layer can be expressed **both** as:
-- A **linear recurrence** ([[SSM]] mode) — efficient for inference; hidden state $h_t \in \mathbb{R}^{N \times P}$ serves as a fixed-size memory analogous to the [[KV cache]]
+- A **linear recurrence** ([[State Space Model|SSM]] mode) — efficient for inference; hidden state $h_t \in \mathbb{R}^{N \times P}$ serves as a fixed-size memory analogous to the [[KV cache]]
 - A **quadratic attention-like form** ([[Attention]] mode) — efficient for training via matrix multiplications on tensor cores
 
 This is the core of **State Space Duality ([[SSD]])**.
@@ -163,7 +163,7 @@ Key contrasts with standard [[Transformer]] [[Attention]]:
 
 ## Key Insight
 
-> The [[SSD]] model sits at the intersection of [[SSM|SSMs]] and linear [[Attention]] — enabling both efficient recurrent inference and GPU-optimized training via tensor cores, closing a **~15× hardware efficiency gap** vs. [[Mamba]]'s parallel scan.
+> The [[SSD]] model sits at the intersection of [[State Space Model|SSMs]] and linear [[Attention]] — enabling both efficient recurrent inference and GPU-optimized training via tensor cores, closing a **~15× hardware efficiency gap** vs. [[Mamba]]'s parallel scan.
 
 ---
 
@@ -171,15 +171,15 @@ Key contrasts with standard [[Transformer]] [[Attention]]:
 
 - **Hardware efficiency:** [[SSD]]'s matmul-based training algorithm exploits tensor cores for **~989 TFLOPS** BF16 throughput on H100, vs. **~67 TFLOPS** for [[Mamba]]'s scan — a **~15× utilization improvement** and **2–8× end-to-end training speedup**.
 - **Larger state capacity:** The multi-head design allows state sizes of $N=64$–$128$ (vs. $N=16$ in [[Mamba]]), giving the model **4–8× more memory capacity per layer** while remaining computationally tractable.
-- **Theoretical unification:** By proving that [[SSD]] is simultaneously an [[SSM]] and a form of linear [[Attention]], the work provides a formal bridge between two previously disconnected paradigms, enabling cross-pollination of techniques (e.g., [[Sequence parallelism]], [[FlashAttention]]-style tiling) from [[Transformer]] systems research into recurrent models.
+- **Theoretical unification:** By proving that [[SSD]] is simultaneously an [[State Space Model|SSM]] and a form of linear [[Attention]], the work provides a formal bridge between two previously disconnected paradigms, enabling cross-pollination of techniques (e.g., [[Sequence parallelism]], [[FlashAttention]]-style tiling) from [[Transformer]] systems research into recurrent models.
 
 ---
 
 ## Connections
 
-- [[Mamba]] — predecessor selective [[SSM]]; [[Transformers Are SSMs|Mamba-2]] restricts its diagonal $A$ to scalar-times-identity
+- [[Mamba]] — predecessor selective [[State Space Model|SSM]]; [[Transformers Are SSMs|Mamba-2]] restricts its diagonal $A$ to scalar-times-identity
 - [[Transformers Are SSMs|Mamba-2]] — the full model and architecture building on this [[SSD]] theory
-- [[SSM]] — the broader family of state space models that [[SSD]] belongs to
+- [[State Space Model|SSM]] — the broader family of state space models that [[SSD]] belongs to
 - [[SSD]] — the specific algorithmic layer introduced here
 - [[Attention]] — [[SSD]]'s quadratic form is equivalent to softmax-free linear attention with decay mask
 - [[FlashAttention]] — systems inspiration for [[SSD]]'s chunkwise tiling algorithm; [[FlashAttention-2]] achieves analogous tensor-core utilization for standard [[Attention]]
@@ -187,7 +187,7 @@ Key contrasts with standard [[Transformer]] [[Attention]]:
 - [[RWKV]] — another recurrent model with an attention-mode dual interpretation; [[SSD]] formalizes this duality more explicitly
 - [[KV cache]] — [[SSD]]'s fixed-size hidden state $h_t$ is the recurrent analogue, with $O(1)$ memory vs. $O(T)$ for [[Transformer]]s
 - [[Chunkwise recurrent]] — the [[SSD]] training algorithm; processes length-$C$ chunks with intra-chunk matmuls and inter-chunk recurrence
-- [[Sequence parallelism]] — [[SSD]]'s matmul structure unlocks [[Transformer]]-style data and sequence parallelism for [[SSM|SSMs]]
+- [[Sequence parallelism]] — [[SSD]]'s matmul structure unlocks [[Transformer]]-style data and sequence parallelism for [[State Space Model|SSMs]]
 - [[Jamba]] — hybrid [[Mamba]]/[[Transformer]] architecture that could benefit from [[SSD]]'s improved throughput
 
 ---
@@ -202,16 +202,16 @@ Key contrasts with standard [[Transformer]] [[Attention]]:
 
 ## Related Wiki Notes
 
-- [[Mamba]] — predecessor selective [[SSM]]
+- [[Mamba]] — predecessor selective [[State Space Model|SSM]]
 - [[Transformers Are SSMs|Mamba-2]] — the full [[Transformers Are SSMs|Mamba-2]] model and training results
-- [[SSM]] — broader state space model family
+- [[State Space Model|SSM]] — broader state space model family
 - [[SSD]] — the Structured State Space Duality algorithm
 - [[Chunkwise recurrent]] — the [[SSD]] algorithm processes sequences in chunks
 - [[Hardware-Aware Scan]] — [[Mamba]]'s approach replaced by [[SSD]] matmuls
 - [[Diagonal recurrence]] — the recurrence type used in [[SSD]]
 - [[Exponential decay]] — the scalar $a_t$ acts as a positional decay
 - [[FlashAttention]] — systems inspiration for [[SSD]]
-- [[Sequence parallelism]] — [[SSD]] unlocks [[Transformer]]-style parallelism for [[SSM|SSMs]]
+- [[Sequence parallelism]] — [[SSD]] unlocks [[Transformer]]-style parallelism for [[State Space Model|SSMs]]
 - [[RWKV]] — another recurrent model with [[Attention]]-like duality
 - [[RetNet]] — linear [[Attention]] with fixed [[Exponential decay]]; closely related to [[SSD]]
 - [[KV cache]] — [[SSD]]'s fixed-size state as the recurrent analogue

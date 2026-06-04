@@ -26,7 +26,7 @@ tldr: >
 wikilinks:
   - "[[Mamba]]"
   - "[[Transformers Are SSMs|Mamba-2]]"
-  - "[[SSM]]"
+  - "[[State Space Model|SSM]]"
   - "[[SSD]]"
   - "[[FlashAttention]]"
   - "[[Hardware-Aware Scan]]"
@@ -53,7 +53,7 @@ wikilinks:
 
 ## TL;DR
 
-The `state-spaces/mamba` GitHub repository is the canonical implementation of three generations of selective [[SSM|state space models]]. [[Mamba]] (v1) introduced input-dependent parameters with a hardware-aware parallel scan, achieving [[Transformer]]-competitive perplexity with **5× faster inference** at 2K sequence length. [[Transformers Are SSMs|Mamba-2]] restructured the recurrence into the [[SSD]] (Structured State Space Duality) framework, enabling tensor-core matmuls and **2–8× training throughput improvement** over Mamba-1. Mamba-3 (2025) adds MIMO (multiple-input multiple-output) SSM structure for improved long-range recall with an inference-first design philosophy. The repo ships pip-installable CUDA kernels, pretrained checkpoints (130M–2.8B parameters trained on 300B tokens), and direct integration with `lm-evaluation-harness`.
+The `state-spaces/mamba` GitHub repository is the canonical implementation of three generations of selective [[State Space Model|state space models]]. [[Mamba]] (v1) introduced input-dependent parameters with a hardware-aware parallel scan, achieving [[Transformer]]-competitive perplexity with **5× faster inference** at 2K sequence length. [[Transformers Are SSMs|Mamba-2]] restructured the recurrence into the [[SSD]] (Structured State Space Duality) framework, enabling tensor-core matmuls and **2–8× training throughput improvement** over Mamba-1. Mamba-3 (2025) adds MIMO (multiple-input multiple-output) SSM structure for improved long-range recall with an inference-first design philosophy. The repo ships pip-installable CUDA kernels, pretrained checkpoints (130M–2.8B parameters trained on 300B tokens), and direct integration with `lm-evaluation-harness`.
 
 ---
 
@@ -65,8 +65,8 @@ This is the **official implementation** of the Mamba family of models, including
 
 ## Key Concepts
 
-- **[[Mamba]]** — Selective [[SSM]] (S6) with input-dependent $(A, B, C)$ parameters; breaks the time-invariance constraint of classical SSMs to enable content-based reasoning
-- **[[SSM|Selective State Space Model]]** — Continuous-time system discretized per token; Mamba-1 uses state size $N=16$, Mamba-2 expands to $N=64$–$128$
+- **[[Mamba]]** — Selective [[State Space Model|SSM]] (S6) with input-dependent $(A, B, C)$ parameters; breaks the time-invariance constraint of classical SSMs to enable content-based reasoning
+- **[[State Space Model|Selective State Space Model]]** — Continuous-time system discretized per token; Mamba-1 uses state size $N=16$, Mamba-2 expands to $N=64$–$128$
 - **[[SSD]] (Structured State Space Duality)** — [[Transformers Are SSMs|Mamba-2]]'s core algorithm; scalar-times-identity $A_t$ constraint enables rewriting the recurrence as a masked matrix multiplication, unlocking tensor-core acceleration
 - **Hardware-Aware Scan** — Fused CUDA kernel that keeps the scan state in SRAM rather than [[HBM]], eliminating the memory-bandwidth bottleneck; inspired by [[FlashAttention]]'s IO-aware design
 - **Chunkwise recurrent computation** — Splits sequences into chunks (e.g., 256 tokens); each chunk is computed with a matmul (parallel, fast) and chunk boundaries are connected by a short recurrent scan
@@ -175,7 +175,7 @@ lm_eval --model mamba_ssm \
 
 - [[Mamba]] — Mamba-1 foundational paper; introduces selectivity mechanism and hardware-aware scan
 - [[Transformers Are SSMs|Mamba-2]] — Mamba-2 / [[SSD]] paper; theoretical duality between SSMs and [[Attention]], enabling tensor-core training
-- [[SSM]] — Broader family of state space models (S4, S5, H3) that Mamba extends with selectivity
+- [[State Space Model|SSM]] — Broader family of state space models (S4, S5, H3) that Mamba extends with selectivity
 - [[SSD]] — Structured State Space Duality; the algorithmic core of Mamba-2
 - [[FlashAttention]] — Direct inspiration for IO-aware kernel design; both avoid materializing full intermediate tensors in [[HBM]]
 - [[Attention]] — The mechanism Mamba's recurrent form replaces at inference; [[Transformers Are SSMs|Mamba-2]] paper formalizes their mathematical duality
@@ -203,7 +203,7 @@ lm_eval --model mamba_ssm \
 
 - [[Mamba]] — the foundational selective SSM paper
 - [[Transformers Are SSMs|Mamba-2]] — SSD: Structured State Space Duality
-- [[SSM]] — state space models background
+- [[State Space Model|SSM]] — state space models background
 - [[SSD]] — the core Mamba-2 algorithm
 - [[Hardware-Aware Scan]] — Mamba-1's training algorithm
 - [[Chunkwise recurrent]] — Mamba-2's SSD training algorithm

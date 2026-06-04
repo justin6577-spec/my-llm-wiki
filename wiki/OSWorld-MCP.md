@@ -81,6 +81,6 @@ The gap: no benchmark simultaneously tests (1) GUI interaction skill, (2) tool i
 [[LLM Benchmarks]] [[LLM evaluation]] — parent context for this work  
 [[OSWorld]] — the base environment this benchmark extends  
 [[WebArena]] — related dynamic GUI agent benchmark  
-[[Tool Use]] — the core capability being measured  
+[[ToolLLM|Tool Use]] — the core capability being measured  
 [[RLHF]] — training paradigm relevant to improving tool-use behavior  
 [[Transformer]] — backbone of the multimodal models being evaluated

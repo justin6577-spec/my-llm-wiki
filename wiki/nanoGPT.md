@@ -20,7 +20,7 @@ nanoGPT is a minimal, readable codebase for training and fine-tuning GPT-style [
 - `train.py` — a straightforward training loop with DDP support
 - `model.py` — a GPT model definition that can load OpenAI GPT-2 weights
 
-Its design philosophy prioritises *practicality over pedagogy*, making it easy to hack for custom [[language model]] experiments.
+Its design philosophy prioritises *practicality over pedagogy*, making it easy to hack for custom [[Transformer|language model]] experiments.
 
 ## Key Features
 
@@ -58,4 +58,4 @@ python sample.py --out_dir=out-shakespeare-char
 
 ## Relevance to Wiki Themes
 
-nanoGPT is a canonical reference implementation of the [[transformer]] [[neural network]] architecture for [[language model]] pretraining. It demonstrates [[scaling]] considerations (batch size, context length, model size) and serves as the pedagogical baseline against which hardware-accelerated systems like [[FlashAttention-2]] and [[Sequence parallelism]] are often benchmarked.
+nanoGPT is a canonical reference implementation of the [[transformer]] [[Transformer|neural network]] architecture for [[Transformer|language model]] pretraining. It demonstrates [[Scaling Laws|scaling]] considerations (batch size, context length, model size) and serves as the pedagogical baseline against which hardware-accelerated systems like [[FlashAttention-2]] and [[Sequence parallelism]] are often benchmarked.

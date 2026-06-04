@@ -330,6 +330,19 @@ def build():
     out_path.write_text(json.dumps(notes, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"Processed {len(notes)} notes → {out_path}")
 
+    # Warn about broken wikilinks so authors notice them at build time.
+    # Normalize everything to lowercase-with-hyphens for comparison.
+    note_id_norm  = {re.sub(r"[\s_]", "-", n["id"].lower()) for n in notes}
+    note_ttl_norm = {n.get("title", "").lower() for n in notes}
+    broken_links = []
+    for n in notes:
+        for link_id in n.get("links", []):
+            clean = re.sub(r"[\s_]", "-", link_id.lower())
+            if clean not in note_id_norm and link_id.lower() not in note_ttl_norm:
+                broken_links.append(f"{n['title']} → [[{link_id}]]")
+    if broken_links:
+        print(f"  ⚠️  {len(broken_links)} broken wikilinks detected")
+
 
 if __name__ == "__main__":
     build()

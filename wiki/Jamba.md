@@ -160,19 +160,19 @@ The 1:7 ratio was selected as the **most compute-efficient variant among best-pe
 
 ### Builds On
 - [[Mamba]] — The SSM backbone; Jamba uses Mamba layers with added RMSNorm for stability
-- [[Mixtral-8x7B]] — MoE design inspiration; Jamba matches its quality with 8x smaller KV cache
-- [[Transformer Architecture]] — Attention layers retained at 1:8 ratio
-- [[H3]] — Early hybrid SSM+attention up to 2.7B params; Jamba scales this to production
+- [[Mixtral|Mixtral-8x7B]] — MoE design inspiration; Jamba matches its quality with 8x smaller KV cache
+- [[Transformer|Transformer Architecture]] — Attention layers retained at 1:8 ratio
+- [[HIPPO|H3]] — Early hybrid SSM+attention up to 2.7B params; Jamba scales this to production
 - [[Mixture of Experts]] — Sparse MoE (top-2 of 16) to decouple capacity from compute
 
 ### Competes With
-- [[Mixtral-8x7B]] — Similar active params (12B vs 12.9B), similar quality, but Jamba has 3x throughput and 8x smaller KV cache
-- [[Llama-2 70B]] — Comparable quality, but Llama-2-70B requires much more memory and cannot do 256K context
+- [[Mixtral|Mixtral-8x7B]] — Similar active params (12B vs 12.9B), similar quality, but Jamba has 3x throughput and 8x smaller KV cache
+- [[LLaMA 2|Llama-2 70B]] — Comparable quality, but Llama-2-70B requires much more memory and cannot do 256K context
 - [[StripedHyena-7B]] — Another hybrid SSM-attention model; lags Mistral-7B, unlike Jamba
 
 ### Enables / Related
-- [[State Space Models]] — Validates SSM viability in production LLMs
-- [[Long Context LLMs]] — New benchmark for open models at 256K tokens
+- [[State Space Model|State Space Models]] — Validates SSM viability in production LLMs
+- [[KV Cache Optimization|Long-Context LLMs]] — New benchmark for open models at 256K tokens
 - [[Efficient LLM Inference]] — KV cache compression via architectural design rather than post-hoc compression
 
 ---
@@ -200,15 +200,15 @@ The 1:7 ratio was selected as the **most compute-efficient variant among best-pe
 
 ## Related Concepts
 
-[[State Space Models]]
+[[State Space Model|State Space Models]]
 [[Selective State Spaces]]
 [[Mixture of Experts]]
 [[KV Cache Optimization]]
-[[Long Context Modeling]]
+[[KV Cache Optimization|Long-Context Modeling]]
 [[Efficient Transformer Architectures]]
-[[Grouped Query Attention]]
+[[GQA|Grouped Query Attention]]
 [[RMSNorm]]
 [[SwiGLU]]
-[[Sparse Attention]]
-[[Recurrent Neural Networks]]
+[[Sliding window attention|Sparse Attention]]
+[[LSTM|Recurrent Neural Networks]]
 [[BPE Tokenization]]
