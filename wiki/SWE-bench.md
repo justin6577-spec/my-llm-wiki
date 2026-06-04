@@ -5,7 +5,7 @@ year: "2024"
 arxiv: "2310.06770"
 tags: [benchmarks, coding, agentic, evaluation, software-engineering]
 tldr: "A benchmark of 2,294 real GitHub issues requiring repository-scale code edits, where the best model at launch (Claude 2) solved only 1.96%"
-citation_count: 0
+citation_count: 2443
 ---
 
 ## TL;DR

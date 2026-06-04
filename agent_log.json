@@ -102,5 +102,27 @@
       "xLSTM.md (-505)"
     ],
     "skipped": []
+  },
+  {
+    "timestamp": "2026-06-03T19:04:32.927254",
+    "mode": "update-citations",
+    "topic": null,
+    "added": [
+      "Mamba.md (+15)",
+      "Mamba3.md (+1)",
+      "Medusa.md (+2)",
+      "OSWorld-MCP.md (+13)",
+      "OSWorld.md (+762)",
+      "RWKV.md (+3)",
+      "RetNet.md (+1)",
+      "S4.md (+6)",
+      "SWE-bench Pro.md (+114)",
+      "SWE-bench.md (+2,443)",
+      "ToolLLM.md (+1,644)",
+      "Transformer.md (+130)",
+      "Transformers Are SSMs.md (+4)",
+      "xLSTM.md (+1)"
+    ],
+    "skipped": []
   }
 ]
