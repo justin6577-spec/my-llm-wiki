@@ -163,5 +163,21 @@
       "xLSTM.md (+8)"
     ],
     "skipped": []
+  },
+  {
+    "timestamp": "2026-06-10T02:07:44.846306",
+    "mode": "update-citations",
+    "topic": null,
+    "added": [
+      "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models.md (+7,912)",
+      "Chinchilla_Scaling_Laws.md (-158)",
+      "DeepSeek-R1 Incentivizing Reasoning Capability in LLMs via Reinforcement Learning.md (-5,131)",
+      "DeepSeek-V3 Technical Report.md (-3,500)",
+      "Direct Preference Optimization Your Language Model is Secretly a Reward Model.md (+3,544)",
+      "RoPE.md (+413)",
+      "The Llama 3 Herd of Models.md (+2,936)",
+      "Transformer.md (+1)"
+    ],
+    "skipped": []
   }
 ]
