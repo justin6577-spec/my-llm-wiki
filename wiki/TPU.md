@@ -1,6 +1,7 @@
 ---
 title: "TPU (Tensor Processing Unit)"
 tags: [hardware, tpu, google, asic, systolic-array]
+aliases: ["Tensor-Processing-Unit"]
 tldr: "Google's custom ASIC for neural network training and inference, built around large [[Systolic array|systolic arrays]] for matrix multiplication. High matmul density and predictable execution; less programmable than [[GPU]]s."
 ---
 

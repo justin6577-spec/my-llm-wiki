@@ -1,6 +1,7 @@
 ---
 title: "Grouped Query Attention (GQA)"
 tags: [attention, memory, inference, kv-cache, efficiency]
+aliases: ["Grouped-Query-Attention"]
 tldr: "Partition Q heads into groups that share K and V heads. With 32 Q heads and 2 KV heads (as in Nemotron-3 Super), the KV cache shrinks 16× vs. standard MHA with minimal quality loss."
 theme: efficiency
 ---

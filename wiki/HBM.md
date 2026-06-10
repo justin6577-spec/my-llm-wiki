@@ -1,6 +1,7 @@
 ---
 title: "HBM (High Bandwidth Memory)"
 tags: [hardware, memory, gpu, bandwidth]
+aliases: ["High-Bandwidth-Memory"]
 tldr: "Stacked DRAM chips placed next to the accelerator die through silicon interposers. ~3–8 TB/s aggregate bandwidth, dominant memory tier of modern GPUs and TPUs. Not as fast as on-chip [[SRAM]], but the only practical option for tens of GB of capacity."
 ---
 

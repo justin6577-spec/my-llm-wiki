@@ -1,5 +1,6 @@
 ---
 title: ReAct: Synergizing Reasoning and Acting in Language Models
+aliases: ["ReAct"]
 authors: Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan, Yuan Cao
 year: 2023
 arxiv: 2210.03629

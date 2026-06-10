@@ -1,9 +1,10 @@
 ---
-title: DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning
+title: "DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning"
 authors: DeepSeek-AI
 year: 2025
 arxiv: 2501.12948
 tags: [reinforcement-learning, reasoning, chain-of-thought, foundational, inference, fine-tuning]
+aliases: ["DeepSeek-R1"]
 citation_count: 5369
 tldr: DeepSeek-R1 trains LLMs to reason using pure RL (GRPO) without human-annotated reasoning traces, achieving performance surpassing supervised baselines on AIME and other STEM benchmarks with emergent self-reflection behaviors.
 ---

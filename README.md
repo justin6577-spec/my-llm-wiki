@@ -189,6 +189,26 @@ Notes grouped by theme in the **By Theme** tab:
 4. Press › to jump through all 3 occurrences
 5. Clear search → highlights disappear
 
+### Search Modes
+
+Three search scope modes are available via the mode selector above the result bar:
+
+| Mode | Button | Scope |
+|------|--------|-------|
+| **Papers only** | 📄 | Academic papers — filters by arXiv ID, citation count, and year; searches title and tags only |
+| **All notes** | 💡 | Default — all notes including concept stubs; searches title, tags, and TL;DR |
+| **Full text** | 🔍 | All notes with complete body text search (slowest but most thorough) |
+
+**Enter-key card highlighting:**
+- Press **Enter** while typing to freeze the current search results as a visual overlay:
+  - Matching cards glow purple with a soft border shadow
+  - Non-matching cards dim to 20% opacity
+  - Text inside matching cards is highlighted with `<mark>` spans
+  - Status bar shows `"X matching cards highlighted  Esc to clear"`
+- Press **Escape** to clear highlighting and return to normal filtering
+- Typing while in highlight mode auto-clears the highlight (returns to live filtering)
+- Press `/` anywhere on the page to jump focus to the search bar
+
 ### Paper Comparison
 
 - Click **⊕ Compare** on any note card to select it for comparison
@@ -219,7 +239,7 @@ Notes grouped by theme in the **By Theme** tab:
 
 ## 📚 Wiki Contents
 
-[![Wiki Notes](https://img.shields.io/badge/dynamic/json?url=https://MuhammadSaqlainAslam.github.io/my-llm-wiki/notes.json&query=$.length&label=wiki+notes&color=7c3aed&style=flat)](https://MuhammadSaqlainAslam.github.io/my-llm-wiki) — 20+ full paper articles + growing concept glossary (badge updates automatically with each new paper).
+[![Wiki Notes](https://img.shields.io/badge/dynamic/json?url=https://MuhammadSaqlainAslam.github.io/my-llm-wiki/notes.json&query=$.length&label=wiki+notes&color=7c3aed&style=flat)](https://MuhammadSaqlainAslam.github.io/my-llm-wiki) — 30+ full paper articles + growing concept glossary (badge updates automatically with each new paper).
 
 ### Papers
 
@@ -264,6 +284,29 @@ Notes grouped by theme in the **By Theme** tab:
 | EAGLE | 2024 | ~474 | [arXiv:2401.15077](https://arxiv.org/abs/2401.15077) |
 | Speculative Decoding | 2025 | ~6 | [arXiv:2601.11580](https://arxiv.org/abs/2601.11580) |
 | KV Cache Optimization | 2026 | ~1 | [arXiv:2603.20397](https://arxiv.org/abs/2603.20397) |
+
+#### Reasoning & RL
+
+| Paper | Year | ~Citations | arXiv |
+|-------|------|-----------|-------|
+| Chain-of-Thought Prompting | 2022 | ~18,000 | [arXiv:2201.11903](https://arxiv.org/abs/2201.11903) |
+| ReAct: Reasoning + Acting | 2022 | ~4,500 | [arXiv:2210.03629](https://arxiv.org/abs/2210.03629) |
+| DeepSeek-R1 | 2025 | ~3,000 | [arXiv:2501.12948](https://arxiv.org/abs/2501.12948) |
+
+#### Fine-tuning & Alignment
+
+| Paper | Year | ~Citations | arXiv |
+|-------|------|-----------|-------|
+| LoRA | 2021 | ~22,000 | [arXiv:2106.09685](https://arxiv.org/abs/2106.09685) |
+| Direct Preference Optimization (DPO) | 2023 | ~8,000 | [arXiv:2305.18290](https://arxiv.org/abs/2305.18290) |
+
+#### Frontier Model Families
+
+| Paper | Year | ~Citations | arXiv |
+|-------|------|-----------|-------|
+| The Llama 3 Herd of Models | 2024 | ~5,000 | [arXiv:2407.21783](https://arxiv.org/abs/2407.21783) |
+| DeepSeek-V3 | 2024 | ~2,500 | [arXiv:2412.19437](https://arxiv.org/abs/2412.19437) |
+| Qwen3 Technical Report | 2025 | ~800 | [arXiv:2505.09388](https://arxiv.org/abs/2505.09388) |
 
 #### Modern Synthesis
 

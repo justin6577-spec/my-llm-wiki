@@ -1,5 +1,6 @@
 ---
 title: "Attention Is All You Need"
+aliases: ["Attention-Is-All-You-Need"]
 authors: "Vaswani et al."
 year: 2017
 arxiv: "1706.03762"

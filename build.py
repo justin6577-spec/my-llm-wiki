@@ -51,10 +51,11 @@ def extract_wikilinks(text):
     cleaned = re.sub(r"`[^`\n]+`", lambda m: " " * len(m.group()), text)
     # Also strip fenced code blocks (``` ... ```)
     cleaned = re.sub(r"```.*?```", lambda m: " " * len(m.group()), cleaned, flags=re.DOTALL)
-    raw = re.findall(r"!?\[\[([^\]|#]+?)(?:[|#][^\]]*)?\]\]", cleaned)
+    raw = re.findall(r"!?\[\[([^\]|#]+?)(?:[\\|#][^\]]*)?\]\]", cleaned)
     ids = []
     for r in raw:
-        note_id = r.strip().replace(" ", "-")
+        # Strip trailing backslash — Obsidian uses \| inside table cells to escape the pipe
+        note_id = r.strip().rstrip("\\").strip().replace(" ", "-")
         if note_id not in ids:
             ids.append(note_id)
     return ids

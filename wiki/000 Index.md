@@ -333,6 +333,51 @@ Evaluates LLM ability to use external tools, APIs, and computer interfaces.
 
 ---
 
+## 🧠 Reasoning & RL
+
+Papers on reasoning, reinforcement learning from human feedback, chain-of-thought, and alignment.
+
+| Paper | Year | Citations | arXiv |
+|-------|------|-----------|-------|
+| [[Chain-of-Thought Prompting Elicits Reasoning in Large Language Models\|Chain of Thought]] | 2022 | ~9,000 | [2201.11903](https://arxiv.org/abs/2201.11903) |
+| [[RLHF\|InstructGPT / RLHF]] | 2022 | ~8,500 | [2203.02155](https://arxiv.org/abs/2203.02155) |
+| [[ReAct Synergizing Reasoning and Acting in Language Models\|ReAct]] | 2022 | ~3,500 | [2210.03629](https://arxiv.org/abs/2210.03629) |
+| [[Direct Preference Optimization Your Language Model is Secretly a Reward Model\|DPO]] | 2023 | ~4,500 | [2305.18290](https://arxiv.org/abs/2305.18290) |
+| [[DeepSeek-R1 Incentivizing Reasoning Capability in LLMs via Reinforcement Learning\|DeepSeek-R1]] | 2025 | ~8,000 | [2501.12948](https://arxiv.org/abs/2501.12948) |
+
+**Tags:** `reasoning` `rlhf` `alignment` `chain-of-thought`
+
+---
+
+## 🔧 Fine-tuning & Alignment
+
+Parameter-efficient fine-tuning and alignment techniques.
+
+| Paper | Year | Citations | arXiv |
+|-------|------|-----------|-------|
+| [[LoRA Low-Rank Adaptation of Large Language Models\|LoRA]] | 2021 | ~12,000 | [2106.09685](https://arxiv.org/abs/2106.09685) |
+| [[RLHF\|InstructGPT / RLHF]] | 2022 | ~8,500 | [2203.02155](https://arxiv.org/abs/2203.02155) |
+| [[Direct Preference Optimization Your Language Model is Secretly a Reward Model\|DPO]] | 2023 | ~4,500 | [2305.18290](https://arxiv.org/abs/2305.18290) |
+
+**Tags:** `fine-tuning` `alignment` `parameter-efficient` `rlhf`
+
+---
+
+## 🌐 Frontier Model Families
+
+Technical reports of major model families (2024–2025).
+
+| Paper | Year | Citations | arXiv |
+|-------|------|-----------|-------|
+| [[The Llama 3 Herd of Models\|LLaMA 3]] | 2024 | ~15,000 | [2407.21783](https://arxiv.org/abs/2407.21783) |
+| [[DeepSeek-V3 Technical Report\|DeepSeek-V3]] | 2024 | ~3,000 | [2412.19437](https://arxiv.org/abs/2412.19437) |
+| [[DeepSeek-R1 Incentivizing Reasoning Capability in LLMs via Reinforcement Learning\|DeepSeek-R1]] | 2025 | ~8,000 | [2501.12948](https://arxiv.org/abs/2501.12948) |
+| [[Qwen3 Technical Report\|Qwen3]] | 2025 | ~500 | [2505.09388](https://arxiv.org/abs/2505.09388) |
+
+**Tags:** `llm` `foundational` `scaling` `open-source`
+
+---
+
 ## Reading Order
 
 **If you're new:** [[Transformer]] → [[LLaMA 2]] → [[Mixture-of-Experts]] → [[Mamba]] → [[Nemotron-3]]
@@ -342,6 +387,10 @@ Evaluates LLM ability to use external tools, APIs, and computer interfaces.
 **If you're deploying:** [[Flash Attention]] → [[FlashAttention-2]] → [[KV Cache Optimization]] → [[Medusa]] → [[EAGLE]] → [[Speculative Decoding]]
 
 **If you want the math:** [[Transformer]] (attention) → [[S4]] (SSM, HiPPO, Cauchy kernel) → [[Mamba]] (selectivity) → [[Transformers Are SSMs]] (semiseparable matrices, SSD) → [[xLSTM]] (exponential gating + matrix memory)
+
+**If you care about alignment:** [[RLHF]] → [[Direct Preference Optimization Your Language Model is Secretly a Reward Model|DPO]] → [[DeepSeek-R1 Incentivizing Reasoning Capability in LLMs via Reinforcement Learning|DeepSeek-R1]]
+
+**If you care about fine-tuning:** [[LoRA Low-Rank Adaptation of Large Language Models|LoRA]] → [[RLHF]] → [[Direct Preference Optimization Your Language Model is Secretly a Reward Model|DPO]]
 
 **If you care about silicon:** [[Hardware Acceleration for Neural Networks]] → [[Flash Attention]] → [[FlashAttention-2]] → [[KV Cache Optimization]] → [[Hardware-Aware Scan]]
 
