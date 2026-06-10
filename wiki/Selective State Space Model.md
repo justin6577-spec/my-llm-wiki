@@ -1,7 +1,7 @@
 ---
 title: "Selective State Space Model (S6)"
 tags: [ssm, mamba, selectivity, recurrence]
-tldr: "A state-space model whose $\mathbf{B}$, $\mathbf{C}$, and $\Delta$ parameters are functions of the current input $x_t$ — content-dependent rather than fixed. The core innovation behind [[Mamba]] that closed the quality gap between SSMs and attention."
+tldr: "A state-space model whose $\\mathbf{B}$, $\\mathbf{C}$, and $\\Delta$ parameters are functions of the current input $x_t$ — content-dependent rather than fixed. The core innovation behind [[Mamba]] that closed the quality gap between SSMs and attention."
 ---
 
 # Selective State Space Model (S6)

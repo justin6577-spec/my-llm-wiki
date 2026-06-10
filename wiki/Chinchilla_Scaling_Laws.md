@@ -1,6 +1,9 @@
 ---
 title: "Chinchilla Scaling Laws"
+authors: "Hoffmann et al."
 tags: [glossary, scaling, training, llms]
+arxiv: "2203.15556"
+citation_count: 3500
 tldr: "For a fixed compute budget, model size and training tokens should scale equally — overturning the Kaplan et al. belief that bigger models are always better."
 ---
 

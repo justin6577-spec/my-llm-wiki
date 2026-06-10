@@ -1,7 +1,7 @@
 ---
 title: "Draft Model"
 tags: [speculative-decoding, inference, throughput]
-tldr: "The small, fast model in [[Speculative Decoding]] that proposes $K$ candidate tokens for the larger "target" model to verify in parallel. Can be a separately trained small model, an early-exit head, or a [[Multi-Token Prediction]] auxiliary head."
+tldr: "The small, fast model in [[Speculative Decoding]] that proposes $K$ candidate tokens for the larger \"target\" model to verify in parallel. Can be a separately trained small model, an early-exit head, or a [[Multi-Token Prediction]] auxiliary head."
 ---
 
 # Draft Model

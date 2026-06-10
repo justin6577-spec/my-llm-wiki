@@ -1,7 +1,7 @@
 ---
 title: "Selective State Spaces"
 tags: [ssm, mamba, selectivity]
-tldr: "Synonym for [[Selective State Space Model]] — see that note for the full explanation. The phrase "selective state spaces" appears in Mamba's title."
+tldr: "Synonym for [[Selective State Space Model]] — see that note for the full explanation. The phrase \"selective state spaces\" appears in Mamba's title."
 ---
 
 # Selective State Spaces

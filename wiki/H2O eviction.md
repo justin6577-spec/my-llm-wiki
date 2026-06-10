@@ -1,7 +1,7 @@
 ---
 title: "H2O Eviction (Heavy Hitter Oracle)"
 tags: [kv-cache, eviction, attention-score]
-tldr: "An [[Eviction policy]] that drops KV-cache entries based on accumulated attention scores: the "heavy hitters" (highest cumulative attention received) stay, the rest are evicted. Budget-controlled, mild quality loss."
+tldr: "An [[Eviction policy]] that drops KV-cache entries based on accumulated attention scores: the \"heavy hitters\" (highest cumulative attention received) stay, the rest are evicted. Budget-controlled, mild quality loss."
 ---
 
 # H2O Eviction (Heavy Hitter Oracle)

@@ -1,5 +1,5 @@
 ---
-title: Hardware Acceleration for Neural Networks: A Comprehensive Survey
+title: "Hardware Acceleration for Neural Networks: A Comprehensive Survey"
 authors: Bin Xu, Ayan Banerjee, Sandeep Gupta
 year: 2026
 arxiv: 2512.23914

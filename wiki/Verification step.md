@@ -1,7 +1,7 @@
 ---
 title: "Verification Step"
 tags: [speculative-decoding, inference, sampling]
-tldr: "The single parallel forward pass through the big "target" model in [[Speculative Decoding]] that scores all $K$ draft tokens at once, accepts the longest matching prefix, and rejects the rest. Equivalent to autoregressive sampling in distribution — no quality loss."
+tldr: "The single parallel forward pass through the big \"target\" model in [[Speculative Decoding]] that scores all $K$ draft tokens at once, accepts the longest matching prefix, and rejects the rest. Equivalent to autoregressive sampling in distribution — no quality loss."
 ---
 
 # Verification Step
