@@ -2,6 +2,7 @@
 title: "Hardware Acceleration for Neural Networks: A Comprehensive Survey"
 authors: "Bin Xu, Ayan Banerjee, Sandeep Gupta"
 year: 2025
+arxiv: "2512.23914"
 tags: [hardware, gpu, tpu, npu, fpga, asic, lpu, in-memory, kv-cache, inference, throughput]
 tldr: "A survey of every chip family running neural networks today — GPUs with tensor cores, TPUs/NPUs, FPGAs, ASICs, LLM-serving LPUs, and in-/near-memory computing — through one consistent taxonomy: workload × execution setting × optimization lever. The recurring theme is that peak FLOPS doesn't matter — memory movement and KV-cache bandwidth dominate end-to-end performance for modern LLMs."
 aliases: [Hardware Acceleration Survey, NN Accelerators]

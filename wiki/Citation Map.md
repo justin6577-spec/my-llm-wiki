@@ -6,7 +6,7 @@ tldr: "Citation scores and downstream impact of core papers — total citations 
 
 # Citation Map
 
-> Last updated: June 2026
+> Last updated: June 10, 2026
 > Source: Semantic Scholar (live API)
 
 ## How to Read This
