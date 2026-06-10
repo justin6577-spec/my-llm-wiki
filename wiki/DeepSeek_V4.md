@@ -1,7 +1,9 @@
 ---
 title: "DeepSeek-V4: Towards Highly Efficient Million-Token Context Intelligence"
+arxiv: "2504.05411"
 authors: "DeepSeek-AI"
 year: 2026
+citation_count: 8
 tags: [moe, long-context, attention, compression, sparse-attention, muon, post-training, rl]
 tldr: "Crack the quadratic attention bottleneck for 1M-token contexts by replacing standard attention with two new compressed variants (CSA + HCA), upgrading residual connections with manifold-constrained hyper-connections, and using the Muon optimizer. Result: at 1M tokens, DeepSeek-V4-Pro uses only 27% of DeepSeek-V3's FLOPs and 10% of its KV cache."
 theme: efficiency

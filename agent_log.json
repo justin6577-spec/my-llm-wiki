@@ -124,5 +124,44 @@
       "xLSTM.md (+1)"
     ],
     "skipped": []
+  },
+  {
+    "timestamp": "2026-06-10T00:57:25.431187",
+    "mode": "update-citations",
+    "topic": null,
+    "added": [
+      "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models.md (+18,912)",
+      "DeepSeek-R1 Incentivizing Reasoning Capability in LLMs via Reinforcement Learning.md (+5,369)",
+      "DeepSeek_V4.md (+8)",
+      "Direct Preference Optimization Your Language Model is Secretly a Reward Model.md (+9,044)",
+      "EAGLE.md (+7)",
+      "Flash Attention.md (+46)",
+      "FlashAttention-2.md (+37)",
+      "Griffin.md (+3)",
+      "Humanity's Last Exam.md (+338)",
+      "Jamba.md (+5)",
+      "LLaMA 2.md (+88)",
+      "LoRA Low-Rank Adaptation of Large Language Models.md (+19,723)",
+      "MCP-Atlas.md (+19)",
+      "Mamba.md (+89)",
+      "Medusa.md (+10)",
+      "Mixtral.md (+1,930)",
+      "Mixture-of-Experts.md (+4,060)",
+      "Nemotron-3.md (+13)",
+      "OSWorld.md (+16)",
+      "Qwen3 Technical Report.md (+5,740)",
+      "RWKV.md (+4)",
+      "RetNet.md (+8)",
+      "S4.md (+35)",
+      "SWE-bench Pro.md (+4)",
+      "SWE-bench.md (+52)",
+      "Speculative Decoding.md (+1)",
+      "The Llama 3 Herd of Models.md (+15,936)",
+      "ToolLLM.md (+29)",
+      "Transformer.md (+728)",
+      "Transformers Are SSMs.md (+22)",
+      "xLSTM.md (+8)"
+    ],
+    "skipped": []
   }
 ]
