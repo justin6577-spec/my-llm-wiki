@@ -1,5 +1,6 @@
 ---
 title: "Attention Sinks"
+aliases: ["StreamingLLM"]
 tags: [attention, kv-cache, streamingllm]
 tldr: "The first few tokens of every sequence accumulate disproportionate attention weight across all heads — even when their content is meaningless. Evicting them collapses quality; retaining them lets sliding-window models work at arbitrary context length."
 ---

@@ -1,5 +1,6 @@
 ---
 title: "FPGA (Field-Programmable Gate Array)"
+aliases: ["FPGA-LLM"]
 tags: [hardware, fpga, reconfigurable]
 tldr: "Reconfigurable silicon — you compile a circuit description down to bit-level routing instead of compiling instructions. Lower density than ASICs but flexible; useful for niche or rapidly changing workloads."
 ---

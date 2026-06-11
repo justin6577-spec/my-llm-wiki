@@ -50,7 +50,7 @@ arXiv: 2405.21060 | Authors: Dao & Gu
 |------|-------|------|-----------|-------|
 | 1 | [[Mamba-3]] — Improved SSM sequence modeling | 2026 | ~300 | Architecture |
 | 2 | [[Falcon Mamba]] — 7B SSM LLM | 2024 | ~280 | LLM |
-| 3 | [[RWKV-7]] — Updated linear attention | 2025 | ~250 | Architecture |
+| 3 | [[RWKV\|RWKV-7]] — Updated linear attention | 2025 | ~250 | Architecture |
 | 4 | [[Samba]] — Mamba + sliding window attention | 2024 | ~220 | Hybrid |
 | 5 | [[Hymba]] — Hybrid Mamba-attention heads | 2024 | ~200 | Architecture |
 | 6 | [[DenseMamba]] — Dense hidden connections | 2024 | ~180 | Architecture |
@@ -100,7 +100,7 @@ arXiv: 2512.23914
 | 6 | [[LLM-PQ]] — Mixed precision LLM on hardware | 2025 | ~35 | Hardware |
 | 7 | [[NeuralKV]] — KV cache in hardware | 2025 | ~30 | Hardware |
 | 8 | [[TensorSSM]] — Tensor core SSM acceleration | 2025 | ~25 | Hardware |
-| 9 | [[FPGA-LLM]] — LLM inference on FPGA | 2025 | ~20 | Hardware |
+| 9 | [[FPGA\|FPGA-LLM]] — LLM inference on FPGA | 2025 | ~20 | Hardware |
 | 10 | [[EdgeMamba]] — Mamba on edge devices | 2025 | ~15 | Hardware |
 
 ---
@@ -136,8 +136,8 @@ arXiv: 2603.20397
 
 | Rank | Paper | Year | Citations | Theme |
 |------|-------|------|-----------|-------|
-| 1 | [[StreamingLLM]] — Infinite context via KV | 2024 | ~1,200 | Inference |
-| 2 | [[H2O]] — Heavy-hitter oracle KV eviction | 2024 | ~900 | Inference |
+| 1 | [[Attention sinks\|StreamingLLM]] — Infinite context via KV | 2024 | ~1,200 | Inference |
+| 2 | [[H2O eviction\|H2O]] — Heavy-hitter oracle KV eviction | 2024 | ~900 | Inference |
 | 3 | [[SnapKV]] — Snapshot KV compression | 2024 | ~600 | Inference |
 | 4 | [[PyramidKV]] — Pyramid KV allocation | 2024 | ~400 | Inference |
 | 5 | [[KVQuant]] — KV cache quantization | 2024 | ~350 | Inference |

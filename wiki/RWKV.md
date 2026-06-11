@@ -6,7 +6,7 @@ arxiv: "2305.13048"
 citation_count: 1063
 tags: [rnn, linear-attention, efficiency, inference, language-model, recurrence, parallelism]
 tldr: "RWKV replaces dot-product attention with a linear attention variant that can be computed either as a parallelizable Transformer (training) or as an O(1)-per-step RNN (inference). Scales to 14B parameters — the largest dense RNN ever trained — while matching GPT-NeoX-20B quality at a fraction of inference cost."
-aliases: [RWKV, Receptance Weighted Key Value]
+aliases: [RWKV, "RWKV-7", "Receptance Weighted Key Value"]
 theme: efficiency
 ---
 
