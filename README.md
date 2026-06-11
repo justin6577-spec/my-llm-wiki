@@ -560,30 +560,11 @@ Designed by the **Artificial Intelligence Research Center**
 
 ---
 
-## 📊 Analytics & Visitor Tracking
+## 📊 Analytics
 
-### For visitors
-Live country-based visitor tracking displayed at the bottom of every page via
-[Flag Counter](https://flagcounter.com) —
-updates automatically on every visit.
-No personal data collected. No cookies.
-GDPR compliant.
-
-### For the wiki owner (private)
-
-**Cloudflare Web Analytics — detailed stats:**
-https://dash.cloudflare.com
-→ Web Analytics → my-llm-wiki
-Tracks: page views, unique visitors, top pages, countries, referrers, browsers.
-Real-time. No cookies. Privacy-friendly.
-
-**Flag Counter — country breakdown:**
-https://flagcounter.com → Log in → My Counters
-Tracks: total visits per country, historical data since setup date.
-
-> ⚠️ Both services store visitor data permanently on their own servers.
-> Data is preserved regardless of any changes to this repo or HTML files.
-> The Flag Counter URL contains your unique counter ID — never change it.
+Privacy-friendly visitor tracking via
+[Cloudflare Web Analytics](https://cloudflare.com/web-analytics).
+No cookies. No personal data. GDPR compliant.
 
 ---
 
