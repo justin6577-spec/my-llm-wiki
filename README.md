@@ -562,9 +562,7 @@ Designed by the **Artificial Intelligence Research Center**
 
 ## 📊 Analytics
 
-Privacy-friendly visitor tracking via
-[Cloudflare Web Analytics](https://cloudflare.com/web-analytics).
-No cookies. No personal data. GDPR compliant.
+Privacy-friendly, cookie-free visitor tracking. No personal data collected.
 
 ---
 
