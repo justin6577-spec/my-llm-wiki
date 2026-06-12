@@ -20,3 +20,14 @@ __pycache__/
 # Logs — operational noise, may leak internal details
 *.log
 cron.log
+
+# PDF papers — server only, copyright compliance
+# Files stay on server disk but must not be committed to public GitHub
+raw/*.pdf
+raw/**/*.pdf
+
+# Company logos — require official authorization before public use
+docs/assets/foxconn-logo*.png
+docs/assets/foxconn-logo*.svg
+docs/assets/hhri-logo*.png
+docs/assets/hhri-logo*.svg
