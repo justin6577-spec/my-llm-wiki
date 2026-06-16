@@ -171,3 +171,4 @@ If you're deploying: **Flash Attention → FlashAttention-2 → KV Cache Optimiz
 If you care about silicon: **Hardware Acceleration → Flash Attention → FlashAttention-2 → Hardware-Aware Scan → KV Cache Optimization**
 
 If you want the linear-RNN lineage: **S4 → RWKV → RetNet → Griffin → Mamba → Transformers Are SSMs**
+ 
