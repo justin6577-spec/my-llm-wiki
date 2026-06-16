@@ -223,5 +223,21 @@
       "Transformers Are SSMs.md (+55)"
     ],
     "skipped": []
+  },
+  {
+    "timestamp": "2026-06-16T03:14:31.818172",
+    "mode": "update-citations",
+    "topic": null,
+    "added": [],
+    "skipped": []
+  },
+  {
+    "timestamp": "2026-06-16T03:24:11.930025",
+    "mode": "citations",
+    "topic": null,
+    "added": [
+      "/tmp/MegaBlocks.pdf"
+    ],
+    "skipped": []
   }
 ]

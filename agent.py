@@ -22,22 +22,29 @@ from pathlib import Path
 
 from openai import OpenAI
 
-# ── OpenRouter client (lazy — only initialized when LLM mode is used) ────────
-_OR_KEY = os.environ.get("OPENROUTER_API_KEY")
-_OR_URL = os.environ.get("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
-_MODEL  = os.environ.get("AGENT_LLM_MODEL", "anthropic/claude-sonnet-4-6")
+# ── .env support ────────────────────────────────────────────────────────────
+try:
+    from dotenv import load_dotenv
+    from pathlib import Path
+    load_dotenv(Path(__file__).parent / ".env")
+except ImportError:
+    pass
 
-_client = None
+# ── LLM client (lazy — reads env, works with DeepSeek, OpenRouter, etc.) ─────
+_API_KEY = os.environ.get("AGENT_LLM_API_KEY") or os.environ.get("DEEPSEEK_API_KEY") or os.environ.get("OPENROUTER_API_KEY")
+_API_URL = os.environ.get("AGENT_LLM_BASE_URL", "https://api.deepseek.com/v1")
+_MODEL   = os.environ.get("AGENT_LLM_MODEL", "deepseek-chat")
+
+_warned = False
 
 def _get_client():
-    global _client
-    if _client is not None:
-        return _client
-    if not _OR_KEY:
-        print("ERROR: OPENROUTER_API_KEY not set. Create a .env file or export it.")
-        sys.exit(1)
-    _client = OpenAI(api_key=_OR_KEY, base_url=_OR_URL)
-    return _client
+    global _warned
+    if not _API_KEY:
+        if not _warned:
+            print("ERROR: No LLM API key found. Set AGENT_LLM_API_KEY, DEEPSEEK_API_KEY, or OPENROUTER_API_KEY.")
+            _warned = True
+        return None
+    return OpenAI(api_key=_API_KEY, base_url=_API_URL)
 
 # Wiki location: override with WIKI_VAULT env var; defaults to this file's directory.
 VAULT = Path(os.environ.get("WIKI_VAULT", Path(__file__).resolve().parent))
@@ -301,113 +308,136 @@ def log_agent_run(results: dict):
 
 TOOLS = [
     {
-        "name": "search_arxiv",
-        "description": "Search arXiv for recent papers by keyword or topic.",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "query":       {"type": "string", "description": "Search query"},
-                "days_back":   {"type": "integer", "default": 1,  "description": "How many days back to include"},
-                "max_results": {"type": "integer", "default": 10, "description": "Max results to return"},
+        "type": "function",
+        "function": {
+            "name": "search_arxiv",
+            "description": "Search arXiv for recent papers by keyword or topic.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query":       {"type": "string", "description": "Search query"},
+                    "days_back":   {"type": "integer", "default": 1,  "description": "How many days back to include"},
+                    "max_results": {"type": "integer", "default": 10, "description": "Max results to return"},
+                },
+                "required": ["query"],
             },
-            "required": ["query"],
         },
     },
     {
-        "name": "get_citations",
-        "description": "Get high-impact papers (≥ min_citations) that cite an existing wiki paper.",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "arxiv_id":      {"type": "string",  "description": "arXiv ID of the source paper"},
-                "min_citations": {"type": "integer", "default": 100, "description": "Minimum citation count"},
+        "type": "function",
+        "function": {
+            "name": "get_citations",
+            "description": "Get high-impact papers (≥ min_citations) that cite an existing wiki paper.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "arxiv_id":      {"type": "string",  "description": "arXiv ID of the source paper"},
+                    "min_citations": {"type": "integer", "default": 100, "description": "Minimum citation count"},
+                },
+                "required": ["arxiv_id"],
             },
-            "required": ["arxiv_id"],
         },
     },
     {
-        "name": "fetch_github_readme",
-        "description": "Fetch README text from a GitHub repository (owner/repo).",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "repo": {"type": "string", "description": "GitHub repo in owner/repo format"},
+        "type": "function",
+        "function": {
+            "name": "fetch_github_readme",
+            "description": "Fetch README text from a GitHub repository (owner/repo).",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "repo": {"type": "string", "description": "GitHub repo in owner/repo format"},
+                },
+                "required": ["repo"],
             },
-            "required": ["repo"],
         },
     },
     {
-        "name": "fetch_blog_post",
-        "description": "Fetch and extract text from a blog post URL.",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "url": {"type": "string", "description": "Full URL of the blog post"},
+        "type": "function",
+        "function": {
+            "name": "fetch_blog_post",
+            "description": "Fetch and extract text from a blog post URL.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "url": {"type": "string", "description": "Full URL of the blog post"},
+                },
+                "required": ["url"],
             },
-            "required": ["url"],
         },
     },
     {
-        "name": "get_youtube_transcript",
-        "description": "Get auto-generated transcript of a YouTube video.",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "video_id": {"type": "string", "description": "YouTube video ID (11-char string)"},
+        "type": "function",
+        "function": {
+            "name": "get_youtube_transcript",
+            "description": "Get auto-generated transcript of a YouTube video.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "video_id": {"type": "string", "description": "YouTube video ID (11-char string)"},
+                },
+                "required": ["video_id"],
             },
-            "required": ["video_id"],
         },
     },
     {
-        "name": "download_pdf",
-        "description": "Download an arXiv paper PDF into raw/ for later processing by build_wiki.py.",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "arxiv_id": {"type": "string", "description": "arXiv ID, e.g. 2312.00752"},
-                "filename":  {"type": "string", "description": "Output filename, e.g. Mamba.pdf"},
+        "type": "function",
+        "function": {
+            "name": "download_pdf",
+            "description": "Download an arXiv paper PDF into raw/ for later processing by build_wiki.py.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "arxiv_id": {"type": "string", "description": "arXiv ID, e.g. 2312.00752"},
+                    "filename":  {"type": "string", "description": "Output filename, e.g. Mamba.pdf"},
+                },
+                "required": ["arxiv_id", "filename"],
             },
-            "required": ["arxiv_id", "filename"],
         },
     },
     {
-        "name": "check_wiki",
-        "description": "Check if content with a given title already exists in the wiki.",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "title": {"type": "string", "description": "Title to check"},
+        "type": "function",
+        "function": {
+            "name": "check_wiki",
+            "description": "Check if content with a given title already exists in the wiki.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "title": {"type": "string", "description": "Title to check"},
+                },
+                "required": ["title"],
             },
-            "required": ["title"],
         },
     },
     {
-        "name": "write_note",
-        "description": (
-            "Write a markdown note directly to wiki/ for non-PDF content "
-            "(GitHub repos, blog posts, YouTube transcripts). "
-            "Include full YAML frontmatter: title, tags, year, tldr, wikilinks."
-        ),
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "filename": {"type": "string", "description": "Output filename, e.g. nanoGPT.md"},
-                "content":  {"type": "string", "description": "Full markdown content including YAML frontmatter"},
+        "type": "function",
+        "function": {
+            "name": "write_note",
+            "description": "Write a markdown note directly to wiki/ for non-PDF content (GitHub repos, blog posts, YouTube transcripts). Include full YAML frontmatter: title, tags, year, tldr, wikilinks.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "filename": {"type": "string", "description": "Output filename, e.g. nanoGPT.md"},
+                    "content":  {"type": "string", "description": "Full markdown content including YAML frontmatter"},
+                },
+                "required": ["filename", "content"],
             },
-            "required": ["filename", "content"],
         },
     },
     {
-        "name": "done",
-        "description": "Signal the agent is finished. Provide a summary plus lists of added and skipped items.",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "summary": {"type": "string"},
-                "added":   {"type": "array", "items": {"type": "string"}},
-                "skipped": {"type": "array", "items": {"type": "string"}},
+        "type": "function",
+        "function": {
+            "name": "done",
+            "description": "Signal the agent is finished. Provide a summary plus lists of added and skipped items.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "summary": {"type": "string"},
+                    "added":   {"type": "array", "items": {"type": "string"}},
+                    "skipped": {"type": "array", "items": {"type": "string"}},
+                },
+                "required": ["summary", "added", "skipped"],
             },
-            "required": ["summary", "added", "skipped"],
         },
     },
 ]
@@ -660,7 +690,22 @@ def run_agent(mode: str = "daily", topic: str = None, min_citations: int = 100) 
         )
 
         msg = response.choices[0].message
-        messages.append(msg)
+
+        # Convert to a plain dict for the messages array (DeepSeek is strict)
+        assistant_msg = {"role": "assistant", "content": msg.content or None}
+        if msg.tool_calls:
+            assistant_msg["tool_calls"] = [
+                {
+                    "id": tc.id,
+                    "type": "function",
+                    "function": {
+                        "name": tc.function.name,
+                        "arguments": tc.function.arguments,
+                    },
+                }
+                for tc in msg.tool_calls
+            ]
+        messages.append(assistant_msg)
 
         if msg.content:
             print(f"  {msg.content[:200]}")
@@ -673,7 +718,11 @@ def run_agent(mode: str = "daily", topic: str = None, min_citations: int = 100) 
 
         for tc in msg.tool_calls:
             name   = tc.function.name
-            inputs = json.loads(tc.function.arguments)
+            try:
+                inputs = json.loads(tc.function.arguments)
+            except json.JSONDecodeError:
+                print(f"  ⚠️  Could not parse arguments for {name}, skipping")
+                continue
 
             print(f"  → {name}({json.dumps(inputs)[:100]})")
             result = execute_tool(name, inputs)
@@ -701,7 +750,7 @@ def run_agent(mode: str = "daily", topic: str = None, min_citations: int = 100) 
         if finished:
             break
 
-        messages.append({"role": "user", "content": tool_results})
+        messages.extend(tool_results)
 
     return {
         "mode":    mode,
