@@ -11,6 +11,8 @@ Usage:
 
 import json
 import os
+from dotenv import load_dotenv
+from openai import OpenAI
 import re
 import sys
 import time
@@ -322,7 +324,8 @@ TOOLS = [
                 "required": ["query"],
             },
         },
-    },
+                },
+            },
     {
         "type": "function",
         "function": {
@@ -337,7 +340,8 @@ TOOLS = [
                 "required": ["arxiv_id"],
             },
         },
-    },
+                },
+            },
     {
         "type": "function",
         "function": {
@@ -351,7 +355,8 @@ TOOLS = [
                 "required": ["repo"],
             },
         },
-    },
+                },
+            },
     {
         "type": "function",
         "function": {
@@ -365,7 +370,8 @@ TOOLS = [
                 "required": ["url"],
             },
         },
-    },
+                },
+            },
     {
         "type": "function",
         "function": {
@@ -379,7 +385,8 @@ TOOLS = [
                 "required": ["video_id"],
             },
         },
-    },
+                },
+            },
     {
         "type": "function",
         "function": {
@@ -394,7 +401,8 @@ TOOLS = [
                 "required": ["arxiv_id", "filename"],
             },
         },
-    },
+                },
+            },
     {
         "type": "function",
         "function": {
@@ -408,7 +416,8 @@ TOOLS = [
                 "required": ["title"],
             },
         },
-    },
+                },
+            },
     {
         "type": "function",
         "function": {
@@ -423,7 +432,8 @@ TOOLS = [
                 "required": ["filename", "content"],
             },
         },
-    },
+                },
+            },
     {
         "type": "function",
         "function": {
