@@ -1,0 +1,3998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="description" content="AI research knowledge base — papers, concepts &amp; intuitions on LLM architecture and inference">
+  <title>AI Research Wiki</title>
+  <!-- Cloudflare Web Analytics -->
+  <script defer src='https://static.cloudflareinsights.com/beacon.min.js'
+    data-cf-beacon='{"token": "37b0ea0ace544dc89dc44237601d4a92"}'></script>
+  <!-- End Cloudflare Web Analytics -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <!-- Prism.js — syntax highlighting for fenced code blocks (token classes only; colors themed below) -->
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-clike.min.js"
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #0d1117;
+      --surface:     #161b22;
+      --surface2:    #1c2128;
+      --border:      #30363d;
+      --text:        #e6edf3;
+      --muted:       #8b949e;
+      --accent:      #7c3aed;
+      --accent-lt:   #a78bfa;
+      --accent-dim:  rgba(124,58,237,.14);
+      --accent-ring: rgba(124,58,237,.45);
+      --tag-bg:      rgba(124,58,237,.18);
+      --panel-w:     540px;
+      --bg-glass:    rgba(13,17,23,.90);
+      --code-color:  #e3b341;
+      --bq-color:    #b8a0e8;
+    }
+
+    [data-theme="light"] {
+      --bg:          #ffffff;
+      --surface:     #f6f8fa;
+      --surface2:    #eaeef2;
+      --border:      #d0d7de;
+      --text:        #1c2128;
+      --muted:       #57606a;
+      --accent-lt:   #6d28d9;
+      --accent-dim:  rgba(124,58,237,.08);
+      --accent-ring: rgba(124,58,237,.25);
+      --tag-bg:      rgba(124,58,237,.08);
+      --bg-glass:    rgba(255,255,255,.92);
+      --code-color:  #b45309;
+      --bq-color:    #6d28d9;
+    }
+
+    html, body { height: 100%; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.6;
+      transition: background .2s ease, color .2s ease;
+    }
+
+    /* ── SITE NAV ───────────────────────────────────────────────────── */
+    .site-nav {
+      display: flex; align-items: stretch; gap: 2px;
+      height: 100%; flex-shrink: 0;
+    }
+
+    .site-nav a {
+      display: flex; align-items: center;
+      text-decoration: none;
+      color: var(--muted); font-size: .82rem; font-weight: 500;
+      padding: 0 13px; position: relative;
+      transition: color .12s;
+    }
+
+    .site-nav a:hover { color: var(--text); }
+    .site-nav a.active { color: var(--text); }
+
+    .site-nav a.active::after {
+      content: '';
+      position: absolute; bottom: 0; left: 13px; right: 13px;
+      height: 2px; background: var(--accent);
+      border-radius: 1px 1px 0 0;
+    }
+
+    /* ── HEADER ─────────────────────────────────────────────────────── */
+    header {
+      position: sticky; top: 0; z-index: 200;
+      background: var(--bg-glass);
+      backdrop-filter: blur(14px) saturate(1.4);
+      border-bottom: 1px solid var(--border);
+      padding: 0 28px;
+      height: 64px;
+      display: flex; align-items: center; gap: 18px;
+    }
+
+    .brand { flex-shrink: 0; }
+
+    .brand-title {
+      font-size: 1.15rem; font-weight: 700; letter-spacing: -.03em;
+      color: var(--text);
+    }
+    .brand-title .dot { color: var(--accent-lt); }
+
+    .brand-sub {
+      font-size: .72rem; color: var(--muted); margin-top: 1px;
+      letter-spacing: .01em;
+    }
+
+    .search-wrap {
+      flex: 1; max-width: 440px; min-width: 200px; position: relative;
+      box-sizing: border-box;
+    }
+
+    .search-icon {
+      position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+      color: var(--muted); pointer-events: none;
+    }
+
+    #search {
+      width: 100%; min-width: 160px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px 8px 34px;
+      color: var(--text); font-size: .875rem;
+      outline: none; transition: border-color .15s, box-shadow .15s;
+      box-sizing: border-box;
+    }
+    #search:focus {
+      border-color: #f59e0b;
+      box-shadow: 0 0 0 3px rgba(245,158,11,0.15);
+    }
+    #search::placeholder { color: var(--muted); }
+
+    .kbd {
+      position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+      font-size: .65rem; color: var(--muted);
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 4px; padding: 1px 5px; pointer-events: none;
+    }
+
+    /* search clear button */
+    .search-clear-btn {
+      position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+      min-width: 18px; min-height: 18px; width: 18px; height: 18px;
+      border-radius: 50%; border: none;
+      background: #9ca3af; color: #fff;
+      font-size: 10px; font-weight: 700; cursor: pointer;
+      display: none; align-items: center; justify-content: center;
+      line-height: 1; padding: 0; flex-shrink: 0;
+      transition: background .15s, transform .15s;
+    }
+    .search-clear-btn:hover {
+      background: #6b7280;
+      transform: translateY(-50%) scale(1.1);
+    }
+    .search-clear-btn:active {
+      transform: translateY(-50%) scale(0.95);
+    }
+    #search.has-value { padding-right: 36px; }
+    @media (max-width: 768px) {
+      .search-clear-btn { width: 22px; height: 22px; font-size: 11px; right: 12px; }
+      #search.has-value { padding-right: 42px; }
+    }
+
+    /* active filter bar */
+    #active-filters {
+      display: none; flex-wrap: wrap; align-items: center; gap: 6px;
+      margin-bottom: 14px;
+    }
+    #active-filters.on { display: flex; }
+
+    .active-filter-label {
+      font-size: .72rem; color: var(--muted); margin-right: 2px;
+    }
+
+    .filter-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--accent); color: #fff;
+      border: 1px solid var(--accent);
+      border-radius: 20px; padding: 4px 10px;
+      font-size: .72rem; font-weight: 600;
+      cursor: pointer;
+      transition: background .12s;
+    }
+    .filter-pill:hover { background: #6d28d9; border-color: #6d28d9; }
+
+    .filter-pill .x {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.22);
+      font-size: .65rem; line-height: 1;
+    }
+
+    .clear-all-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 20px; padding: 3px 11px;
+      font-size: .7rem; cursor: pointer;
+      transition: color .12s, border-color .12s;
+    }
+    .clear-all-btn:hover { color: var(--text); border-color: var(--muted); }
+
+    .header-count {
+      margin-left: auto; font-size: .75rem; color: var(--muted);
+      white-space: nowrap; flex-shrink: 0;
+    }
+
+    /* ── THREE-WAY THEME TOGGLE ─────────────────────────────────────── */
+    .theme-controls {
+      display: flex;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2px;
+      gap: 1px;
+      flex-shrink: 0;
+    }
+
+    .theme-opt {
+      background: none; border: none;
+      color: var(--muted);
+      border-radius: 6px;
+      min-width: 30px; height: 26px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .78rem; cursor: pointer;
+      padding: 0 6px;
+      transition: background .12s, color .12s;
+    }
+    .theme-opt:hover { color: var(--text); background: var(--surface); }
+    .theme-opt.active { background: var(--accent); color: #fff; }
+
+    /* ── LAYOUT ─────────────────────────────────────────────────────── */
+    #app {
+      display: flex;
+      height: calc(100vh - 64px);
+    }
+
+    /* ── GRID PANE ───────────────────────────────────────────────────── */
+    #grid-pane {
+      flex: 1; min-width: 0;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── BROWSE AREA (wraps result-bar, filters, grid) ─────────────── */
+    #browse-area {
+      flex: 1; overflow-y: auto; padding: 24px;
+    }
+
+    /* ── TAB BAR ─────────────────────────────────────────────────────── */
+    .tab-bar {
+      display: flex; gap: 0;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .tab-btn {
+      background: none; border: none;
+      color: var(--muted); font-size: .83rem; font-weight: 500;
+      padding: 8px 16px; cursor: pointer;
+      position: relative;
+      transition: color .12s;
+    }
+    .tab-btn:hover { color: var(--text); }
+
+    .tab-btn.active { color: var(--text); }
+
+    .tab-btn.active::after {
+      content: '';
+      position: absolute; bottom: -1px; left: 0; right: 0;
+      height: 2px; background: var(--accent);
+      border-radius: 1px 1px 0 0;
+    }
+
+    /* ── PROGRESS SECTION ────────────────────────────────────────────── */
+    #progress-section {
+      display: none;
+      padding: 8px 16px 9px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+    #progress-section.show { display: block; }
+
+    .progress-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 13px;
+      margin-bottom: 7px;
+    }
+
+    .progress-card-top {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .progress-label {
+      font-size: .71rem; font-weight: 600; color: var(--muted);
+    }
+
+    #progress-stat {
+      font-size: .71rem; color: var(--muted); white-space: nowrap;
+    }
+
+    .progress-track {
+      height: 5px;
+      background: var(--border);
+      border-radius: 3px; overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%; background: var(--accent);
+      border-radius: 3px; transition: width 0.4s ease;
+    }
+
+    .progress-filter-row {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+
+    .progress-legend {
+      font-size: .69rem; color: var(--muted);
+      white-space: nowrap; flex-shrink: 0;
+    }
+
+    .progress-filter-group {
+      display: flex; gap: 3px; flex-shrink: 0;
+    }
+
+    .progress-filter-btn {
+      background: none; border: 1px solid var(--border);
+      color: var(--muted); border-radius: 5px;
+      padding: 3px 9px; font-size: .69rem;
+      cursor: pointer;
+      transition: background .12s, color .12s, border-color .12s;
+    }
+    .progress-filter-btn:hover { color: var(--text); border-color: var(--muted); }
+    .progress-filter-btn.active {
+      background: var(--accent); color: #fff; border-color: var(--accent);
+    }
+
+    /* ── RESULT BAR ──────────────────────────────────────────────────── */
+    #result-bar {
+      font-size: .75rem; color: var(--muted); margin-bottom: 18px;
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    /* ── SORT SELECT ─────────────────────────────────────────────────── */
+    .sort-select {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: .73rem;
+      cursor: pointer;
+      margin-left: auto;
+      outline: none;
+      transition: border-color .12s;
+    }
+    .sort-select:hover { border-color: var(--muted); color: var(--text); }
+
+    #grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 13px;
+    }
+
+    /* ── CARD ────────────────────────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px; padding: 17px 18px;
+      cursor: pointer; display: flex; flex-direction: column; gap: 10px;
+      transition: border-color .15s, box-shadow .15s, transform .1s;
+    }
+
+    .card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent), 0 6px 24px rgba(124,58,237,.1);
+      transform: translateY(-2px);
+    }
+
+    .card.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+
+    .card-top {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 8px;
+    }
+
+    .card-title {
+      font-size: .93rem; font-weight: 600; line-height: 1.4; color: var(--text);
+    }
+
+    /* ── CARD META (year + citation stacked) ─────────────────────────── */
+    .card-meta {
+      display: flex; flex-direction: column;
+      align-items: flex-end; gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .year-badge {
+      flex-shrink: 0;
+      font-size: .68rem; font-weight: 700;
+      color: var(--accent-lt);
+      background: var(--accent-dim);
+      border: 1px solid var(--accent-ring);
+      border-radius: 4px; padding: 2px 7px;
+    }
+
+    /* ── CITATION BADGE (card) ───────────────────────────────────────── */
+    .citation-badge {
+      display: inline-block;
+      font-size: .63rem; font-weight: 600;
+      color: var(--accent-lt);
+      background: var(--tag-bg);
+      border: 1px solid var(--accent-ring);
+      border-radius: 10px; padding: 1px 7px;
+      white-space: nowrap;
+    }
+
+    /* ── STATUS BADGE (reading progress) ────────────────────────────── */
+    .status-badge {
+      width: 22px; height: 22px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .82rem; line-height: 1;
+      cursor: pointer; user-select: none;
+      border: 2px solid;
+      transition: background .12s, opacity .12s;
+      flex-shrink: 0;
+    }
+    .status-badge.unread  { background: transparent; color: #888780; border-color: #888780; }
+    .status-badge.reading { background: #FAEEDA; color: #BA7517; border-color: #BA7517; }
+    .status-badge.done    { background: #E1F5EE; color: #0F6E56; border-color: #0F6E56; }
+    .status-badge:hover { opacity: .75; }
+
+    .card-tldr {
+      font-size: .81rem; color: var(--muted); line-height: 1.6;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-tldr em { font-style: italic; opacity: .6; }
+
+    /* ── arXiv LINK (card footer + detail badge) ─────────────────────── */
+    .card-footer {
+      margin-top: 8px; padding-top: 8px;
+      border-top: 0.5px solid var(--border);
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    }
+    .card-footer:empty { display: none; }
+
+    .arxiv-link {
+      font-size: 11px; color: var(--accent);
+      text-decoration: none;
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 8px;
+      border: 0.5px solid var(--accent-ring);
+      border-radius: 20px;
+      transition: background .15s, border-color .15s;
+      white-space: nowrap;
+    }
+    .arxiv-link:hover { background: var(--accent-dim); border-color: var(--accent); }
+
+    .arxiv-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 13px; color: var(--accent);
+      text-decoration: none;
+      padding: 6px 12px;
+      border: 0.5px solid var(--accent-ring);
+      border-radius: 8px;
+      transition: background .15s, border-color .15s;
+    }
+    .arxiv-badge:hover { background: var(--accent-dim); border-color: var(--accent); }
+
+    /* ── TAGS ────────────────────────────────────────────────────────── */
+    .tags { display: flex; flex-wrap: wrap; gap: 5px; }
+
+    .tag {
+      font-size: .68rem; color: var(--accent-lt);
+      background: transparent;
+      border: 1px solid var(--accent-ring);
+      border-radius: 12px; padding: 2px 9px;
+      cursor: pointer; user-select: none;
+      transition: background .12s, color .12s, border-color .12s;
+    }
+    .tag:hover { background: var(--accent-dim); }
+    .tag.active-tag {
+      background: var(--accent); color: #fff;
+      border-color: var(--accent);
+    }
+    .tag.active-tag:hover { background: #6d28d9; border-color: #6d28d9; }
+
+    /* ── EMPTY STATE ─────────────────────────────────────────────────── */
+    #empty {
+      display: none; grid-column: 1/-1;
+      text-align: center; padding: 80px 20px; color: var(--muted);
+    }
+    #empty.show { display: block; }
+    #empty svg { opacity: .25; margin-bottom: 14px; }
+    #empty p { font-size: .9rem; }
+
+    /* ── BY THEME (By Theme tab) ─────────────────────────────────────── */
+    .theme-section {
+      grid-column: 1 / -1;
+      margin-bottom: 28px;
+    }
+
+    .theme-heading {
+      font-size: .78rem; font-weight: 700; color: var(--muted);
+      letter-spacing: .07em; text-transform: uppercase;
+      margin-bottom: 12px; padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .theme-heading .theme-count {
+      font-weight: 400; font-size: .72rem; margin-left: 6px;
+    }
+
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 13px;
+    }
+
+    /* ── DETAIL PANEL ────────────────────────────────────────────────── */
+    #panel {
+      flex-shrink: 0;
+      width: 0; overflow: hidden;
+      border-left: 1px solid transparent;
+      background: var(--surface);
+      display: flex; flex-direction: column;
+      transition: width .22s cubic-bezier(.4,0,.2,1),
+                  border-color .22s;
+    }
+
+    #panel.open {
+      width: var(--panel-w);
+      border-left-color: var(--border);
+    }
+
+    #panel-inner {
+      width: var(--panel-w); height: 100%;
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+
+    /* panel header */
+    #panel-hd {
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    #panel-topbar {
+      display: flex; align-items: center;
+      justify-content: space-between; margin-bottom: 10px;
+    }
+
+    .panel-meta {
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    #panel-year {
+      font-size: .72rem; font-weight: 700; color: var(--accent-lt);
+      letter-spacing: .04em;
+    }
+
+    /* ── PANEL CITATION ──────────────────────────────────────────────── */
+    #panel-citations {
+      display: none;
+      font-size: .7rem; font-weight: 600;
+      color: var(--accent-lt);
+      background: var(--tag-bg);
+      border: 1px solid var(--accent-ring);
+      border-radius: 4px; padding: 1px 8px;
+    }
+
+    #close-btn {
+      display: flex; align-items: center; gap: 5px;
+      background: none; border: 1px solid var(--border);
+      color: var(--muted); border-radius: 6px;
+      padding: 4px 11px; font-size: .75rem; cursor: pointer;
+      transition: border-color .12s, color .12s;
+    }
+    #close-btn:hover { border-color: var(--muted); color: var(--text); }
+
+    #panel-title {
+      font-size: 1.05rem; font-weight: 700; line-height: 1.4;
+      color: var(--text); margin-bottom: 10px;
+    }
+
+    /* panel body */
+    #panel-body {
+      flex: 1; overflow-y: auto; padding: 24px 22px;
+      scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+    }
+
+    /* prose */
+    #panel-body h1 { display: none; }
+
+    #panel-body h2 {
+      font-size: .97rem; font-weight: 700; color: var(--text);
+      margin: 26px 0 10px; padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    #panel-body h3 {
+      font-size: .88rem; font-weight: 600; color: var(--text);
+      margin: 18px 0 7px;
+    }
+
+    #panel-body p {
+      font-size: .855rem; color: var(--muted);
+      margin-bottom: 13px; line-height: 1.75;
+    }
+
+    #panel-body ul, #panel-body ol {
+      padding-left: 18px; margin-bottom: 13px;
+    }
+
+    #panel-body li {
+      font-size: .855rem; color: var(--muted);
+      margin-bottom: 5px; line-height: 1.7;
+    }
+
+    #panel-body blockquote {
+      border-left: 3px solid var(--accent);
+      background: var(--accent-dim);
+      border-radius: 0 6px 6px 0;
+      padding: 9px 15px; margin: 14px 0;
+    }
+
+    #panel-body blockquote p {
+      color: var(--bq-color); margin: 0;
+      font-size: .83rem; font-style: italic; line-height: 1.6;
+    }
+
+    /* ── Code blocks — clean minimal style ── */
+    #panel-body pre {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 16px 0;
+      -webkit-overflow-scrolling: touch;
+    }
+    #panel-body pre code {
+      font-family: 'SF Mono','Fira Code','Cascadia Code','JetBrains Mono',Consolas,monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--text);
+      background: none !important;
+      border: none !important;
+      padding: 0 !important;
+      border-radius: 0 !important;
+      white-space: pre;
+      display: block;
+    }
+    /* inline code */
+    #panel-body code {
+      font-family: 'SF Mono','Fira Code',Consolas,monospace;
+      font-size: 12px;
+      background: var(--surface2);
+      border: 0.5px solid var(--border);
+      border-radius: 4px;
+      padding: 2px 6px;
+      color: var(--accent);
+    }
+
+    @media (max-width: 768px) {
+      #panel-body pre { padding: 12px; }
+      #panel-body pre code { font-size: 12px; }
+    }
+
+    /* ── Prism syntax-highlight tokens (theme-aware, GitHub palette) ──── */
+    #panel-body .token.comment,
+    #panel-body .token.prolog,
+    #panel-body .token.doctype,
+    #panel-body .token.cdata      { color: #8b949e; font-style: italic; }
+    #panel-body .token.keyword,
+    #panel-body .token.operator,
+    #panel-body .token.boolean,
+    #panel-body .token.important  { color: #ff7b72; }
+    #panel-body .token.string,
+    #panel-body .token.char,
+    #panel-body .token.attr-value { color: #a5d6ff; }
+    #panel-body .token.function,
+    #panel-body .token.class-name { color: #d2a8ff; }
+    #panel-body .token.number,
+    #panel-body .token.constant,
+    #panel-body .token.builtin    { color: #79c0ff; }
+    #panel-body .token.punctuation { color: var(--muted); }
+    [data-theme="light"] #panel-body .token.comment,
+    [data-theme="light"] #panel-body .token.prolog,
+    [data-theme="light"] #panel-body .token.doctype,
+    [data-theme="light"] #panel-body .token.cdata      { color: #6e7781; }
+    [data-theme="light"] #panel-body .token.keyword,
+    [data-theme="light"] #panel-body .token.operator,
+    [data-theme="light"] #panel-body .token.boolean    { color: #cf222e; }
+    [data-theme="light"] #panel-body .token.string,
+    [data-theme="light"] #panel-body .token.char       { color: #0a3069; }
+    [data-theme="light"] #panel-body .token.function,
+    [data-theme="light"] #panel-body .token.class-name { color: #8250df; }
+    [data-theme="light"] #panel-body .token.number,
+    [data-theme="light"] #panel-body .token.constant,
+    [data-theme="light"] #panel-body .token.builtin    { color: #0550ae; }
+
+    #panel-body table {
+      width: 100%; border-collapse: collapse;
+      font-size: .8rem; margin: 14px 0;
+    }
+
+    #panel-body th {
+      background: var(--surface2); color: var(--text);
+      font-weight: 600; padding: 7px 10px;
+      border: 1px solid var(--border); text-align: left;
+    }
+
+    #panel-body td {
+      padding: 7px 10px; border: 1px solid var(--border);
+      color: var(--muted); vertical-align: top;
+    }
+
+    #panel-body tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+
+    /* obsidian-only blocks (dataview / mermaid / embeds) */
+    .obsidian-note {
+      background: var(--surface);
+      border-left: 3px solid var(--accent);
+      padding: 8px 12px;
+      font-size: 13px;
+      font-style: italic;
+      color: var(--muted);
+      border-radius: 4px;
+      margin: 8px 0;
+    }
+
+    /* wikilinks inside panel */
+    .wikilink {
+      color: var(--accent-lt); text-decoration: none;
+      border-bottom: 1px solid rgba(167,139,250,.35);
+      transition: color .12s, border-color .12s;
+    }
+    .wikilink:hover { color: #c4b5fd; border-bottom-color: #c4b5fd; }
+    .wikilink.missing { color: var(--muted); border-bottom-style: dashed; }
+
+    /* ── SCROLLBARS ──────────────────────────────────────────────────── */
+    #browse-area::-webkit-scrollbar,
+    #panel-body::-webkit-scrollbar { width: 5px; }
+    #browse-area::-webkit-scrollbar-track,
+    #panel-body::-webkit-scrollbar-track { background: transparent; }
+    #browse-area::-webkit-scrollbar-thumb,
+    #panel-body::-webkit-scrollbar-thumb {
+      background: var(--border); border-radius: 3px;
+    }
+
+    /* ── CITATION EXPLORER ───────────────────────────────────────────── */
+    #ce-explorer {
+      display: none;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .ce-wrap {
+      display: flex;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* Left panel */
+    .ce-left {
+      width: 35%;
+      flex-shrink: 0;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .ce-hd {
+      padding: 16px 18px 12px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .ce-hd-title {
+      font-size: .95rem; font-weight: 700; color: var(--text);
+      margin-bottom: 3px;
+    }
+
+    .ce-hd-sub {
+      font-size: .72rem; color: var(--muted);
+      margin-bottom: 10px; line-height: 1.4;
+    }
+
+    .ce-search {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 10px;
+      color: var(--text); font-size: .82rem;
+      outline: none;
+      transition: border-color .15s;
+    }
+    .ce-search:focus { border-color: var(--accent); }
+    .ce-search::placeholder { color: var(--muted); }
+
+    .ce-list {
+      flex: 1;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+    .ce-list::-webkit-scrollbar { width: 4px; }
+    .ce-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .ce-item {
+      display: flex; align-items: center;
+      padding: 9px 18px; gap: 10px;
+      cursor: pointer;
+      transition: background .1s;
+      border-bottom: 1px solid rgba(255,255,255,.03);
+    }
+    [data-theme="light"] .ce-item { border-bottom-color: rgba(0,0,0,.04); }
+
+    .ce-item:hover { background: var(--surface2); }
+    .ce-item.active { background: var(--accent-dim); border-left: 2px solid var(--accent); }
+    .ce-item:not(.active) { border-left: 2px solid transparent; }
+
+    .ce-rank {
+      font-size: .7rem; font-weight: 700;
+      color: var(--muted); min-width: 22px;
+      text-align: right; flex-shrink: 0;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    .ce-info { flex: 1; min-width: 0; }
+
+    .ce-item-title {
+      font-size: .82rem; font-weight: 600; color: var(--text);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      margin-bottom: 3px;
+    }
+
+    .ce-item-year {
+      font-size: .67rem; color: var(--muted);
+    }
+
+    .ce-bar-wrap {
+      width: 72px; flex-shrink: 0;
+    }
+
+    .ce-bar-track {
+      background: var(--surface2);
+      border-radius: 3px; height: 4px;
+      margin-bottom: 2px; overflow: hidden;
+    }
+    [data-theme="light"] .ce-bar-track { background: var(--border); }
+
+    .ce-bar-fill {
+      height: 100%; border-radius: 3px;
+      min-width: 4px;
+      transition: width .25s ease;
+    }
+    .ce-bar-fill.purple { background: var(--accent); }
+    .ce-bar-fill.teal   { background: #0d9488; }
+    .ce-bar-fill.blue   { background: #2563eb; }
+    .ce-bar-fill.gray   { background: #6b7280; }
+
+    .ce-bar-num {
+      font-size: .62rem; color: var(--muted);
+      text-align: right;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    /* Right panel */
+    .ce-right {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px 32px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+    .ce-right::-webkit-scrollbar { width: 5px; }
+    .ce-right::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* Summary view */
+    .ce-summary-title {
+      font-size: 1.1rem; font-weight: 700; color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .ce-summary-sub {
+      font-size: .82rem; color: var(--muted); margin-bottom: 22px;
+    }
+
+    .ce-summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .ce-stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+
+    .ce-stat-label {
+      font-size: .68rem; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .07em;
+      margin-bottom: 5px;
+    }
+
+    .ce-stat-value {
+      font-size: 1.15rem; font-weight: 700; color: var(--text);
+      line-height: 1.2;
+    }
+
+    .ce-stat-sub {
+      font-size: .72rem; color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .ce-clusters-label {
+      font-size: .8rem; font-weight: 600; color: var(--text);
+      margin-bottom: 10px;
+    }
+
+    .ce-cluster-pills {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+
+    .ce-cluster-pill {
+      font-size: .75rem; font-weight: 600;
+      padding: 5px 14px; border-radius: 20px;
+      cursor: default;
+      border: 1px solid;
+    }
+
+    /* Detail view */
+    .ce-back-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: none; border: 1px solid var(--border);
+      color: var(--muted); border-radius: 6px;
+      padding: 5px 12px; font-size: .75rem; cursor: pointer;
+      margin-bottom: 20px;
+      transition: border-color .12s, color .12s;
+    }
+    .ce-back-btn:hover { border-color: var(--muted); color: var(--text); }
+
+    .ce-detail-title {
+      font-size: 1.25rem; font-weight: 700; color: var(--text);
+      line-height: 1.3; margin-bottom: 10px;
+    }
+
+    .ce-detail-meta {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+      font-size: .8rem; color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .ce-meta-sep { color: var(--border); }
+
+    .ce-arxiv-link {
+      color: var(--accent-lt); text-decoration: none; font-size: .75rem;
+      padding: 2px 8px; border: 1px solid var(--accent-ring);
+      border-radius: 4px; transition: background .12s;
+    }
+    .ce-arxiv-link:hover { background: var(--accent-dim); }
+
+    .ce-total-cit {
+      font-size: 2.2rem; font-weight: 700; color: var(--text);
+      letter-spacing: -.02em;
+    }
+
+    .ce-total-label {
+      font-size: .73rem; color: var(--muted); margin-bottom: 10px;
+    }
+
+    .ce-full-bar {
+      height: 7px; border-radius: 4px;
+      margin-bottom: 28px;
+      min-width: 4px;
+      max-width: 100%;
+    }
+
+    .ce-section {
+      margin-top: 28px;
+    }
+
+    .ce-section-title {
+      font-size: .88rem; font-weight: 700; color: var(--text);
+      padding-bottom: 8px; border-bottom: 1px solid var(--border);
+      margin-bottom: 14px;
+    }
+
+    .ce-tldr {
+      font-size: .855rem; color: var(--muted);
+      line-height: 1.75;
+    }
+
+    /* Citing papers table */
+    .cite-table {
+      width: 100%; border-collapse: collapse;
+      font-size: .78rem;
+    }
+
+    .cite-table th {
+      background: var(--surface2); color: var(--muted);
+      font-size: .65rem; font-weight: 600; letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: 6px 10px; border: 1px solid var(--border);
+      text-align: left;
+    }
+
+    .cite-table td {
+      padding: 8px 10px; border: 1px solid var(--border);
+      color: var(--muted); vertical-align: middle;
+    }
+
+    .cite-table tr:hover td { background: var(--surface2); }
+
+    .cite-rank {
+      font-weight: 700; color: var(--muted);
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: .72rem; text-align: center; width: 28px;
+    }
+
+    .cite-title-link {
+      color: var(--accent-lt); font-weight: 500;
+      cursor: pointer; text-decoration: none;
+      border-bottom: 1px solid rgba(167,139,250,.3);
+      transition: color .12s;
+      background: none; border-top: none; border-left: none; border-right: none;
+      padding: 0; font-size: .78rem; font-family: inherit;
+    }
+    .cite-title-link:hover { color: #c4b5fd; }
+
+    .cite-count { font-weight: 600; color: var(--text); white-space: nowrap; }
+    .cite-year  { color: var(--muted); white-space: nowrap; }
+
+    /* Theme badge pills */
+    .theme-pill {
+      display: inline-block;
+      font-size: .6rem; font-weight: 600; text-transform: uppercase;
+      padding: 1px 6px; border-radius: 8px;
+      letter-spacing: .04em; white-space: nowrap;
+    }
+    .theme-pill.vision       { background: rgba(37,99,235,.18);  color: #60a5fa; border: 1px solid rgba(37,99,235,.35); }
+    .theme-pill.hardware     { background: rgba(234,88,12,.18);  color: #fb923c; border: 1px solid rgba(234,88,12,.35); }
+    .theme-pill.inference    { background: rgba(13,148,136,.18); color: #2dd4bf; border: 1px solid rgba(13,148,136,.35); }
+    .theme-pill.llm          { background: rgba(124,58,237,.18); color: #a78bfa; border: 1px solid rgba(124,58,237,.35); }
+    .theme-pill.medical      { background: rgba(220,38,38,.18);  color: #f87171; border: 1px solid rgba(220,38,38,.35); }
+    .theme-pill.foundations  { background: rgba(107,114,128,.18);color: #9ca3af; border: 1px solid rgba(107,114,128,.35); }
+    .theme-pill.theory       { background: rgba(16,185,129,.18); color: #34d399; border: 1px solid rgba(16,185,129,.35); }
+    .theme-pill.scaling      { background: rgba(245,158,11,.18); color: #fbbf24; border: 1px solid rgba(245,158,11,.35); }
+    .theme-pill.efficiency   { background: rgba(99,102,241,.18); color: #818cf8; border: 1px solid rgba(99,102,241,.35); }
+    .theme-pill.architecture { background: rgba(236,72,153,.18); color: #f472b6; border: 1px solid rgba(236,72,153,.35); }
+    .theme-pill.tokenization { background: rgba(5,150,105,.18);  color: #10b981; border: 1px solid rgba(5,150,105,.35); }
+    .theme-pill.time-series  { background: rgba(139,92,246,.18); color: #a78bfa; border: 1px solid rgba(139,92,246,.35); }
+    .theme-pill.survey       { background: rgba(156,163,175,.18);color: #9ca3af; border: 1px solid rgba(156,163,175,.35); }
+    .theme-pill.ssm          { background: rgba(20,184,166,.18); color: #2dd4bf; border: 1px solid rgba(20,184,136,.35); }
+    .theme-pill.application  { background: rgba(244,114,182,.18);color: #f472b6; border: 1px solid rgba(244,114,182,.35); }
+
+    /* arXiv link */
+    .cite-arxiv {
+      color: var(--muted); text-decoration: none;
+      font-size: .75rem; transition: color .12s;
+    }
+    .cite-arxiv:hover { color: var(--accent-lt); }
+
+    .cite-no-data {
+      font-size: .83rem; color: var(--muted);
+      font-style: italic; padding: 10px 0;
+    }
+
+    /* Related pills */
+    .related-pills {
+      display: flex; flex-wrap: wrap; gap: 7px;
+    }
+
+    .related-pill {
+      font-size: .75rem; font-weight: 500;
+      color: var(--accent-lt);
+      background: var(--accent-dim);
+      border: 1px solid var(--accent-ring);
+      border-radius: 20px; padding: 4px 12px;
+      cursor: pointer; text-decoration: none;
+      transition: background .12s;
+    }
+    .related-pill:hover { background: rgba(124,58,237,.25); }
+
+    .ce-empty {
+      padding: 40px 20px; text-align: center; color: var(--muted);
+      font-size: .88rem;
+    }
+
+    /* ── TIMELINE ────────────────────────────────────────────────────── */
+    #timeline-wrap {
+      display: none;
+      flex: 1;
+      overflow: auto;
+      padding: 20px 24px;
+    }
+    #timeline-wrap.show { display: block; }
+
+    #timeline-scroll {
+      display: flex;
+      gap: 0;
+      min-height: 100%;
+      align-items: flex-start;
+    }
+
+    .tl-col {
+      width: 158px;
+      flex-shrink: 0;
+      border-right: 1px solid var(--border);
+    }
+    .tl-col:last-child { border-right: none; }
+
+    .tl-year-hd {
+      font-size: .7rem; font-weight: 700;
+      color: var(--accent-lt);
+      letter-spacing: .07em; text-transform: uppercase;
+      padding: 0 10px 7px;
+      border-bottom: 2px solid var(--accent);
+      margin-bottom: 10px;
+      position: sticky; top: 0;
+      background: var(--bg); z-index: 1;
+    }
+
+    .tl-cards {
+      padding: 0 8px 16px;
+      display: flex; flex-direction: column; gap: 7px;
+    }
+
+    .tl-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 6px;
+      padding: 9px 10px;
+      cursor: pointer;
+      transition: box-shadow .12s, opacity .12s;
+    }
+    .tl-card:hover { box-shadow: 0 2px 10px rgba(0,0,0,.2); }
+
+    .tl-card-title {
+      font-size: .76rem; font-weight: 600; color: var(--text);
+      line-height: 1.35; margin-bottom: 5px;
+    }
+
+    .tl-card-tags {
+      display: flex; flex-wrap: wrap; gap: 3px;
+    }
+
+    .tl-tag {
+      font-size: .59rem; color: var(--muted);
+      background: var(--surface2);
+      border-radius: 8px; padding: 1px 5px;
+    }
+
+    .tl-empty {
+      font-size: .78rem; color: var(--muted);
+      font-style: italic; padding: 8px 10px;
+    }
+
+    /* ── AGENT TAB ───────────────────────────────────────────────────── */
+    #agent-wrap {
+      display: none;
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+    #agent-wrap.show { display: block; }
+    #agent-wrap::-webkit-scrollbar { width: 5px; }
+    #agent-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    .agent-hd {
+      margin-bottom: 22px;
+    }
+    .agent-hd-title {
+      font-size: 1.1rem; font-weight: 700; color: var(--text);
+      margin-bottom: 4px;
+    }
+    .agent-hd-sub {
+      font-size: .8rem; color: var(--muted);
+    }
+
+    /* Command cards row */
+    .agent-cmd-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .agent-cmd-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 18px 14px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+
+    .agent-cmd-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .agent-cmd-header {
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    .agent-cmd-title {
+      font-size: .9rem; font-weight: 700; color: var(--text);
+    }
+
+    .agent-cmd-desc {
+      font-size: .78rem; color: var(--muted); line-height: 1.55;
+    }
+
+    .agent-cmd-note {
+      font-size: .72rem; color: var(--muted);
+      font-style: italic; line-height: 1.5;
+    }
+
+    /* Code block inside command card */
+    .agent-code-wrap {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 9px 12px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 8px;
+    }
+
+    .agent-code {
+      font-family: 'JetBrains Mono','Fira Code','Cascadia Code',monospace;
+      font-size: .76rem; color: var(--code-color);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      flex: 1;
+    }
+
+    .agent-copy-btn {
+      background: none; border: none;
+      color: var(--muted); cursor: pointer;
+      display: flex; align-items: center;
+      padding: 2px; border-radius: 4px;
+      transition: color .12s;
+      flex-shrink: 0;
+    }
+    .agent-copy-btn:hover { color: var(--text); }
+    .agent-copy-btn.copied { color: #22c55e; }
+
+    /* Topic pills */
+    .agent-pills {
+      display: flex; flex-wrap: wrap; gap: 5px;
+    }
+
+    .agent-pill {
+      font-size: .68rem; font-weight: 500;
+      color: var(--accent-lt);
+      background: var(--accent-dim);
+      border: 1px solid var(--accent-ring);
+      border-radius: 20px; padding: 2px 10px;
+      cursor: pointer; user-select: none;
+      transition: background .12s;
+    }
+    .agent-pill:hover { background: rgba(124,58,237,.25); }
+
+    /* Sources grid */
+    .agent-section-title {
+      font-size: .78rem; font-weight: 700; color: var(--muted);
+      letter-spacing: .07em; text-transform: uppercase;
+      margin-bottom: 12px; padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .agent-sources-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .agent-src-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid;
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+
+    .agent-src-name {
+      font-size: .82rem; font-weight: 700; color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .agent-src-desc {
+      font-size: .72rem; color: var(--muted);
+      line-height: 1.5; margin-bottom: 8px;
+    }
+
+    .agent-src-badge {
+      display: inline-block;
+      font-size: .62rem; font-weight: 600;
+      padding: 1px 7px; border-radius: 10px;
+      background: var(--surface2); color: var(--muted);
+      border: 1px solid var(--border);
+    }
+
+    /* Activity stats */
+    .agent-stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .agent-stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+
+    .agent-stat-label {
+      font-size: .67rem; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .07em;
+      margin-bottom: 4px;
+    }
+
+    .agent-stat-value {
+      font-size: 1.3rem; font-weight: 700; color: var(--text);
+    }
+
+    .agent-stat-sub {
+      font-size: .68rem; color: var(--muted); margin-top: 2px;
+    }
+
+    /* Recent additions list */
+    .agent-recent-list {
+      display: flex; flex-direction: column; gap: 6px;
+    }
+
+    .agent-recent-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      cursor: pointer;
+      transition: border-color .12s;
+    }
+    .agent-recent-item:hover { border-color: var(--accent); }
+
+    .agent-recent-title {
+      font-size: .82rem; font-weight: 600; color: var(--text);
+      flex: 1;
+    }
+
+    .agent-recent-year {
+      font-size: .68rem; color: var(--muted); flex-shrink: 0;
+    }
+
+    /* ── SEARCH HIGHLIGHT ───────────────────────────────────────────── */
+    .search-highlight {
+      background: rgba(245,158,11,0.2);
+      color: inherit;
+      border-radius: 3px;
+      padding: 0 2px;
+      font-weight: 500;
+      scroll-margin-top: 80px;
+    }
+    .search-highlight.active {
+      background: rgba(245,158,11,0.75);
+      color: #1a1a1a;
+      border-radius: 3px;
+      outline: 2px solid #f59e0b;
+    }
+
+    /* ── SEARCH ENTER FEEDBACK ──────────────────────────────────────────── */
+    .search-pulse {
+      animation: card-pulse 0.6s ease;
+    }
+    @keyframes card-pulse {
+      0%   { box-shadow: 0 0 0 0 rgba(245,158,11,0.4); }
+      50%  { box-shadow: 0 0 0 8px rgba(245,158,11,0); border-color: #f59e0b; }
+      100% { box-shadow: 0 0 0 0 rgba(245,158,11,0); }
+    }
+    .enter-hint {
+      font-size: 11px;
+      color: var(--muted);
+      background: var(--surface2);
+      border: 0.5px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 6px;
+      margin-left: 6px;
+    }
+
+    /* ── SEARCH MODE SELECTOR ──────────────────────────────────────────── */
+    .search-modes {
+      display: flex; gap: 4px;
+      padding: 8px 12px 4px;
+      flex-wrap: wrap; min-width: 0;
+    }
+    .mode-btn {
+      padding: 4px 13px;
+      font-size: 12px;
+      border: 0.5px solid var(--border);
+      border-radius: 20px;
+      background: var(--surface2);
+      color: var(--muted);
+      cursor: pointer;
+      transition: border-color .15s, color .15s, background .15s;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .mode-btn:hover {
+      border-color: rgba(245,158,11,0.5);
+      color: var(--text);
+    }
+    .mode-btn.active {
+      background: #f59e0b;
+      border-color: #f59e0b;
+      color: #1a1a1a;
+      font-weight: 600;
+    }
+    .mode-desc {
+      font-size: 11px;
+      color: var(--muted);
+      margin: 0;
+      padding: 0 14px 6px;
+      min-height: 16px;
+    }
+    @media (max-width: 480px) {
+      .mode-btn { flex: 1; text-align: center; min-width: 80px; }
+    }
+
+    /* ── CARD HIGHLIGHT MODE (Enter key) ────────────────────────────────── */
+    .card.search-highlighted {
+      border-color: rgba(245,158,11,0.45) !important;
+      box-shadow: 0 0 0 2px rgba(245,158,11,0.08) !important;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease;
+    }
+    .card.search-highlighted-active {
+      border-color: #f59e0b !important;
+      box-shadow: 0 0 0 4px rgba(245,158,11,0.28), 0 0 22px rgba(245,158,11,0.18) !important;
+      background: rgba(245,158,11,0.05);
+      position: relative; z-index: 1;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease;
+    }
+    [data-theme="dark"] .card.search-highlighted-active {
+      border-color: #fbbf24 !important;
+      box-shadow: 0 0 0 4px rgba(251,191,36,0.25), 0 0 22px rgba(251,191,36,0.15) !important;
+      background: rgba(251,191,36,0.04);
+    }
+    [data-theme="dark"] .card.search-highlighted {
+      border-color: rgba(251,191,36,0.4) !important;
+      box-shadow: 0 0 0 2px rgba(251,191,36,0.08) !important;
+    }
+    [data-theme="light"] .card.search-highlighted-active {
+      border-color: #d97706 !important;
+      box-shadow: 0 0 0 4px rgba(217,119,6,0.2), 0 0 16px rgba(217,119,6,0.1) !important;
+      background: rgba(217,119,6,0.03);
+    }
+    [data-theme="light"] .card.search-highlighted {
+      border-color: rgba(217,119,6,0.4) !important;
+    }
+    .card.search-dimmed {
+      opacity: 0.2;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    mark.search-mark {
+      background: rgba(245,158,11,0.22);
+      color: inherit;
+      border-radius: 3px;
+      padding: 0 2px;
+      font-weight: 600;
+    }
+    @media (max-width: 768px) {
+      .card.search-dimmed { opacity: 0.3; }
+    }
+
+    /* ── MATCH NAV BAR ──────────────────────────────────────────────── */
+    #match-nav {
+      display: none;
+      align-items: center; gap: 8px;
+      padding: 6px 16px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      font-size: .75rem; color: var(--muted);
+      flex-shrink: 0;
+    }
+    #match-nav.show { display: flex; }
+
+    .match-nav-term {
+      font-weight: 600; color: var(--accent-lt);
+      white-space: nowrap; overflow: hidden;
+      text-overflow: ellipsis; max-width: 180px;
+    }
+
+    .match-nav-count {
+      white-space: nowrap; flex: 1;
+    }
+
+    .match-nav-btn {
+      background: none; border: 1px solid var(--border);
+      color: var(--muted); border-radius: 5px;
+      width: 24px; height: 24px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .85rem; cursor: pointer; flex-shrink: 0;
+      transition: border-color .12s, color .12s, background .12s;
+      line-height: 1;
+    }
+    .match-nav-btn:hover { border-color: var(--accent); color: var(--accent-lt); background: var(--accent-dim); }
+    .match-nav-btn:disabled { opacity: .35; cursor: default; }
+    .match-nav-btn:disabled:hover { border-color: var(--border); color: var(--muted); background: none; }
+
+    /* ── BACKLINK BADGE (card) ───────────────────────────────────────── */
+    .backlink-badge {
+      font-size: .63rem; font-weight: 600;
+      color: var(--muted);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px; padding: 1px 7px;
+      white-space: nowrap;
+    }
+
+    /* ── BACKLINKS PANEL (note body) ─────────────────────────────────── */
+    .backlinks-section {
+      margin-top: 28px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+    }
+
+    .backlinks-header {
+      font-size: .72rem; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .07em;
+      margin-bottom: 10px;
+    }
+
+    .backlinks-pills {
+      display: flex; flex-wrap: wrap; gap: 7px;
+    }
+
+    .backlink-pill {
+      font-size: .75rem; font-weight: 500;
+      color: var(--accent-lt);
+      background: var(--accent-dim);
+      border: 1px solid var(--accent-ring);
+      border-radius: 20px; padding: 4px 12px;
+      cursor: pointer; text-decoration: none;
+      transition: background .12s;
+    }
+    .backlink-pill:hover { background: rgba(124,58,237,.25); }
+
+    .backlinks-more {
+      background: none; border: 1px solid var(--border);
+      color: var(--muted); border-radius: 20px;
+      padding: 4px 12px; font-size: .75rem;
+      cursor: pointer;
+      transition: color .12s, border-color .12s;
+    }
+    .backlinks-more:hover { color: var(--text); border-color: var(--muted); }
+
+    /* ── COMPARE BUTTON (card) ───────────────────────────────────────── */
+    .compare-btn {
+      background: none; border: 1px solid var(--border);
+      color: var(--muted); border-radius: 5px;
+      padding: 3px 9px; font-size: .68rem;
+      cursor: pointer; align-self: flex-end;
+      transition: color .12s, border-color .12s, background .12s;
+    }
+    .compare-btn:hover { color: var(--accent-lt); border-color: var(--accent-ring); background: var(--accent-dim); }
+    .compare-btn.comparing { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    /* ── COMPARISON TRAY (fixed bottom bar) ─────────────────────────── */
+    #compare-tray {
+      display: none;
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 300;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 10px 24px;
+      align-items: center; gap: 10px;
+      box-shadow: 0 -4px 20px rgba(0,0,0,.2);
+    }
+    #compare-tray.show { display: flex; }
+
+    .compare-tray-pills { display: flex; flex-wrap: wrap; gap: 7px; flex: 1; }
+
+    .compare-tray-pill {
+      font-size: .75rem; font-weight: 500;
+      color: var(--text);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px; padding: 4px 12px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .compare-tray-pill .ctp-x {
+      cursor: pointer; color: var(--muted);
+      font-size: .78rem; line-height: 1;
+    }
+    .compare-tray-pill .ctp-x:hover { color: var(--text); }
+
+    .compare-open-btn {
+      background: var(--accent); color: #fff;
+      border: none; border-radius: 7px;
+      padding: 7px 16px; font-size: .82rem; font-weight: 600;
+      cursor: pointer; flex-shrink: 0;
+      transition: background .12s;
+    }
+    .compare-open-btn:hover { background: #6d28d9; }
+
+    .compare-clear-btn {
+      background: none; border: 1px solid var(--border);
+      color: var(--muted); border-radius: 7px;
+      padding: 7px 12px; font-size: .82rem;
+      cursor: pointer; flex-shrink: 0;
+      transition: color .12s, border-color .12s;
+    }
+    .compare-clear-btn:hover { color: var(--text); border-color: var(--muted); }
+
+    /* ── COMPARISON PANEL ────────────────────────────────────────────── */
+    #compare-panel {
+      display: none;
+      position: fixed; inset: 0; z-index: 400;
+      background: var(--bg);
+      overflow-y: auto;
+      padding: 24px;
+    }
+    #compare-panel.show { display: block; }
+
+    .compare-panel-hd {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .compare-panel-title {
+      font-size: 1.05rem; font-weight: 700; color: var(--text);
+    }
+
+    .compare-close-btn {
+      display: flex; align-items: center; gap: 5px;
+      background: none; border: 1px solid var(--border);
+      color: var(--muted); border-radius: 6px;
+      padding: 5px 13px; font-size: .78rem; cursor: pointer;
+      transition: border-color .12s, color .12s;
+    }
+    .compare-close-btn:hover { border-color: var(--muted); color: var(--text); }
+
+    .compare-cols {
+      display: grid;
+      gap: 16px;
+    }
+
+    .compare-col {
+      background: var(--surface);
+      border: 1px solid;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .compare-col-hd {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .compare-col-title {
+      font-size: .95rem; font-weight: 700; color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .compare-col-meta {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    }
+
+    .compare-col-body {
+      padding: 16px 18px;
+    }
+
+    .compare-row-label {
+      font-size: .65rem; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .07em;
+      margin-bottom: 6px;
+    }
+
+    .compare-row-val {
+      font-size: .82rem; color: var(--muted);
+      margin-bottom: 14px; line-height: 1.6;
+    }
+
+    .compare-excerpt {
+      font-size: .8rem; color: var(--muted);
+      line-height: 1.7;
+      display: -webkit-box;
+      -webkit-line-clamp: 6;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* ── COMPARE TABLE (enhanced mode) ─────────────────────────────── */
+    .cmp-mode-wrap {
+      display: flex; gap: 4px; align-items: center; flex: 1; justify-content: center;
+    }
+    .cmp-mode-btn {
+      font-size: .72rem; padding: 4px 11px; border-radius: 6px;
+      border: 1px solid var(--border); background: transparent;
+      color: var(--muted); cursor: pointer; transition: all .15s;
+    }
+    .cmp-mode-btn.active {
+      background: var(--accent); color: #fff; border-color: var(--accent);
+    }
+    .cmp-mode-btn:hover:not(.active) { background: var(--surface2); color: var(--text); }
+
+    #compare-key-diffs {
+      padding: 7px 20px; font-size: .76rem; color: var(--muted);
+      border-bottom: 1px solid var(--border); display: none;
+      background: var(--surface2);
+    }
+    #compare-key-diffs.show { display: block; }
+    #compare-key-diffs strong { color: #7c3aed; }
+
+    .compare-table-wrap { overflow-x: auto; }
+    .compare-table {
+      width: 100%; border-collapse: collapse; font-size: .82rem;
+    }
+    .compare-table th {
+      padding: 12px 16px; text-align: left;
+      font-size: .82rem; font-weight: 700; color: var(--text);
+      border-bottom: 2px solid var(--border);
+      background: var(--surface); position: sticky; top: 0; z-index: 2;
+    }
+    .compare-table th.cmp-lbl-th {
+      font-size: .62rem; color: var(--muted); text-transform: uppercase;
+      letter-spacing: .07em; min-width: 130px; max-width: 155px;
+      background: var(--surface2); font-weight: 600;
+    }
+    .compare-table td {
+      padding: 9px 16px; vertical-align: top;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted); line-height: 1.55;
+    }
+    .compare-table td.cmp-label {
+      font-size: .62rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .07em; background: var(--surface2);
+      color: var(--muted); white-space: nowrap; vertical-align: middle;
+    }
+    .compare-table td.cmp-label.diff { color: #7c3aed; }
+    .compare-table tbody tr.cmp-alt-row td:not(.cmp-label) { background: var(--surface); }
+    .compare-table tbody tr:not(.cmp-alt-row) td:not(.cmp-label) { background: var(--bg); }
+
+    /* ── MOBILE ──────────────────────────────────────────────────────── */
+    /* ── GLOBAL MOBILE / TOUCH BASE ─────────────────────────────────────── */
+    * { -webkit-tap-highlight-color: transparent; }
+    html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; overscroll-behavior-y: none; }
+    button, .tab-btn, .filter-pill, .match-nav-btn,
+    .compare-open-btn, .compare-clear-btn, .theme-opt { touch-action: manipulation; }
+    #panel-body, .ce-left, #timeline-wrap { overscroll-behavior: contain; }
+
+    /* ── MOBILE BACKDROP (bottom-sheet panel) ───────────────────────────── */
+    #panel-backdrop {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.45); z-index: 240;
+    }
+    #panel-backdrop.visible { display: block; }
+
+    @media (max-width: 768px) {
+      /* ── Header ──────────────────────────────────────────────────────── */
+      header { padding: 10px 14px; flex-wrap: wrap; height: auto; gap: 8px; }
+      .kbd { display: none; }
+      .header-count { display: none; }
+      .brand-title { font-size: 15px; }
+      .brand-sub { display: none; }
+      .site-nav { gap: 14px; }
+      .search-wrap { order: 3; max-width: 100%; flex-basis: 100%; }
+      #search {
+        font-size: 16px;            /* ≥16px prevents iOS focus zoom */
+        height: 46px; padding: 10px 14px 10px 38px;
+      }
+
+      /* ── App layout ──────────────────────────────────────────────────── */
+      #app { flex-direction: column; height: auto; min-height: calc(100vh - 80px); }
+      #browse-area { overflow: visible; }
+
+      /* ── Tab bar — horizontal scroll ─────────────────────────────────── */
+      .tab-bar {
+        overflow-x: auto; flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch; scrollbar-width: none;
+      }
+      .tab-bar::-webkit-scrollbar { display: none; }
+      .tab-btn { flex-shrink: 0; white-space: nowrap; min-height: 44px; }
+
+      /* ── Note cards — single column ──────────────────────────────────── */
+      #grid { grid-template-columns: 1fr; gap: 10px; padding: 0 12px 16px; }
+      .card { padding: 14px; }
+      .card-title { font-size: 15px; }
+      .card-tldr { font-size: 13px; }
+
+      /* ── Filter pills — wrap, tappable ───────────────────────────────── */
+      #active-filters { padding: 0 12px; }
+      .filter-pill { min-height: 32px; display: inline-flex; align-items: center; }
+      .tag { padding: 4px 9px; font-size: 12px; }
+
+      /* ── Detail panel — full-screen bottom sheet ─────────────────────── */
+      #panel {
+        position: fixed; left: 0; right: 0; bottom: 0; top: auto;
+        width: 100% !important; max-height: none;
+        height: 88vh;
+        border-left: none !important;
+        border-top: 1px solid var(--border);
+        border-radius: 16px 16px 0 0;
+        z-index: 250;
+        transform: translateY(100%);
+        transition: transform .3s cubic-bezier(.4,0,.2,1);
+        box-shadow: 0 -6px 28px rgba(0,0,0,.28);
+        overflow: hidden;
+      }
+      #panel.open { transform: translateY(0); }
+      #panel-inner { width: 100%; }
+      /* Drag handle */
+      #panel-topbar { position: relative; padding-top: 18px; }
+      #panel-topbar::before {
+        content: ''; position: absolute; top: 7px; left: 50%;
+        transform: translateX(-50%);
+        width: 36px; height: 4px; border-radius: 2px;
+        background: var(--border);
+      }
+      #close-btn { min-width: 40px; min-height: 40px; }
+
+      /* ── Citation Explorer — stacked panels ──────────────────────────── */
+      #ce-explorer { flex: none; height: auto; min-height: 80vh; }
+      .ce-wrap { flex-direction: column; height: auto; }
+      .ce-left { width: 100%; max-height: 45vh; overflow-y: auto;
+                 border-right: none; border-bottom: 1px solid var(--border);
+                 -webkit-overflow-scrolling: touch; }
+      .ce-right { width: 100%; padding: 14px 16px; }
+      .ce-summary-grid { grid-template-columns: 1fr 1fr; }
+
+      /* ── Timeline — vertical stack ───────────────────────────────────── */
+      #timeline-wrap { padding: 12px 14px; }
+      #timeline-scroll { flex-direction: column; }
+      .tl-col {
+        width: 100%; border-right: none;
+        border-bottom: 1px solid var(--border); padding-bottom: 10px;
+      }
+
+      /* ── Comparison tray + panel ─────────────────────────────────────── */
+      #compare-tray { padding: 10px 12px; }
+      #compare-panel { padding: 16px 12px; }
+      .compare-table-wrap { -webkit-overflow-scrolling: touch; }
+
+      /* ── Match navigation — sticky, larger buttons ───────────────────── */
+      #match-nav { padding: 8px 12px; position: sticky; top: 0; z-index: 10; }
+      .match-nav-btn { min-width: 36px; min-height: 36px; }
+
+      /* ── Agent tab grids ─────────────────────────────────────────────── */
+      .agent-cmd-grid    { grid-template-columns: 1fr; }
+      .agent-sources-grid { grid-template-columns: 1fr 1fr; }
+      .agent-stats-row   { grid-template-columns: 1fr 1fr; }
+
+      /* ── Reading progress ────────────────────────────────────────────── */
+      #progress-section { padding: 0 12px; }
+      .progress-card { padding: 12px; }
+
+      /* ── Touch targets + iOS zoom guard ──────────────────────────────── */
+      input, select, textarea { font-size: 16px !important; }
+      .tab-btn, .compare-open-btn, .compare-clear-btn,
+      .compare-close-btn, .theme-opt { min-height: 44px; }
+
+      /* ── Footer + visitor ────────────────────────────────────────────── */
+      .footer-inner { flex-direction: column; align-items: center; text-align: center; gap: 16px; }
+      .footer-right { text-align: center; }
+      #visitor-countries { margin-left: 8px; margin-right: 8px; padding: 16px; }
+      .flag-counter-wrap { max-width: 100%; }
+      .flag-counter-img { max-width: 100%; }
+    }
+
+    /* ── VISITOR COUNTER ────────────────────────────────────────────── */
+    #visitor-countries {
+      padding: 24px 32px;
+      border-top: 0.5px solid var(--border);
+      margin-top: 24px;
+      background: var(--surface);
+      border-radius: 8px;
+      margin-left: 16px;
+      margin-right: 16px;
+      margin-bottom: 16px;
+    }
+    .visitor-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; justify-content: center; align-items: flex-start;
+    }
+    /* ── FLAG COUNTER ────────────────────────────────────────────────── */
+    .flag-counter-wrap {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+    }
+    [data-theme="dark"] .flag-counter-wrap { background: #161b22; border-color: #30363d; }
+    [data-theme="light"] .flag-counter-wrap { background: #f6f8fa; border-color: #d0d7de; }
+    .flag-counter-img {
+      cursor: default; pointer-events: none;
+      max-width: 100%; height: auto;
+      border-radius: 6px; display: block; margin: 0 auto;
+    }
+    @media (max-width: 600px) {
+      #visitor-countries { margin-left: 8px; margin-right: 8px; padding: 20px; }
+    }
+
+    /* ── FOOTER ─────────────────────────────────────────────────────── */
+    #site-footer {
+      border-top: 0.5px solid var(--border);
+      padding: 28px 32px;
+      margin-top: 48px;
+      background: var(--surface);
+    }
+    .footer-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 32px; max-width: 1200px; margin: 0 auto; flex-wrap: wrap;
+    }
+    .footer-credit {
+      font-size: 13px; color: var(--muted); text-align: center;
+      margin: 0 0 4px; line-height: 1.6;
+    }
+    .footer-credit strong { color: var(--text); }
+    .footer-link { color: #E73534; text-decoration: none; font-weight: 500; transition: color .15s; }
+    .footer-link:hover { color: #ff4444; text-decoration: underline; }
+    .footer-copy {
+      font-size: 11px; color: var(--muted); opacity: .7;
+      text-align: center; margin: 0;
+    }
+    .footer-right { font-size: 12px; color: var(--muted); text-align: right; }
+    @media (max-width: 600px) {
+      .footer-inner { flex-direction: column; text-align: center; }
+      .footer-right { text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ────────────────────────────────────────────────────────────── -->
+<header>
+  <div class="brand">
+    <div class="brand-title">AI Research Wiki<span class="dot">.</span></div>
+    <div class="brand-sub">LLM architecture &amp; inference — papers, concepts, and intuitions</div>
+  </div>
+
+  <nav class="site-nav">
+    <a href="index.html" class="active">Browse notes</a>
+    <a href="graph.html">Knowledge graph</a>
+  </nav>
+
+  <div class="search-wrap">
+    <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24"
+         fill="none" stroke="currentColor" stroke-width="2.2">
+      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+    </svg>
+    <input id="search" type="text"
+           placeholder="Search titles, tags, full text… (press /)"
+           autocomplete="off" spellcheck="false">
+    <button class="search-clear-btn" id="search-clear-btn"
+            onclick="clearSearch()" aria-label="Clear search"
+            title="Clear search" style="display:none">✕</button>
+    <span class="kbd" id="search-kbd">⌘K</span>
+  </div>
+
+  <div class="header-count" id="header-count"></div>
+
+  <!-- Three-way theme toggle -->
+  <div class="theme-controls" id="theme-controls">
+    <button class="theme-opt" data-ap="system" title="Use system preference">sys</button>
+    <button class="theme-opt" data-ap="dark"   title="Dark mode">☾</button>
+    <button class="theme-opt" data-ap="light"  title="Light mode">☀</button>
+  </div>
+</header>
+
+<!-- ── APP ───────────────────────────────────────────────────────────────── -->
+<div id="app">
+
+  <!-- grid pane -->
+  <div id="grid-pane">
+
+    <!-- tab bar -->
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="all">All</button>
+      <button class="tab-btn" data-tab="top-cited">Citation Explorer</button>
+      <button class="tab-btn" data-tab="by-theme">By Theme</button>
+      <button class="tab-btn" data-tab="timeline">Timeline</button>
+      <button class="tab-btn" data-tab="agent">Agent</button>
+    </div>
+
+    <!-- reading progress section -->
+    <div id="progress-section">
+      <div class="progress-card">
+        <div class="progress-card-top">
+          <span class="progress-label">Reading progress</span>
+          <span id="progress-stat"></span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="progress-filter-row">
+        <span class="progress-legend">○ Unread &nbsp;◑ Reading &nbsp;✓ Done</span>
+        <div class="progress-filter-group">
+          <button class="progress-filter-btn active" data-pf="all">All</button>
+          <button class="progress-filter-btn" data-pf="unread">Unread</button>
+          <button class="progress-filter-btn" data-pf="reading">Reading</button>
+          <button class="progress-filter-btn" data-pf="done">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- normal browse area -->
+    <div id="browse-area">
+
+      <!-- search mode selector — always visible -->
+      <div class="search-modes" id="search-modes">
+        <button class="mode-btn" data-mode="papers"
+                title="Search academic papers only (filters by arXiv / citations)"
+                onclick="setSearchMode('papers')">📄 Papers only</button>
+        <button class="mode-btn active" data-mode="concepts"
+                title="Search all notes by title, tags and summaries"
+                onclick="setSearchMode('concepts')">💡 All notes</button>
+        <button class="mode-btn" data-mode="fulltext"
+                title="Search complete note content including body text"
+                onclick="setSearchMode('fulltext')">🔍 Full text</button>
+      </div>
+      <p class="mode-desc" id="mode-desc">
+        All notes — searching titles, tags and summaries
+      </p>
+
+      <div id="result-bar"></div>
+      <div id="active-filters"></div>
+      <div id="grid">
+        <div id="empty">
+          <svg width="42" height="42" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.3">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          <p>No notes match your search.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- citation explorer (shown when top-cited tab active) -->
+    <div id="ce-explorer">
+      <div class="ce-wrap">
+        <div class="ce-left" id="ce-left"></div>
+        <div class="ce-right" id="ce-right"></div>
+      </div>
+    </div>
+
+    <!-- timeline (shown when timeline tab active) -->
+    <div id="timeline-wrap">
+      <div id="timeline-scroll"></div>
+    </div>
+
+    <!-- agent (shown when agent tab active) -->
+    <div id="agent-wrap"></div>
+
+  </div>
+
+  <!-- detail panel -->
+  <div id="panel">
+    <div id="panel-inner">
+
+      <div id="panel-hd">
+        <div id="panel-topbar">
+          <div class="panel-meta">
+            <span id="panel-year"></span>
+            <span id="panel-citations"></span>
+            <a id="panel-arxiv" class="arxiv-badge" target="_blank" rel="noopener" style="display:none">📄 Read on arXiv →</a>
+          </div>
+          <button id="close-btn">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2.5">
+              <path d="M18 6 6 18M6 6l12 12"/>
+            </svg>
+            close
+          </button>
+        </div>
+        <div id="panel-title"></div>
+        <div id="panel-tags" class="tags"></div>
+      </div>
+
+      <!-- match navigation bar — only shown when search is active -->
+      <div id="match-nav">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <span class="match-nav-term" id="match-nav-term"></span>
+        <span class="match-nav-count" id="match-nav-count"></span>
+        <button class="match-nav-btn" id="match-prev" title="Previous match (Shift+Enter)">‹</button>
+        <button class="match-nav-btn" id="match-next" title="Next match (Enter)">›</button>
+      </div>
+
+      <div id="panel-body"></div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- mobile bottom-sheet backdrop -->
+<div id="panel-backdrop"></div>
+
+<!-- ── COMPARISON TRAY ───────────────────────────────────────────────────── -->
+<div id="compare-tray">
+  <div class="compare-tray-pills" id="compare-tray-pills"></div>
+  <button id="compare-open-btn" class="compare-open-btn">Compare (0)</button>
+  <button id="compare-clear-btn" class="compare-clear-btn">✕ Clear</button>
+</div>
+
+<!-- ── COMPARISON PANEL ──────────────────────────────────────────────────── -->
+<div id="compare-panel">
+  <div class="compare-panel-hd">
+    <div class="compare-panel-title">Comparing papers</div>
+    <div class="cmp-mode-wrap" id="cmp-mode-wrap">
+      <button class="cmp-mode-btn active" data-mode="technical">⊞ Technical</button>
+      <button class="cmp-mode-btn" data-mode="summary">≡ Summary</button>
+    </div>
+    <button class="compare-close-btn" id="compare-panel-close">✕ Close</button>
+  </div>
+  <div id="compare-key-diffs"></div>
+  <div class="compare-cols" id="compare-cols"></div>
+</div>
+
+<script>
+"use strict";
+
+// ── Three-way theme (system / dark / light) ───────────────────────────────
+(function () {
+  const pref = localStorage.getItem('appearance') || 'dark';
+  const eff  = pref === 'light' ? 'light'
+             : pref === 'dark'  ? 'dark'
+             : (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+  document.documentElement.setAttribute('data-theme', eff);
+})();
+
+function setupTheme() {
+  const opts = document.querySelectorAll('.theme-opt');
+  const cur  = localStorage.getItem('appearance') || 'dark';
+  opts.forEach(btn => btn.classList.toggle('active', btn.dataset.ap === cur));
+
+  opts.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const pref = btn.dataset.ap;
+      localStorage.setItem('appearance', pref);
+      const eff = pref === 'light' ? 'light'
+                : pref === 'dark'  ? 'dark'
+                : (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      document.documentElement.setAttribute('data-theme', eff);
+      opts.forEach(b => b.classList.toggle('active', b.dataset.ap === pref));
+    });
+  });
+
+  // React to OS-level changes when in system mode
+  window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', mq => {
+    if ((localStorage.getItem('appearance') || 'dark') === 'system') {
+      document.documentElement.setAttribute('data-theme', mq.matches ? 'light' : 'dark');
+    }
+  });
+}
+
+// ── state ────────────────────────────────────────────────────────────────
+let notes      = [];
+let byId       = {};
+let byArxiv    = {};
+let query      = '';
+let activeTags = new Set();
+let openId     = null;
+let sortBy     = 'title';
+let activeTab  = 'all';
+let ceSelectedId = null;
+let ceQuery      = '';
+let progressFilter = 'all';
+let compareSet     = new Set(); // up to 3 paper IDs
+let cmpMode        = 'technical'; // 'technical' | 'summary'
+let matchEls           = [];    // current search-highlight <mark> elements
+let matchIdx           = 0;    // active match index
+let searchHighlightMode  = false;  // true while Enter-key card highlighting is active
+let highlightedCards   = [];    // matching card elements in step-highlight mode
+let highlightStep      = -1;    // current step index (-1 = not yet stepped)
+let currentSearchMode   = 'concepts'; // 'papers' | 'concepts' | 'fulltext'
+
+// ── reading progress ──────────────────────────────────────────────────────
+let readProgress = {};
+try { readProgress = JSON.parse(localStorage.getItem('llm-wiki-reading-progress') || '{}'); } catch(e) {}
+
+function getReadStatus(id) { return readProgress[id] || 'unread'; }
+
+function statusLabel(s) {
+  if (s === 'reading') return '◑';
+  if (s === 'done')    return '✓';
+  return '○';
+}
+
+function cycleStatus(id, e) {
+  e.stopPropagation();
+  const cur  = getReadStatus(id);
+  const next = cur === 'unread' ? 'reading' : cur === 'reading' ? 'done' : 'unread';
+  if (next === 'unread') delete readProgress[id];
+  else readProgress[id] = next;
+  localStorage.setItem('llm-wiki-reading-progress', JSON.stringify(readProgress));
+  render();
+}
+
+function updateProgress() {
+  const done    = notes.filter(n => readProgress[n.id] === 'done').length;
+  const reading = notes.filter(n => readProgress[n.id] === 'reading').length;
+  const unread  = notes.length - done - reading;
+  const total   = notes.length;
+  const pct     = total > 0 ? (done / total * 100) : 0;
+
+  const statEl = document.getElementById('progress-stat');
+  const fillEl = document.getElementById('progress-fill');
+  if (statEl) statEl.textContent = `${done} of ${total} notes done`;
+  if (fillEl) fillEl.style.width = pct.toFixed(1) + '%';
+
+  document.querySelectorAll('.progress-filter-btn').forEach(btn => {
+    const pf = btn.dataset.pf;
+    const count = pf === 'all' ? total : pf === 'unread' ? unread : pf === 'reading' ? reading : done;
+    const label = pf.charAt(0).toUpperCase() + pf.slice(1);
+    btn.textContent = `${label} (${count})`;
+    btn.classList.toggle('active', btn.dataset.pf === progressFilter);
+  });
+}
+
+// ── theme color for timeline cards ───────────────────────────────────────
+function themeColorOf(n) {
+  const t = new Set(n.tags);
+  if (t.has('foundational') || t.has('architecture')) return '#059669';
+  if (t.has('hardware') || t.has('gpu') || t.has('tpu') || t.has('asic') || t.has('fpga') || t.has('kernel-fusion')) return '#2563eb';
+  if (t.has('inference') || t.has('speculative-decoding') || t.has('kv-cache') || t.has('draft-model') || t.has('throughput')) return '#d97706';
+  if (t.has('glossary')) return '#0d9488';
+  if (t.has('benchmarks') || t.has('evaluation')) return '#f43f5e';
+  if (t.has('ssm') || t.has('mamba') || t.has('lstm') || t.has('linear-time') || t.has('recurrence')) return '#7c3aed';
+  if (t.has('moe') || t.has('routing') || t.has('sparse')) return '#ea580c';
+  if (t.has('post-training') || t.has('rl') || t.has('rlhf') || t.has('reward')) return '#e11d48';
+  if (t.has('attention') || t.has('long-context') || t.has('compression')) return '#60a5fa';
+  return '#64748b';
+}
+
+// ── refs ─────────────────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+const searchEl       = $('search');
+const grid           = $('grid');
+const emptyEl        = $('empty');
+const resultBar      = $('result-bar');
+const headerCount    = $('header-count');
+const filterBar      = $('active-filters');
+const panel          = $('panel');
+const panelYear      = $('panel-year');
+const panelCitations = $('panel-citations');
+const panelArxiv     = $('panel-arxiv');
+const panelTitle     = $('panel-title');
+const panelTags      = $('panel-tags');
+const panelBody      = $('panel-body');
+const closeBtn       = $('close-btn');
+const panelBackdrop  = $('panel-backdrop');
+const browseArea     = $('browse-area');
+const ceExplorer     = $('ce-explorer');
+const ceLeft         = $('ce-left');
+const ceRight        = $('ce-right');
+const progressSection = $('progress-section');
+const timelineWrap   = $('timeline-wrap');
+const agentWrap      = $('agent-wrap');
+const matchNav       = $('match-nav');
+const matchNavTerm   = $('match-nav-term');
+const matchNavCount  = $('match-nav-count');
+const matchPrev      = $('match-prev');
+const matchNext      = $('match-next');
+
+// ── load ─────────────────────────────────────────────────────────────────
+async function init() {
+  const res = await fetch('notes.json');
+  notes = await res.json();
+  notes.forEach(n => {
+    byId[n.id] = n;
+    if (n.arxiv) byArxiv[n.arxiv] = n;
+  });
+  headerCount.textContent = `${notes.length} notes`;
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeTab = btn.dataset.tab;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      render();
+    });
+  });
+
+  document.querySelectorAll('.progress-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      progressFilter = btn.dataset.pf;
+      render();
+    });
+  });
+
+  render();
+}
+
+// ── format citation count ─────────────────────────────────────────────────
+function fmtCit(n) {
+  if (!n) return '';
+  return n.toLocaleString();
+}
+
+function fmtCitShort(n) {
+  if (n >= 1000) return (n / 1000).toFixed(n >= 10000 ? 0 : 1) + 'k';
+  return String(n);
+}
+
+// ── citation bar color class ──────────────────────────────────────────────
+function citBarClass(n) {
+  if (n >= 10000) return 'purple';
+  if (n >= 1000)  return 'teal';
+  if (n >= 100)   return 'blue';
+  return 'gray';
+}
+
+// ── citation bar hex color ────────────────────────────────────────────────
+function citBarHex(n) {
+  if (n >= 10000) return '#7c3aed';
+  if (n >= 1000)  return '#0d9488';
+  if (n >= 100)   return '#2563eb';
+  return '#6b7280';
+}
+
+// ── wikilink resolver ────────────────────────────────────────────────────
+function resolveWikilinks(html) {
+  // [[target]], [[target#heading]], [[target|display]] — honor the display alias
+  return html.replace(
+    /\[\[([^\]|#]+?)(?:#[^\]|]+)?(?:\|([^\]]+))?\]\]/g,
+    (_, ref, alias) => {
+      const target = ref.trim();
+      const id = target.replace(/\s+/g, '-');
+      const exists = byId[id] || byId[target];
+      const cls = exists ? 'wikilink' : 'wikilink missing';
+      const resolvedId = exists ? (byId[id] ? id : target) : id;
+      const label = (alias && alias.trim()) ? alias.trim() : target;
+      return `<a href="#" class="${cls}" data-noteid="${resolvedId}">${label}</a>`;
+    }
+  );
+}
+
+// ── search mode helpers ───────────────────────────────────────────────────
+const MODE_DESCRIPTIONS = {
+  papers:   'Academic papers only — filtered by title and tags',
+  concepts: 'All notes — searching titles, tags and summaries',
+  fulltext: 'All notes — searching complete content including body text',
+};
+
+function isPaper(note) {
+  // arXiv ID → definitely a paper
+  if (note.arxiv && note.arxiv.trim() !== '') return true;
+  // Real citation count → it's a paper
+  if ((note.citation_count || 0) > 0) return true;
+  // Glossary / stub / meta / navigation tags → not a paper
+  const tags = note.tags || [];
+  if (tags.some(t => ['glossary','stub','meta','index','dashboard',
+                       'navigation','quality','standards'].includes(t.toLowerCase())))
+    return false;
+  // Has a publication year in range → likely a paper
+  const year = parseInt(String(note.year || '').slice(0, 4));
+  if (year >= 2010 && year <= 2030) return true;
+  // Has an authors field → likely a paper
+  if (note.authors && note.authors.trim() !== '') return true;
+  return false;
+}
+
+function matchesSearch(note, term) {
+  const t = (term || '').toLowerCase().trim();
+  if (!t) return true;
+  if (currentSearchMode === 'papers') {
+    if (!isPaper(note)) return false;
+    return (
+      note.title.toLowerCase().includes(t) ||
+      (note.tags || []).some(tag => tag.toLowerCase().includes(t))
+    );
+  }
+  if (currentSearchMode === 'concepts') {
+    return (
+      note.title.toLowerCase().includes(t) ||
+      (note.tags || []).some(tag => tag.toLowerCase().includes(t)) ||
+      (note.tldr && note.tldr.toLowerCase().includes(t))
+    );
+  }
+  // fulltext
+  return (
+    note.title.toLowerCase().includes(t) ||
+    (note.tags || []).some(tag => tag.toLowerCase().includes(t)) ||
+    (note.tldr && note.tldr.toLowerCase().includes(t)) ||
+    (note.search_text && note.search_text.includes(t))
+  );
+}
+
+function setSearchMode(mode) {
+  currentSearchMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(btn =>
+    btn.classList.toggle('active', btn.dataset.mode === mode)
+  );
+  const descEl = document.getElementById('mode-desc');
+  if (descEl) descEl.textContent = MODE_DESCRIPTIONS[mode] || '';
+  // Exit highlight mode and re-run search with new mode
+  if (searchHighlightMode) {
+    searchHighlightMode = false;
+    clearCardHighlighting();
+  }
+  if (query) searchEl.dispatchEvent(new Event('input'));
+}
+
+// ── filtering + sorting ──────────────────────────────────────────────────
+function filteredNotes() {
+  return notes.filter(n => {
+    for (const t of activeTags) {
+      if (!n.tags.includes(t)) return false;
+    }
+    if (progressFilter !== 'all' && getReadStatus(n.id) !== progressFilter) return false;
+    return matchesSearch(n, query);
+  });
+}
+
+function sortedNotes(arr) {
+  const copy = [...arr];
+  if (sortBy === 'citations') {
+    copy.sort((a, b) => (b.citation_count || 0) - (a.citation_count || 0));
+  } else if (sortBy === 'year') {
+    copy.sort((a, b) => (b.year || '').localeCompare(a.year || ''));
+  } else {
+    copy.sort((a, b) => a.title.localeCompare(b.title));
+  }
+  return copy;
+}
+
+// ── categorize for By Theme ──────────────────────────────────────────────
+const THEME_ORDER = [
+  { key: 'Foundations',            match: n => n.tags.some(t => ['foundational','architecture'].includes(t)) },
+  { key: 'State Space Models',     match: n => n.tags.some(t => ['ssm','linear-time','recurrence','mamba','lstm','rnn','linear-attention'].includes(t)) },
+  { key: 'Mixture-of-Experts',     match: n => n.tags.some(t => ['moe','routing','sparse'].includes(t)) },
+  { key: 'Inference Optimization', match: n => n.tags.some(t => ['inference','speculative-decoding','throughput','draft-model','kv-cache'].includes(t)) },
+  { key: 'Hardware & Systems',     match: n => n.tags.some(t => ['hardware','io-awareness','kernel-fusion','gpu','tpu','asic','fpga'].includes(t)) },
+  { key: 'Attention & KV',         match: n => n.tags.some(t => ['attention','long-context','compression'].includes(t)) },
+  { key: 'Training & RL',          match: n => n.tags.some(t => ['rlhf','rl','post-training','training','reward'].includes(t)) },
+  { key: 'Benchmarks',             match: n => n.tags.some(t => ['benchmarks','evaluation'].includes(t)) },
+  { key: 'Concepts & Glossary',    match: n => n.tags.includes('glossary') },
+  { key: 'Meta',                   match: n => n.tags.some(t => ['index','meta','dashboard'].includes(t)) },
+];
+
+function themeOf(n) {
+  for (const th of THEME_ORDER) {
+    if (th.match(n)) return th.key;
+  }
+  return 'Other';
+}
+
+// ── build a card element ─────────────────────────────────────────────────
+function makeCard(n) {
+  const card = document.createElement('div');
+  card.className = 'card' + (n.id === openId ? ' active' : '');
+  card.dataset.id = n.id;
+
+  const tldrRaw = n.tldr || '';
+  const tldrHtml = tldrRaw
+    ? (typeof marked !== 'undefined'
+        ? marked.parseInline(tldrRaw)
+        : escHtml(tldrRaw))
+    : '<em>No summary yet.</em>';
+
+  const yearHtml = n.year
+    ? `<span class="year-badge">${escHtml(n.year)}</span>`
+    : '';
+
+  const citHtml = n.citation_count
+    ? `<span class="citation-badge">🔖 ${fmtCit(n.citation_count)} citations</span>`
+    : '';
+
+  const status    = getReadStatus(n.id);
+  const statusHtml = `<span class="status-badge ${status}" data-id="${escAttr(n.id)}" title="Click to cycle reading status">${statusLabel(status)}</span>`;
+
+  const tagsHtml = n.tags.slice(0, 6).map(t =>
+    `<span class="tag${activeTags.has(t) ? ' active-tag' : ''}" data-tag="${escAttr(t)}">${escHtml(t)}</span>`
+  ).join('');
+
+  const blCount = n.backlinks ? n.backlinks.length : 0;
+  const blBadge = blCount > 0
+    ? `<span class="backlink-badge" title="${blCount} note${blCount !== 1 ? 's' : ''} link here">← ${blCount}</span>`
+    : '';
+
+  const isComparing = compareSet.has(n.id);
+  const compareBtnHtml = `<button class="compare-btn${isComparing ? ' comparing' : ''}" data-id="${escAttr(n.id)}">${isComparing ? '✓ Comparing' : '⊕ Compare'}</button>`;
+
+  const arxivHtml = n.arxiv
+    ? `<a href="https://arxiv.org/abs/${escAttr(n.arxiv)}" target="_blank" rel="noopener" class="arxiv-link" onclick="event.stopPropagation()">📄 arXiv:${escHtml(n.arxiv)}</a>`
+    : '';
+
+  card.innerHTML = `
+    <div class="card-top">
+      <span class="card-title">${escHtml(n.title)}</span>
+      <div class="card-meta">
+        ${statusHtml}
+        ${yearHtml}
+        ${citHtml}
+        ${blBadge}
+      </div>
+    </div>
+    <p class="card-tldr">${tldrHtml}</p>
+    <div class="tags">${tagsHtml}</div>
+    ${arxivHtml ? `<div class="card-footer">${arxivHtml}</div>` : ''}
+    ${compareBtnHtml}
+  `;
+
+  card.querySelectorAll('.tag').forEach(el =>
+    el.addEventListener('click', e => {
+      e.stopPropagation();
+      toggleTag(el.dataset.tag);
+    })
+  );
+
+  card.querySelector('.status-badge').addEventListener('click', e => cycleStatus(n.id, e));
+  card.querySelector('.compare-btn').addEventListener('click', e => { e.stopPropagation(); toggleCompare(n.id); });
+  card.addEventListener('click', () => openNote(n.id));
+  return card;
+}
+
+// ── render filter bar ────────────────────────────────────────────────────
+function renderFilters() {
+  if (activeTags.size === 0) {
+    filterBar.classList.remove('on');
+    filterBar.innerHTML = '';
+    return;
+  }
+  filterBar.classList.add('on');
+
+  const label = `<span class="active-filter-label">Active filters:</span>`;
+  const pills = [...activeTags].map(t =>
+    `<span class="filter-pill" data-tag="${escAttr(t)}">${escHtml(t)}<span class="x">×</span></span>`
+  ).join('');
+  const clearBtn = `<button class="clear-all-btn" id="clear-all">Clear all filters</button>`;
+
+  filterBar.innerHTML = label + pills + clearBtn;
+
+  filterBar.querySelectorAll('.filter-pill').forEach(el =>
+    el.addEventListener('click', () => removeTag(el.dataset.tag))
+  );
+  filterBar.querySelector('#clear-all').addEventListener('click', clearTags);
+}
+
+// ── clear grid (keep #empty) ──────────────────────────────────────────────
+function clearGrid() {
+  [...grid.children].forEach(c => { if (c !== emptyEl) c.remove(); });
+}
+
+// ── RENDER ALL ────────────────────────────────────────────────────────────
+function renderAll() {
+  const visible = sortedNotes(filteredNotes());
+  emptyEl.classList.toggle('show', visible.length === 0);
+
+  const enterHint = (query && visible.length > 0)
+    ? `<span class="enter-hint">↵ Enter to highlight one by one</span>`
+    : '';
+  resultBar.innerHTML = `
+    <span id="result-count-msg">${visible.length} of ${notes.length} notes${enterHint}</span>
+    <select class="sort-select" id="sort-select">
+      <option value="title"${sortBy === 'title' ? ' selected' : ''}>Sort: Title A–Z</option>
+      <option value="year"${sortBy === 'year' ? ' selected' : ''}>Sort: Year (newest)</option>
+      <option value="citations"${sortBy === 'citations' ? ' selected' : ''}>Sort: Citations ↓</option>
+    </select>
+  `;
+  document.getElementById('sort-select').addEventListener('change', e => {
+    sortBy = e.target.value;
+    render();
+  });
+
+  clearGrid();
+  visible.forEach(n => grid.insertBefore(makeCard(n), emptyEl));
+  renderFilters();
+}
+
+// ── RENDER BY THEME ───────────────────────────────────────────────────────
+function renderByTheme() {
+  const visible = filteredNotes();
+
+  resultBar.innerHTML = `<span id="result-count-msg">${visible.length} of ${notes.length} notes</span>`;
+  emptyEl.classList.toggle('show', visible.length === 0);
+
+  clearGrid();
+
+  const groups = {};
+  visible.forEach(n => {
+    const theme = themeOf(n);
+    if (!groups[theme]) groups[theme] = [];
+    groups[theme].push(n);
+  });
+
+  const renderedThemes = new Set();
+  THEME_ORDER.forEach(th => {
+    if (!groups[th.key] || groups[th.key].length === 0) return;
+    renderedThemes.add(th.key);
+
+    const section = document.createElement('div');
+    section.className = 'theme-section';
+
+    const heading = document.createElement('div');
+    heading.className = 'theme-heading';
+    heading.innerHTML = `${escHtml(th.key)}<span class="theme-count">(${groups[th.key].length})</span>`;
+    section.appendChild(heading);
+
+    const themeGrid = document.createElement('div');
+    themeGrid.className = 'theme-grid';
+    groups[th.key].forEach(n => themeGrid.appendChild(makeCard(n)));
+    section.appendChild(themeGrid);
+
+    grid.insertBefore(section, emptyEl);
+  });
+
+  if (groups['Other'] && groups['Other'].length > 0) {
+    const section = document.createElement('div');
+    section.className = 'theme-section';
+
+    const heading = document.createElement('div');
+    heading.className = 'theme-heading';
+    heading.innerHTML = `Other<span class="theme-count">(${groups['Other'].length})</span>`;
+    section.appendChild(heading);
+
+    const themeGrid = document.createElement('div');
+    themeGrid.className = 'theme-grid';
+    groups['Other'].forEach(n => themeGrid.appendChild(makeCard(n)));
+    section.appendChild(themeGrid);
+
+    grid.insertBefore(section, emptyEl);
+  }
+
+  renderFilters();
+}
+
+// ── TIMELINE ─────────────────────────────────────────────────────────────
+function renderTimeline() {
+  const tlScroll = document.getElementById('timeline-scroll');
+  tlScroll.innerHTML = '';
+
+  const years = [];
+  for (let y = 2017; y <= 2026; y++) years.push(String(y));
+
+  const grouped = {};
+  years.forEach(y => grouped[y] = []);
+  grouped['Reference'] = [];
+
+  notes.forEach(n => {
+    const y = String(n.year || '');
+    if (years.includes(y)) grouped[y].push(n);
+    else grouped['Reference'].push(n);
+  });
+
+  const filterFn = n => {
+    if (progressFilter === 'all') return true;
+    return getReadStatus(n.id) === progressFilter;
+  };
+
+  [...years, 'Reference'].forEach(year => {
+    const items = (grouped[year] || []).filter(filterFn);
+    if (items.length === 0) return;
+
+    const col = document.createElement('div');
+    col.className = 'tl-col';
+
+    const hd = document.createElement('div');
+    hd.className = 'tl-year-hd';
+    hd.textContent = year;
+    col.appendChild(hd);
+
+    const cardsWrap = document.createElement('div');
+    cardsWrap.className = 'tl-cards';
+
+    items.forEach(n => {
+      const color = themeColorOf(n);
+      const card = document.createElement('div');
+      card.className = 'tl-card';
+      card.style.borderLeftColor = color;
+      card.innerHTML = `
+        <div class="tl-card-title">${escHtml(n.title)}</div>
+        <div class="tl-card-tags">${
+          n.tags.slice(0, 3).map(t => `<span class="tl-tag">${escHtml(t)}</span>`).join('')
+        }</div>
+      `;
+      card.addEventListener('click', () => openNote(n.id));
+      cardsWrap.appendChild(card);
+    });
+
+    col.appendChild(cardsWrap);
+    tlScroll.appendChild(col);
+  });
+
+  if (tlScroll.children.length === 0) {
+    tlScroll.innerHTML = '<div class="tl-empty" style="padding:40px 20px;color:var(--muted);font-size:.88rem;">No notes match the current filter.</div>';
+  }
+}
+
+// ── CITATION EXPLORER ─────────────────────────────────────────────────────
+
+function renderTopCited() {
+  panel.classList.remove('open');
+  openId = null;
+
+  renderCeLeft();
+  if (ceSelectedId && byId[ceSelectedId]) {
+    renderCeDetail(byId[ceSelectedId]);
+  } else {
+    renderCeSummary();
+  }
+}
+
+// ── CE Left panel ─────────────────────────────────────────────────────────
+function renderCeLeft() {
+  const allCited = notes
+    .filter(n => n.citation_count > 0)
+    .sort((a, b) => b.citation_count - a.citation_count);
+
+  ceLeft.innerHTML = `
+    <div class="ce-hd">
+      <div class="ce-hd-title">Citation Explorer</div>
+      <div class="ce-hd-sub">Click any paper to see what it influenced</div>
+      <input class="ce-search" id="ce-search-input"
+             placeholder="Filter papers…"
+             value="${escAttr(ceQuery)}"
+             autocomplete="off" spellcheck="false">
+    </div>
+    <div class="ce-list" id="ce-list"></div>
+  `;
+
+  document.getElementById('ce-search-input').addEventListener('input', e => {
+    ceQuery = e.target.value.trim();
+    buildCeList(allCited);
+  });
+
+  buildCeList(allCited);
+}
+
+function buildCeList(allCited) {
+  const listEl = document.getElementById('ce-list');
+  if (!listEl) return;
+
+  const q = ceQuery.toLowerCase();
+  const filtered = q
+    ? allCited.filter(n => n.title.toLowerCase().includes(q))
+    : allCited;
+
+  listEl.innerHTML = '';
+
+  if (filtered.length === 0) {
+    listEl.innerHTML = '<div class="ce-empty">No papers match your filter.</div>';
+    return;
+  }
+
+  filtered.forEach(n => {
+    const rank = allCited.indexOf(n) + 1;
+    const pct  = Math.max((n.citation_count / 100000) * 100, 0.4);
+    const cls  = citBarClass(n.citation_count);
+
+    const item = document.createElement('div');
+    item.className = 'ce-item' + (n.id === ceSelectedId ? ' active' : '');
+    item.dataset.id = n.id;
+    item.innerHTML = `
+      <span class="ce-rank">#${rank}</span>
+      <div class="ce-info">
+        <div class="ce-item-title">${escHtml(n.title)}</div>
+        <div class="ce-item-year">${n.year || '—'}</div>
+      </div>
+      <div class="ce-bar-wrap">
+        <div class="ce-bar-track">
+          <div class="ce-bar-fill ${cls}" style="width:${pct}%"></div>
+        </div>
+        <div class="ce-bar-num">${fmtCitShort(n.citation_count)}</div>
+      </div>
+    `;
+
+    item.addEventListener('click', () => {
+      ceSelectedId = n.id;
+      listEl.querySelectorAll('.ce-item').forEach(el => el.classList.remove('active'));
+      item.classList.add('active');
+      renderCeDetail(n);
+    });
+
+    listEl.appendChild(item);
+  });
+}
+
+// ── CE Summary (default right panel) ─────────────────────────────────────
+function renderCeSummary() {
+  const cited     = notes.filter(n => n.citation_count > 0);
+  const totalCit  = cited.reduce((s, n) => s + (n.citation_count || 0), 0);
+  const topPaper  = [...cited].sort((a, b) => b.citation_count - a.citation_count)[0];
+
+  ceRight.innerHTML = `
+    <div class="ce-summary-title">Citation Overview</div>
+    <p class="ce-summary-sub">
+      Select a paper from the left panel to explore its citation impact
+      and the downstream works it influenced.
+    </p>
+
+    <div class="ce-summary-grid">
+      <div class="ce-stat-card">
+        <div class="ce-stat-label">Papers in Wiki</div>
+        <div class="ce-stat-value">${notes.length}</div>
+      </div>
+      <div class="ce-stat-card">
+        <div class="ce-stat-label">Total Citations Tracked</div>
+        <div class="ce-stat-value">${totalCit.toLocaleString()}</div>
+      </div>
+      <div class="ce-stat-card">
+        <div class="ce-stat-label">Most Cited</div>
+        <div class="ce-stat-value" style="font-size:.92rem;line-height:1.3">
+          ${topPaper ? escHtml(topPaper.title) : '—'}
+        </div>
+        <div class="ce-stat-sub">
+          ${topPaper ? topPaper.citation_count.toLocaleString() + ' citations' : ''}
+        </div>
+      </div>
+      <div class="ce-stat-card">
+        <div class="ce-stat-label">Fastest Growing</div>
+        <div class="ce-stat-value" style="font-size:.92rem;line-height:1.3">Mamba</div>
+        <div class="ce-stat-sub">4,841 citations in 18 months</div>
+      </div>
+    </div>
+
+    <div class="ce-clusters-label">Citation Clusters</div>
+    <div class="ce-cluster-pills">
+      <span class="ce-cluster-pill"
+        style="background:rgba(107,114,128,.14);color:#9ca3af;border-color:rgba(107,114,128,.3)">
+        Foundations
+      </span>
+      <span class="ce-cluster-pill"
+        style="background:rgba(99,102,241,.14);color:#818cf8;border-color:rgba(99,102,241,.3)">
+        Efficiency
+      </span>
+      <span class="ce-cluster-pill"
+        style="background:rgba(13,148,136,.14);color:#2dd4bf;border-color:rgba(13,148,136,.3)">
+        Inference
+      </span>
+      <span class="ce-cluster-pill"
+        style="background:rgba(234,88,12,.14);color:#fb923c;border-color:rgba(234,88,12,.3)">
+        Hardware
+      </span>
+    </div>
+  `;
+}
+
+// ── CE Detail (paper selected) ─────────────────────────────────────────────
+function renderCeDetail(n) {
+  const pct   = Math.max((n.citation_count / 100000) * 100, 1);
+  const color = citBarHex(n.citation_count);
+
+  const authorsPart = n.authors
+    ? `<span>${escHtml(n.authors)}</span><span class="ce-meta-sep">·</span>`
+    : '';
+  const yearPart = n.year
+    ? `<span>${escHtml(n.year)}</span><span class="ce-meta-sep">·</span>`
+    : '';
+  const arxivPart = n.arxiv
+    ? `<a href="https://arxiv.org/abs/${escAttr(n.arxiv)}" target="_blank" rel="noopener" class="ce-arxiv-link">
+         arXiv: ${escHtml(n.arxiv)} ↗
+       </a>`
+    : '';
+
+  // Citing papers table
+  let citeSection = '';
+  if (n.cited_by_details && n.cited_by_details.length > 0) {
+    const rows = n.cited_by_details.map((c, i) => {
+      const thCls   = (c.theme || '').replace(/[^a-z-]/g, '');
+      const thLabel = escHtml(c.theme || '');
+      const citCount = c.citations ? ('~' + c.citations.toLocaleString()) : '—';
+      const arxivLink = c.arxiv
+        ? `<a href="https://arxiv.org/abs/${escAttr(c.arxiv)}" target="_blank"
+              rel="noopener" class="cite-arxiv" title="Open on arXiv">↗</a>`
+        : '';
+      return `
+        <tr>
+          <td class="cite-rank">${i + 1}</td>
+          <td>
+            <button class="cite-title-link" data-arxiv="${escAttr(c.arxiv || '')}"
+                    data-title="${escAttr(c.title)}">
+              ${escHtml(c.title)}
+            </button>
+          </td>
+          <td class="cite-year">${c.year || '—'}</td>
+          <td class="cite-count">${citCount}</td>
+          <td><span class="theme-pill ${thCls}">${thLabel}</span></td>
+          <td>${arxivLink}</td>
+        </tr>`;
+    }).join('');
+
+    citeSection = `
+      <table class="cite-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Paper</th>
+            <th>Year</th>
+            <th>~Citations</th>
+            <th>Theme</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+  } else {
+    citeSection = `<p class="cite-no-data">Citation detail not yet tracked for this paper.</p>`;
+  }
+
+  // Related in this wiki
+  const relatedIds = (n.links || []).filter(id => byId[id] && id !== n.id);
+  const relatedHtml = relatedIds.length > 0
+    ? `<div class="related-pills">
+         ${relatedIds.map(id =>
+           `<a href="#" class="related-pill" data-noteid="${escAttr(id)}">${escHtml(byId[id].title)}</a>`
+         ).join('')}
+       </div>`
+    : `<p class="cite-no-data">No linked notes resolved in this wiki.</p>`;
+
+  ceRight.innerHTML = `
+    <button class="ce-back-btn" id="ce-back">← All Papers</button>
+
+    <div class="ce-detail-title">${escHtml(n.title)}</div>
+    <div class="ce-detail-meta">
+      ${authorsPart}${yearPart}${arxivPart}
+    </div>
+
+    <div class="ce-total-cit">${(n.citation_count || 0).toLocaleString()}</div>
+    <div class="ce-total-label">total citations</div>
+    <div class="ce-full-bar" style="background:${color};width:${pct}%"></div>
+
+    <div class="ce-section">
+      <div class="ce-section-title">What this paper introduced</div>
+      <p class="ce-tldr">${escHtml(n.tldr || 'No summary available.')}</p>
+    </div>
+
+    <div class="ce-section">
+      <div class="ce-section-title">Top 10 papers that cite this work</div>
+      ${citeSection}
+    </div>
+
+    <div class="ce-section">
+      <div class="ce-section-title">Related papers in this wiki</div>
+      ${relatedHtml}
+    </div>
+  `;
+
+  // Wire back button
+  document.getElementById('ce-back').addEventListener('click', () => {
+    ceSelectedId = null;
+    const listEl = document.getElementById('ce-list');
+    if (listEl) listEl.querySelectorAll('.ce-item').forEach(el => el.classList.remove('active'));
+    renderCeSummary();
+  });
+
+  // Wire citing paper title clicks
+  ceRight.querySelectorAll('.cite-title-link').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.preventDefault();
+      const arxivId = btn.dataset.arxiv;
+      const match = arxivId ? byArxiv[arxivId] : null;
+      if (match) {
+        ceSelectedId = match.id;
+        const listEl = document.getElementById('ce-list');
+        if (listEl) {
+          listEl.querySelectorAll('.ce-item').forEach(el => el.classList.remove('active'));
+          const activeItem = listEl.querySelector(`[data-id="${escAttr(match.id)}"]`);
+          if (activeItem) activeItem.classList.add('active');
+        }
+        renderCeDetail(match);
+        ceRight.scrollTop = 0;
+      } else if (arxivId) {
+        window.open('https://arxiv.org/abs/' + arxivId, '_blank', 'noopener');
+      }
+    });
+  });
+
+  // Wire related pills — switch to All tab and open note panel
+  ceRight.querySelectorAll('.related-pill').forEach(el => {
+    el.addEventListener('click', e => {
+      e.preventDefault();
+      activeTab = 'all';
+      document.querySelectorAll('.tab-btn').forEach(b =>
+        b.classList.toggle('active', b.dataset.tab === 'all'));
+      render();
+      openNote(el.dataset.noteid);
+    });
+  });
+}
+
+// ── MAIN RENDER DISPATCH ──────────────────────────────────────────────────
+function render() {
+  const isBrowse = activeTab === 'all' || activeTab === 'by-theme';
+
+  browseArea.style.display     = isBrowse ? '' : 'none';
+  ceExplorer.style.display     = activeTab === 'top-cited' ? 'flex' : 'none';
+  timelineWrap.classList.toggle('show', activeTab === 'timeline');
+  agentWrap.classList.toggle('show',    activeTab === 'agent');
+  progressSection.classList.toggle('show',
+    activeTab !== 'top-cited' && activeTab !== 'agent');
+
+  if (activeTab === 'top-cited') {
+    renderTopCited();
+  } else if (activeTab === 'by-theme') {
+    renderByTheme();
+    updateProgress();
+  } else if (activeTab === 'timeline') {
+    renderTimeline();
+    updateProgress();
+  } else if (activeTab === 'agent') {
+    renderAgent();
+  } else {
+    renderAll();
+    updateProgress();
+  }
+}
+
+// ── AGENT TAB ─────────────────────────────────────────────────────────────
+function renderAgent() {
+  const totalNotes = notes.length;
+
+  // "Added by agent" heuristic: tags contain 'arxiv', 'github', or 'agent'
+  const agentNotes = notes.filter(n =>
+    n.tags && n.tags.some(t => ['arxiv','github','agent','youtube'].includes(t))
+  );
+
+  // Sort notes by title for recent-additions list (newest year first, then title)
+  const recent = [...notes]
+    .filter(n => n.year)
+    .sort((a, b) => (b.year || '').localeCompare(a.year || '') || a.title.localeCompare(b.title))
+    .slice(0, 5);
+
+  const SOURCES = [
+    { name: 'arXiv',           desc: 'cs.LG, cs.CL, cs.AI — new papers by keyword/topic',  badge: 'Free API',   color: '#7c3aed' },
+    { name: 'GitHub',          desc: 'karpathy/*, state-spaces/mamba, huggingface/transformers', badge: 'Free API', color: '#0d9488' },
+    { name: 'Blogs',           desc: 'Karpathy, Lilian Weng, HuggingFace, Distill.pub',    badge: 'Web fetch',  color: '#d97706' },
+    { name: 'YouTube',         desc: 'Lecture transcripts via yt-dlp (Karpathy channel)',   badge: 'Free',       color: '#ef4444' },
+    { name: 'Semantic Scholar',desc: 'Papers citing existing wiki papers (100+ threshold)', badge: 'Free API',   color: '#2563eb' },
+  ];
+
+  const TOPIC_PILLS = ['Mamba 2', 'DeepSeek R2', 'Flash Attention 3', 'LLM inference 2025', 'xLSTM improvements'];
+
+  const svgSearch = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>`;
+  const svgMerge  = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M6 9v3a3 3 0 0 0 3 3h3M18 15V9a3 3 0 0 0-3-3H9"/></svg>`;
+  const svgRadar  = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="2"/><path d="M6 12a6 6 0 0 1 6-6M6 12a6 6 0 0 0 6 6M18 12a6 6 0 0 0-6-6M18 12a6 6 0 0 1-6 6"/><circle cx="12" cy="12" r="10"/></svg>`;
+  const svgSync   = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>`;
+  const svgCopy   = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+  const svgCheck  = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`;
+
+  function cmdCard(icon, iconBg, title, desc, code, extraHtml = '', note = '') {
+    return `
+      <div class="agent-cmd-card">
+        <div class="agent-cmd-header">
+          <div class="agent-cmd-icon" style="background:${iconBg}20;color:${iconBg}">${icon}</div>
+          <div class="agent-cmd-title">${title}</div>
+        </div>
+        <div class="agent-cmd-desc">${desc}</div>
+        <div class="agent-code-wrap">
+          <span class="agent-code">${escHtml(code)}</span>
+          <button class="agent-copy-btn" data-cmd="${escAttr(code)}" title="Copy command">
+            <span class="copy-icon">${svgCopy}</span>
+            <span class="check-icon" style="display:none">${svgCheck}</span>
+          </button>
+        </div>
+        ${extraHtml}
+        ${note ? `<div class="agent-cmd-note">${note}</div>` : ''}
+      </div>`;
+  }
+
+  const pillsHtml = `
+    <div class="agent-pills">
+      ${TOPIC_PILLS.map(p =>
+        `<span class="agent-pill" data-topic="${escAttr(p)}">${escHtml(p)}</span>`
+      ).join('')}
+    </div>`;
+
+  agentWrap.innerHTML = `
+    <div class="agent-hd">
+      <div class="agent-hd-title">Research Agent</div>
+      <div class="agent-hd-sub">Autonomous wiki ingestion — run on server</div>
+    </div>
+
+    <div class="agent-cmd-grid">
+      ${cmdCard(svgSearch, '#7c3aed', 'Topic search',
+          'Add papers about a specific topic',
+          'python3 agent.py topic "your topic here"',
+          pillsHtml)}
+      ${cmdCard(svgMerge, '#0d9488', 'Citation tracking',
+          'Find high-impact papers citing your wiki',
+          'python3 agent.py citations',
+          '',
+          'Checks Semantic Scholar for papers with 100+ citations')}
+      ${cmdCard(svgRadar, '#d97706', 'Daily monitor',
+          'Broad sweep of arXiv + GitHub + blogs',
+          'python3 agent.py daily',
+          '',
+          'Searches cs.LG, cs.CL, cs.AI &plus; 6 GitHub repos &plus; 4 blogs')}
+      ${cmdCard(svgSync, '#0891b2', 'Update citations',
+          'Sync citation counts from Semantic Scholar for all papers',
+          'python3 agent.py update-citations',
+          '',
+          'Queries Semantic Scholar API &middot; updates all citation_count fields &middot; rebuilds web demo &middot; run monthly')}
+    </div>
+
+    <div class="agent-section-title">Sources monitored</div>
+    <div class="agent-sources-grid">
+      ${SOURCES.map(s => `
+        <div class="agent-src-card" style="border-left-color:${s.color}">
+          <div class="agent-src-name">${escHtml(s.name)}</div>
+          <div class="agent-src-desc">${escHtml(s.desc)}</div>
+          <span class="agent-src-badge">${escHtml(s.badge)}</span>
+        </div>`).join('')}
+    </div>
+
+    <div class="agent-section-title">Wiki activity</div>
+    <div class="agent-stats-row">
+      <div class="agent-stat-card">
+        <div class="agent-stat-label">Total notes</div>
+        <div class="agent-stat-value">${totalNotes}</div>
+        <div class="agent-stat-sub">in wiki</div>
+      </div>
+      <div class="agent-stat-card">
+        <div class="agent-stat-label">Agent-sourced</div>
+        <div class="agent-stat-value">${agentNotes.length}</div>
+        <div class="agent-stat-sub">via arXiv / GitHub tags</div>
+      </div>
+      <div class="agent-stat-card">
+        <div class="agent-stat-label">Relevance bar</div>
+        <div class="agent-stat-value">7<span style="font-size:.8rem;font-weight:400;color:var(--muted)">/10</span></div>
+        <div class="agent-stat-sub">minimum to add</div>
+      </div>
+      <div class="agent-stat-card">
+        <div class="agent-stat-label">Sources watched</div>
+        <div class="agent-stat-value">5</div>
+        <div class="agent-stat-sub">arXiv · GitHub · blogs · YT · Scholar</div>
+      </div>
+      <div class="agent-stat-card">
+        <div class="agent-stat-label">Citations updated</div>
+        <div class="agent-stat-value" id="citations-updated" style="font-size:1.05rem">June 2026</div>
+        <div class="agent-stat-sub">Semantic Scholar live API</div>
+      </div>
+    </div>
+
+    <div class="agent-section-title">Most recent notes</div>
+    <div class="agent-recent-list">
+      ${recent.map(n => `
+        <div class="agent-recent-item" data-id="${escAttr(n.id)}">
+          <span class="agent-recent-title">${escHtml(n.title)}</span>
+          <span class="agent-recent-year">${n.year || '—'}</span>
+        </div>`).join('')}
+    </div>
+  `;
+
+  // Copy-to-clipboard
+  agentWrap.querySelectorAll('.agent-copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      navigator.clipboard.writeText(btn.dataset.cmd).then(() => {
+        btn.classList.add('copied');
+        btn.querySelector('.copy-icon').style.display = 'none';
+        btn.querySelector('.check-icon').style.display = '';
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.querySelector('.copy-icon').style.display = '';
+          btn.querySelector('.check-icon').style.display = 'none';
+        }, 1200);
+      });
+    });
+  });
+
+  // Topic pills → copy full command to clipboard
+  agentWrap.querySelectorAll('.agent-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      const cmd = `python3 agent.py topic "${pill.dataset.topic}"`;
+      navigator.clipboard.writeText(cmd).then(() => {
+        const orig = pill.textContent;
+        pill.textContent = '✓ copied';
+        setTimeout(() => { pill.textContent = orig; }, 1200);
+      });
+    });
+  });
+
+  // Recent note items → open note panel
+  agentWrap.querySelectorAll('.agent-recent-item').forEach(el => {
+    el.addEventListener('click', () => {
+      activeTab = 'all';
+      document.querySelectorAll('.tab-btn').forEach(b =>
+        b.classList.toggle('active', b.dataset.tab === 'all'));
+      render();
+      openNote(el.dataset.id);
+    });
+  });
+}
+
+// ── open panel ───────────────────────────────────────────────────────────
+function openNote(id) {
+  const n = byId[id];
+  if (!n) return;
+
+  openId = id;
+  panelYear.textContent = n.year || '';
+
+  if (n.citation_count) {
+    panelCitations.textContent = `📚 ${fmtCit(n.citation_count)} citations`;
+    panelCitations.style.display = 'inline-block';
+  } else {
+    panelCitations.style.display = 'none';
+  }
+
+  if (n.arxiv) {
+    panelArxiv.href = `https://arxiv.org/abs/${n.arxiv}`;
+    panelArxiv.style.display = 'inline-flex';
+  } else {
+    panelArxiv.style.display = 'none';
+  }
+
+  panelTitle.textContent = n.title;
+
+  panelTags.innerHTML = n.tags.map(t =>
+    `<span class="tag${activeTags.has(t) ? ' active-tag' : ''}" data-tag="${escAttr(t)}">${escHtml(t)}</span>`
+  ).join('');
+  panelTags.querySelectorAll('.tag').forEach(el =>
+    el.addEventListener('click', () => toggleTag(el.dataset.tag))
+  );
+
+  panelBody.innerHTML = resolveWikilinks(n.html);
+  panelBody.querySelectorAll('a.wikilink:not(.missing)').forEach(a =>
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      openNote(a.dataset.noteid);
+    })
+  );
+
+  // Reset match state before new highlights
+  hideMatchNav();
+
+  renderBacklinks(n, panelBody);
+  renderMath(panelBody);
+  // Syntax-highlight fenced code blocks (graceful no-op if Prism not loaded yet)
+  if (window.Prism) Prism.highlightAllUnder(panelBody);
+
+  panel.classList.add('open');
+  // Mobile: show backdrop + lock background scroll for bottom-sheet
+  if (window.innerWidth <= 768) {
+    panelBackdrop.classList.add('visible');
+    document.body.style.overflow = 'hidden';
+  }
+  // Only reset scroll when no search active (search will scroll to first match)
+  if (!query) panelBody.scrollTop = 0;
+  if (activeTab !== 'top-cited' && activeTab !== 'timeline') render();
+
+  // Highlight after panel is open so scrollIntoView works correctly
+  if (query) requestAnimationFrame(() => highlightSearch(panelBody, query));
+}
+
+// ── search highlight + match navigation ──────────────────────────────────
+function highlightSearch(el, q) {
+  matchEls = [];
+  matchIdx = 0;
+
+  if (!q) { hideMatchNav(); return; }
+
+  const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const re = new RegExp(escaped, 'gi');
+
+  // Walk all text nodes, skip script/style
+  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
+    acceptNode: node => {
+      const tag = node.parentElement && node.parentElement.tagName;
+      return (tag === 'SCRIPT' || tag === 'STYLE')
+        ? NodeFilter.FILTER_REJECT
+        : NodeFilter.FILTER_ACCEPT;
+    }
+  });
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+
+  nodes.forEach(node => {
+    if (!node.textContent.toLowerCase().includes(q.toLowerCase())) return;
+    const frag = document.createDocumentFragment();
+    let last = 0, m;
+    re.lastIndex = 0;
+    while ((m = re.exec(node.textContent)) !== null) {
+      if (m.index > last)
+        frag.appendChild(document.createTextNode(node.textContent.slice(last, m.index)));
+      const mark = document.createElement('mark');
+      mark.className = 'search-highlight';
+      mark.textContent = m[0];
+      frag.appendChild(mark);
+      matchEls.push(mark);
+      last = m.index + m[0].length;
+    }
+    if (last < node.textContent.length)
+      frag.appendChild(document.createTextNode(node.textContent.slice(last)));
+    node.parentNode.replaceChild(frag, node);
+  });
+
+  if (matchEls.length === 0) { hideMatchNav(); return; }
+
+  // Activate first match and scroll to it
+  setActiveMatch(0, /* scroll */ true);
+  showMatchNav(q);
+}
+
+function setActiveMatch(idx, scroll) {
+  if (matchEls.length === 0) return;
+  matchEls.forEach(m => m.classList.remove('active'));
+  matchIdx = ((idx % matchEls.length) + matchEls.length) % matchEls.length;
+  matchEls[matchIdx].classList.add('active');
+  if (scroll) {
+    matchEls[matchIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  updateMatchNavCount();
+}
+
+function showMatchNav(q) {
+  matchNav.classList.add('show');
+  matchNavTerm.textContent = `"${q}"`;
+  updateMatchNavCount();
+}
+
+function hideMatchNav() {
+  matchNav.classList.remove('show');
+  matchEls = [];
+  matchIdx = 0;
+}
+
+function updateMatchNavCount() {
+  if (matchEls.length === 0) {
+    matchNavCount.textContent = 'no matches';
+    matchPrev.disabled = true;
+    matchNext.disabled = true;
+  } else {
+    matchNavCount.textContent = `${matchIdx + 1} of ${matchEls.length}`;
+    matchPrev.disabled = matchEls.length <= 1;
+    matchNext.disabled = matchEls.length <= 1;
+  }
+}
+
+// ── backlinks panel ──────────────────────────────────────────────────────
+function renderBacklinks(n, container) {
+  const bls = (n.backlinks || []).filter(id => byId[id]);
+  if (bls.length === 0) return;
+
+  const section = document.createElement('div');
+  section.className = 'backlinks-section';
+  const showLimit = 8;
+  const visible = bls.slice(0, showLimit);
+  const hidden  = bls.slice(showLimit);
+
+  const pillsHtml = visible.map(id =>
+    `<a href="#" class="backlink-pill" data-noteid="${escAttr(id)}">${escHtml(byId[id].title)}</a>`
+  ).join('');
+  const moreBtn = hidden.length > 0
+    ? `<button class="backlinks-more" id="bl-more">+${hidden.length} more</button>`
+    : '';
+
+  section.innerHTML = `
+    <div class="backlinks-header">Referenced by ${bls.length} note${bls.length !== 1 ? 's' : ''}</div>
+    <div class="backlinks-pills" id="bl-pills">${pillsHtml}${moreBtn}</div>
+  `;
+  container.appendChild(section);
+
+  section.querySelectorAll('.backlink-pill').forEach(a =>
+    a.addEventListener('click', e => { e.preventDefault(); openNote(a.dataset.noteid); })
+  );
+
+  if (hidden.length > 0) {
+    section.querySelector('#bl-more').addEventListener('click', () => {
+      const pillsEl = section.querySelector('#bl-pills');
+      const moreEl  = section.querySelector('#bl-more');
+      hidden.forEach(id => {
+        const a = document.createElement('a');
+        a.href = '#'; a.className = 'backlink-pill';
+        a.dataset.noteid = id;
+        a.textContent = byId[id].title;
+        a.addEventListener('click', e => { e.preventDefault(); openNote(id); });
+        pillsEl.insertBefore(a, moreEl);
+      });
+      moreEl.remove();
+    });
+  }
+}
+
+// ── comparison ───────────────────────────────────────────────────────────
+function toggleCompare(id) {
+  if (compareSet.has(id)) {
+    compareSet.delete(id);
+  } else {
+    if (compareSet.size >= 3) {
+      const first = [...compareSet][0];
+      compareSet.delete(first);
+    }
+    compareSet.add(id);
+  }
+  renderCompareTray();
+  render();
+}
+
+function renderCompareTray() {
+  const tray   = document.getElementById('compare-tray');
+  const pills  = document.getElementById('compare-tray-pills');
+  const openBtn = document.getElementById('compare-open-btn');
+
+  if (compareSet.size === 0) {
+    tray.classList.remove('show');
+    return;
+  }
+  tray.classList.add('show');
+  openBtn.textContent = `Compare (${compareSet.size})`;
+
+  pills.innerHTML = [...compareSet].map(id => {
+    const n = byId[id];
+    return n
+      ? `<span class="compare-tray-pill">
+           ${escHtml(n.title.length > 30 ? n.title.slice(0, 30) + '…' : n.title)}
+           <span class="ctp-x" data-id="${escAttr(id)}" title="Remove">✕</span>
+         </span>`
+      : '';
+  }).join('');
+
+  pills.querySelectorAll('.ctp-x').forEach(x =>
+    x.addEventListener('click', e => { e.stopPropagation(); toggleCompare(x.dataset.id); })
+  );
+}
+
+function renderComparePanel() {
+  const panel       = document.getElementById('compare-panel');
+  const cols        = document.getElementById('compare-cols');
+  const keyDiffsEl  = document.getElementById('compare-key-diffs');
+  const ids         = [...compareSet];
+  const colColors   = ['#7c3aed', '#0d9488', '#d97706'];
+
+  // ── Mode toggle wiring (idempotent) ─────────────────────────────────
+  document.querySelectorAll('.cmp-mode-btn').forEach(btn => {
+    btn.onclick = () => {
+      cmpMode = btn.dataset.mode;
+      document.querySelectorAll('.cmp-mode-btn').forEach(b =>
+        b.classList.toggle('active', b.dataset.mode === cmpMode));
+      renderComparePanel();
+    };
+  });
+
+  // ── Text helpers ─────────────────────────────────────────────────────
+  function htmlToText(html) {
+    const d = document.createElement('div');
+    d.innerHTML = html;
+    return (d.textContent || '').replace(/\s+/g, ' ').trim();
+  }
+
+  function firstSentence(text, max = 200) {
+    if (!text || !text.trim()) return '—';
+    const m = text.trim().match(/^[^.!?]+[.!?]/);
+    const s = m ? m[0].trim() : text.trim().slice(0, max);
+    return s.length > max ? s.slice(0, max) + '…' : s;
+  }
+
+  function findSentence(text, keywords, max = 200) {
+    const sentences = text.match(/[^.!?\n]+[.!?]+/g) || [];
+    for (const kw of keywords) {
+      const s = sentences.find(s => s.toLowerCase().includes(kw.toLowerCase()));
+      if (s) { const t = s.trim(); return t.length > max ? t.slice(0, max) + '…' : t; }
+    }
+    return '—';
+  }
+
+  function findAfterHeader(text, headers, max = 200) {
+    const lower = text.toLowerCase();
+    // First pass: try exact header strings (including ## prefix for markdown source)
+    for (const h of headers) {
+      const idx = lower.indexOf(h.toLowerCase());
+      if (idx === -1) continue;
+      const after = text.slice(idx + h.length).replace(/^[\s:#*\-]+/, '').trim();
+      if (after.length > 10) return firstSentence(after, max);
+    }
+    // Second pass: strip ## prefix and try bare heading text (for HTML-stripped content)
+    for (const h of headers) {
+      const bare = h.replace(/^#+\s*/, '').trim();
+      if (!bare) continue;
+      const idx = lower.indexOf(bare.toLowerCase());
+      if (idx === -1) continue;
+      const after = text.slice(idx + bare.length).replace(/^[\s:#*\-]+/, '').trim();
+      if (after.length > 10) return firstSentence(after, max);
+    }
+    return '—';
+  }
+
+  // ── Field extractor ─────────────────────────────────────────────────
+  function extractField(n, fieldKey) {
+    const raw = htmlToText(n.html || '');
+    switch (fieldKey) {
+      case 'core_innovation':
+        if (n.tldr) return n.tldr.slice(0, 220);
+        return findAfterHeader(raw, ['## Core Idea', '## TL;DR', '## What Is', '## Overview', '## Introduction']);
+
+      case 'architecture': {
+        const archMap = { ssm:'SSM', transformer:'Transformer', hybrid:'Hybrid', rnn:'RNN',
+          moe:'MoE', mamba:'Mamba (SSM)', attention:'Attention', diffusion:'Diffusion', rl:'RL', 'state-space':'SSM' };
+        const found = n.tags.map(t => archMap[t.toLowerCase()]).filter(Boolean);
+        if (found.length > 0) return [...new Set(found)].join(' + ');
+        return findSentence(raw, ['architecture', 'model is', 'designed as'], 120);
+      }
+
+      case 'complexity':
+        return findSentence(raw, ['O(n²)', 'O(n^2)', 'O(n log n)', 'O(n)', 'quadratic', 'linear time', 'subquadratic']);
+
+      case 'formula': {
+        const lines = raw.split('\n');
+        const line = lines.find(l =>
+          /O\(n[²2]?\)|softmax|log P|attn|∑|∫|δ|α|β|σ/.test(l) ||
+          (/=/.test(l) && l.length < 120 && /[A-Z][a-z]/.test(l))
+        );
+        return line ? line.trim().slice(0, 160) : '—';
+      }
+
+      case 'benchmark':
+        return findSentence(raw, ['%', '×', 'throughput', 'speedup', 'state of the art', 'outperforms', 'sota', 'surpasses', 'achieves', 'beats']);
+
+      case 'hardware':
+        return findSentence(raw, ['H100', 'A100', 'GPU', 'HBM', 'SRAM', 'CUDA', 'TPU', 'hardware-aware', 'memory bandwidth', 'memory-efficient']);
+
+      case 'limitations': {
+        // Strategy 1: heading in HTML (most reliable — actual section)
+        const htmlHeadMatch = (n.html || '').match(/<h[23][^>]*>\s*(?:Limitations?|Weaknesses?|Drawbacks?|Downsides?|Challenges?|Caveats?)\s*<\/h[23]>\s*([\s\S]{20,400}?)(?=<h[123]|$)/i);
+        if (htmlHeadMatch) {
+          const snippet = htmlToText(htmlHeadMatch[1]).replace(/\s+/g, ' ').trim();
+          if (snippet.length > 10) return firstSentence(snippet, 200);
+        }
+        // Strategy 2: bare heading in stripped text (second-pass findAfterHeader)
+        const limHead = findAfterHeader(raw, ['## Limitations', '## Weaknesses', '## Downsides', '## Drawbacks', '## Challenges', '## Caveats']);
+        if (limHead !== '—') return limHead;
+        // Strategy 3: keyword patterns
+        const limKw = findSentence(raw, ['does not scale', 'cannot handle', 'fails to', 'limited by', 'weakness', 'drawback', 'downside', 'limitation', 'struggle', 'but does not', 'does not handle', 'however,']);
+        if (limKw !== '—') return limKw;
+        // Strategy 4: tag-based hints
+        if (n.tags?.includes('attention') || n.tags?.includes('transformer')) return 'Quadratic O(n²) attention cost limits long-context efficiency.';
+        if (n.tags?.includes('ssm') || n.tags?.includes('mamba')) return 'Selective recall may miss fine-grained token interactions vs. full attention.';
+        if (n.tags?.includes('moe')) return 'Load imbalance and communication overhead between experts.';
+        return '—';
+      }
+
+      case 'vs_transformer': {
+        const sents = raw.match(/[^.!?\n]+[.!?]+/g) || [];
+        const s = sents.find(s => {
+          const sl = s.toLowerCase();
+          return sl.includes('transformer') &&
+            (sl.includes('better') || sl.includes('faster') || sl.includes('unlike') ||
+             sl.includes('compared') || sl.includes('instead of') || sl.includes('replaces') || sl.includes('advantage'));
+        });
+        return s ? (s.trim().length > 200 ? s.trim().slice(0, 200) + '…' : s.trim()) : '—';
+      }
+
+      case 'year_citations': {
+        const cc = n.citation_count ? fmtCit(n.citation_count) + ' citations' : 'no data';
+        return `${n.year || '—'} · ${cc}`;
+      }
+
+      case 'reading_status': {
+        const st = getReadStatus(n.id);
+        return st === 'done' ? '✓ Done' : st === 'reading' ? '◑ Reading' : '○ Unread';
+      }
+
+      case '_tags':
+        return n.tags.slice(0, 6).join(', ') || '—';
+
+      default: return '—';
+    }
+  }
+
+  // ── Field definitions ────────────────────────────────────────────────
+  const TECH_FIELDS = [
+    { key:'core_innovation', label:'Core Innovation' },
+    { key:'architecture',    label:'Architecture Type' },
+    { key:'complexity',      label:'Sequence Complexity' },
+    { key:'formula',         label:'Key Formula / Mechanism' },
+    { key:'benchmark',       label:'Best Benchmark Result' },
+    { key:'hardware',        label:'Hardware Requirement' },
+    { key:'limitations',     label:'Limitations' },
+    { key:'vs_transformer',  label:'vs Transformer' },
+    { key:'year_citations',  label:'Year & Citations' },
+    { key:'reading_status',  label:'Reading Status' },
+  ];
+  const SUMM_FIELDS = [
+    { key:'core_innovation', label:'TL;DR' },
+    { key:'year_citations',  label:'Year & Citations' },
+    { key:'_tags',           label:'Tags' },
+    { key:'reading_status',  label:'Reading Status' },
+  ];
+
+  const papers = ids.map(id => byId[id]).filter(Boolean);
+  const activeFields = cmpMode === 'summary' ? SUMM_FIELDS : TECH_FIELDS;
+
+  // Extract all values and detect differences
+  const fieldData = activeFields.map(f => {
+    const values = papers.map(n => extractField(n, f.key));
+    const nonDash = values.filter(v => v !== '—');
+    const differs = nonDash.length > 1 && nonDash.some(v => v !== nonDash[0]);
+    return { ...f, values, differs };
+  });
+
+  // Key differences banner (technical mode only)
+  if (cmpMode === 'technical') {
+    const diffLabels = fieldData
+      .filter(f => f.differs && f.key !== 'reading_status' && f.key !== 'year_citations')
+      .map(f => f.label);
+    if (diffLabels.length > 0) {
+      keyDiffsEl.innerHTML = `<strong>Key differences:</strong> ${diffLabels.join(', ')}`;
+      keyDiffsEl.classList.add('show');
+    } else {
+      keyDiffsEl.classList.remove('show');
+    }
+  } else {
+    keyDiffsEl.classList.remove('show');
+  }
+
+  // ── Build HTML table ─────────────────────────────────────────────────
+  const headerCells = papers.map((n, i) =>
+    `<th style="border-top:3px solid ${colColors[i]};color:${colColors[i]}">${escHtml(n.title)}</th>`
+  ).join('');
+
+  const bodyRows = fieldData.map((fd, ri) => {
+    const labelClass = 'cmp-label' + (fd.differs ? ' diff' : ' same');
+    const valueCells = fd.values.map((v, ci) => {
+      if (fd.key === '_tags') {
+        const tagHtml = papers[ci].tags.slice(0, 6)
+          .map(t => `<span class="tag" style="cursor:default;font-size:.7rem;padding:2px 7px">${escHtml(t)}</span>`)
+          .join(' ');
+        return `<td>${tagHtml}</td>`;
+      }
+      return `<td>${escHtml(v)}</td>`;
+    }).join('');
+    const rowClass = ri % 2 !== 0 ? ' class="cmp-alt-row"' : '';
+    return `<tr${rowClass}><td class="${labelClass}">${escHtml(fd.label)}</td>${valueCells}</tr>`;
+  }).join('');
+
+  cols.innerHTML = `<div class="compare-table-wrap">
+    <table class="compare-table">
+      <thead><tr>
+        <th class="cmp-lbl-th">Attribute</th>
+        ${headerCells}
+      </tr></thead>
+      <tbody>${bodyRows}</tbody>
+    </table>
+  </div>`;
+
+  // Render any LaTeX that appeared in extracted field values
+  renderMath(cols);
+
+  panel.classList.add('show');
+}
+
+// ── KaTeX renderer ───────────────────────────────────────────────────────
+function renderMath(el) {
+  if (typeof renderMathInElement === 'undefined') {
+    setTimeout(() => renderMath(el), 500);
+    return;
+  }
+  try {
+    renderMathInElement(el, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true  },
+        { left: '$',  right: '$',  display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true  }
+      ],
+      throwOnError: false,
+      errorColor: '#cc0000',
+      strict: false,
+      trust: true
+    });
+  } catch(e) {
+    console.warn('KaTeX render error:', e);
+  }
+}
+
+function closePanel() {
+  panel.classList.remove('open');
+  // Mobile: hide backdrop + restore background scroll
+  panelBackdrop.classList.remove('visible');
+  document.body.style.overflow = '';
+  openId = null;
+  hideMatchNav();
+  if (activeTab !== 'top-cited' && activeTab !== 'timeline' && activeTab !== 'agent') render();
+}
+
+// Mobile bottom-sheet: tap backdrop or swipe down to close
+panelBackdrop.addEventListener('click', closePanel);
+let _panelTouchY = 0;
+panel.addEventListener('touchstart', e => {
+  _panelTouchY = e.touches[0].clientY;
+}, { passive: true });
+panel.addEventListener('touchmove', e => {
+  // Only treat as dismiss gesture when the body is scrolled to the top
+  if (panelBody.scrollTop <= 0 && e.touches[0].clientY - _panelTouchY > 80) closePanel();
+}, { passive: true });
+
+// ── tag toggle ───────────────────────────────────────────────────────────
+function toggleTag(tag) {
+  if (!tag) return;
+  if (activeTags.has(tag)) activeTags.delete(tag);
+  else                     activeTags.add(tag);
+  render();
+}
+
+function removeTag(tag) {
+  activeTags.delete(tag);
+  render();
+}
+
+function clearTags() {
+  activeTags.clear();
+  render();
+}
+
+// ── utils ─────────────────────────────────────────────────────────────────
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function escAttr(s) { return String(s).replace(/"/g,'&quot;'); }
+
+// ── card highlight mode (Enter key) ──────────────────────────────────────
+function applyCardHighlighting(term) {
+  const cards = [...grid.querySelectorAll('.card')];
+  highlightedCards = [];
+
+  cards.forEach(card => {
+    const note = byId[card.dataset.id] || {};
+    const isMatch = matchesSearch(note, term);
+    if (isMatch) {
+      highlightedCards.push(card);
+      card.classList.add('search-highlighted');
+      card.classList.remove('search-dimmed', 'search-highlighted-active');
+      highlightTextInCard(card, term);
+    } else {
+      card.classList.add('search-dimmed');
+      card.classList.remove('search-highlighted', 'search-highlighted-active');
+    }
+  });
+
+  highlightStep = -1;
+  advanceHighlight();
+}
+
+function advanceHighlight() {
+  if (highlightedCards.length === 0) return;
+
+  if (highlightStep >= 0 && highlightStep < highlightedCards.length)
+    highlightedCards[highlightStep].classList.remove('search-highlighted-active');
+
+  highlightStep = (highlightStep + 1) % highlightedCards.length;
+  const active = highlightedCards[highlightStep];
+  active.classList.add('search-highlighted-active');
+  active.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+  const countMsg = document.getElementById('result-count-msg');
+  if (countMsg) {
+    countMsg.innerHTML =
+      `<strong>${highlightStep + 1}</strong> of ${highlightedCards.length} note${highlightedCards.length !== 1 ? 's' : ''} highlighted` +
+      ` <span class="enter-hint">↵ next · Esc to clear</span>`;
+  }
+}
+
+function clearCardHighlighting() {
+  grid.querySelectorAll('.card').forEach(card => {
+    card.classList.remove('search-highlighted', 'search-highlighted-active', 'search-dimmed');
+    card.querySelectorAll('mark.search-mark').forEach(mark => {
+      mark.replaceWith(document.createTextNode(mark.textContent));
+    });
+  });
+  highlightedCards = [];
+  highlightStep = -1;
+}
+
+function highlightTextInCard(card, term) {
+  const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const re = new RegExp(escaped, 'gi');
+
+  ['.card-title', '.card-tldr'].forEach(sel => {
+    const el = card.querySelector(sel);
+    if (!el) return;
+
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
+      acceptNode: node => {
+        const tag = node.parentElement?.tagName;
+        return (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'MARK')
+          ? NodeFilter.FILTER_REJECT
+          : NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    const textNodes = [];
+    while (walker.nextNode()) textNodes.push(walker.currentNode);
+
+    textNodes.forEach(textNode => {
+      if (!textNode.textContent.toLowerCase().includes(term.toLowerCase())) return;
+      const frag = document.createDocumentFragment();
+      let last = 0, m;
+      re.lastIndex = 0;
+      while ((m = re.exec(textNode.textContent)) !== null) {
+        if (m.index > last)
+          frag.appendChild(document.createTextNode(textNode.textContent.slice(last, m.index)));
+        const mark = document.createElement('mark');
+        mark.className = 'search-mark';
+        mark.textContent = m[0];
+        frag.appendChild(mark);
+        last = m.index + m[0].length;
+      }
+      if (last < textNode.textContent.length)
+        frag.appendChild(document.createTextNode(textNode.textContent.slice(last)));
+      textNode.parentNode.replaceChild(frag, textNode);
+    });
+  });
+}
+
+// ── search clear button ───────────────────────────────────────────────────
+const searchClearBtn = document.getElementById('search-clear-btn');
+const searchKbd      = document.getElementById('search-kbd');
+
+function updateSearchClearBtn() {
+  const hasVal = searchEl.value.length > 0;
+  searchClearBtn.style.display = hasVal ? 'flex' : 'none';
+  if (searchKbd) searchKbd.style.display = hasVal ? 'none' : '';
+  searchEl.classList.toggle('has-value', hasVal);
+}
+
+function clearSearch() {
+  searchEl.value = '';
+  searchHighlightMode = false;
+  clearCardHighlighting();
+  updateSearchClearBtn();
+  searchEl.dispatchEvent(new Event('input'));
+  searchEl.focus();
+}
+
+// ── events ────────────────────────────────────────────────────────────────
+searchEl.addEventListener('input', () => {
+  if (searchHighlightMode) {
+    searchHighlightMode = false;
+    clearCardHighlighting();
+  }
+  query = searchEl.value.trim();
+  if (!query) hideMatchNav();
+  if (activeTab !== 'top-cited') render();
+  updateSearchClearBtn();
+});
+
+searchEl.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    const term = searchEl.value.trim();
+    if (!term) return;
+    if (!searchHighlightMode) {
+      searchHighlightMode = true;
+      applyCardHighlighting(term);
+    } else {
+      advanceHighlight();
+    }
+    return;
+  }
+  if (e.key === 'Escape') {
+    clearSearch();
+  }
+});
+
+closeBtn.addEventListener('click', closePanel);
+
+document.addEventListener('keydown', e => {
+  const inInput = document.activeElement === searchEl ||
+                  document.activeElement.tagName === 'INPUT' ||
+                  document.activeElement.tagName === 'TEXTAREA';
+
+  if (e.key === 'Escape') {
+    const cmpPanel = document.getElementById('compare-panel');
+    if (cmpPanel && cmpPanel.classList.contains('show')) {
+      cmpPanel.classList.remove('show');
+    } else {
+      closePanel();
+    }
+  }
+
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    e.preventDefault();
+    searchEl.focus();
+    searchEl.select();
+  }
+
+  if (e.key === '/' && !e.metaKey && !e.ctrlKey && !inInput) {
+    e.preventDefault();
+    searchEl.focus();
+    searchEl.select();
+  }
+});
+
+// Match navigation buttons
+matchNext.addEventListener('click', () => setActiveMatch(matchIdx + 1, true));
+matchPrev.addEventListener('click', () => setActiveMatch(matchIdx - 1, true));
+
+// Compare tray buttons
+document.getElementById('compare-open-btn').addEventListener('click', () => {
+  if (compareSet.size > 0) renderComparePanel();
+});
+
+document.getElementById('compare-clear-btn').addEventListener('click', () => {
+  compareSet.clear();
+  renderCompareTray();
+  render();
+});
+
+document.getElementById('compare-panel-close').addEventListener('click', () => {
+  document.getElementById('compare-panel').classList.remove('show');
+});
+
+setupTheme();
+init();
+</script>
+
+<section id="visitor-countries">
+  <div class="visitor-inner">
+    <div class="flag-counter-wrap">
+      <img src="https://s11.flagcounter.com/count2/HHRI/bg_f6f8fa/txt_1c2128/border_d0d7de/columns_4/maxflags_12/viewers_0/labels_1/pageviews_1/flags_Flat/percent_1/"
+           alt="Visitors by Country"
+           class="flag-counter-img"
+           border="0"
+           onerror="this.parentElement.style.display='none'">
+    </div>
+  </div>
+</section>
+
+<footer id="site-footer">
+  <div class="footer-inner">
+    <div class="footer-center">
+      <p class="footer-credit">
+        Designed by<br>
+        <strong>Artificial Intelligence Research Center</strong><br>
+        <a href="https://hhri.foxconn.com/en" target="_blank" rel="noopener"
+           class="footer-link">
+          AI Research Wiki
+        </a>
+      </p>
+      <p class="footer-copy">© 2026 AI Research Wiki. Notes are original summaries for research and educational purposes. All papers linked to their original sources. No paper content reproduced. MIT License (code only).</p>
+    </div>
+    <div class="footer-right">
+      <p class="footer-stats" id="footer-stats"></p>
+    </div>
+  </div>
+</footer>
+<script>
+fetch('notes.json')
+  .then(r => r.json())
+  .then(notes => {
+    const papers   = notes.filter(n => !n.tags?.includes('glossary')).length;
+    const concepts = notes.filter(n =>  n.tags?.includes('glossary')).length;
+    const el = document.getElementById('footer-stats');
+    if (el) el.innerHTML = `${notes.length} notes · ${papers} papers · ${concepts} concepts`;
+  }).catch(() => {});
+</script>
+</body>
+</html>
+<!-- trigger -->
