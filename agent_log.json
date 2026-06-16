@@ -179,5 +179,31 @@
       "Transformer.md (+1)"
     ],
     "skipped": []
+  },
+  {
+    "timestamp": "2026-06-16T03:13:44.205094",
+    "mode": "update-citations",
+    "topic": null,
+    "added": [
+      "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models.md (+8,098)",
+      "Chinchilla_Scaling_Laws.md (-130)",
+      "DeepSeek-R1 Incentivizing Reasoning Capability in LLMs via Reinforcement Learning.md (-5,130)",
+      "DeepSeek-V3 Technical Report.md (-3,500)",
+      "Direct Preference Optimization Your Language Model is Secretly a Reward Model.md (+3,652)",
+      "EAGLE.md (+13)",
+      "Flash Attention.md (+92)",
+      "FlashAttention-2.md (+68)",
+      "Griffin.md (+6)",
+      "Hardware Acceleration for Neural Networks.md (+1)",
+      "Humanity's Last Exam.md (-110)",
+      "InstructGPT.md (+12,620)",
+      "Jamba.md (+4)",
+      "Kaplan_Scaling_Laws.md (+3,722)",
+      "LLaMA 2.md (+174)",
+      "LoRA Low-Rank Adaptation of Large Language Models.md (+1,917)",
+      "Mamba.md (+240)",
+      "xLSTM.md (-490)"
+    ],
+    "skipped": []
   }
 ]

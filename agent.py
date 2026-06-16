@@ -1,6 +1,6 @@
 """
 agent.py — Agentic wiki ingestion system
-Uses Claude (via Vertex AI) with tool use to find, evaluate,
+Uses Claude (via OpenRouter) with tool use to find, evaluate,
 and add content to the LLM wiki from multiple sources.
 
 Usage:
@@ -9,7 +9,6 @@ Usage:
     python3 agent.py citations          # track high-impact citing papers
 """
 
-import anthropic
 import json
 import os
 import re
@@ -20,6 +19,19 @@ import urllib.parse
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta
 from pathlib import Path
+
+from openai import OpenAI
+
+# ── OpenRouter client (no API key needed — reads OPENROUTER_API_KEY from env) ──
+_OR_KEY = os.environ.get("OPENROUTER_API_KEY")
+_OR_URL = os.environ.get("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
+_MODEL  = os.environ.get("AGENT_LLM_MODEL", "anthropic/claude-sonnet-4-6")
+
+if not _OR_KEY:
+    print("ERROR: OPENROUTER_API_KEY not set. Create a .env file or export it.")
+    sys.exit(1)
+
+client = OpenAI(api_key=_OR_KEY, base_url=_OR_URL)
 
 # Wiki location: override with WIKI_VAULT env var; defaults to this file's directory.
 VAULT = Path(os.environ.get("WIKI_VAULT", Path(__file__).resolve().parent))
@@ -67,14 +79,6 @@ SOURCES_TO_WATCH = {
         "UCbfYPyITQ-7l4upoX8nvctg",  # Andrej Karpathy
     ],
 }
-
-# ── Client (Vertex AI) ─────────────────────────────────────────────────────
-_PROJECT = os.environ.get("ANTHROPIC_VERTEX_PROJECT_ID", "your-gcp-project-id")
-_REGION  = os.environ.get("VERTEX_REGION_CLAUDE_4_6_SONNET", "europe-west1")
-_MODEL   = os.environ.get("ANTHROPIC_DEFAULT_SONNET_MODEL", "claude-sonnet-4-6")
-
-client = anthropic.AnthropicVertex(project_id=_PROJECT, region=_REGION)
-
 
 # ── Tool implementations ───────────────────────────────────────────────────
 
@@ -287,13 +291,13 @@ def log_agent_run(results: dict):
     LOG.write_text(json.dumps(log, indent=2))
 
 
-# ── Tool schemas for Claude ────────────────────────────────────────────────
+# ── Tool schemas for OpenAI / OpenRouter ───────────────────────────────────
 
 TOOLS = [
     {
         "name": "search_arxiv",
         "description": "Search arXiv for recent papers by keyword or topic.",
-        "input_schema": {
+        "parameters": {
             "type": "object",
             "properties": {
                 "query":       {"type": "string", "description": "Search query"},
@@ -306,7 +310,7 @@ TOOLS = [
     {
         "name": "get_citations",
         "description": "Get high-impact papers (≥ min_citations) that cite an existing wiki paper.",
-        "input_schema": {
+        "parameters": {
             "type": "object",
             "properties": {
                 "arxiv_id":      {"type": "string",  "description": "arXiv ID of the source paper"},
@@ -318,7 +322,7 @@ TOOLS = [
     {
         "name": "fetch_github_readme",
         "description": "Fetch README text from a GitHub repository (owner/repo).",
-        "input_schema": {
+        "parameters": {
             "type": "object",
             "properties": {
                 "repo": {"type": "string", "description": "GitHub repo in owner/repo format"},
@@ -329,7 +333,7 @@ TOOLS = [
     {
         "name": "fetch_blog_post",
         "description": "Fetch and extract text from a blog post URL.",
-        "input_schema": {
+        "parameters": {
             "type": "object",
             "properties": {
                 "url": {"type": "string", "description": "Full URL of the blog post"},
@@ -340,7 +344,7 @@ TOOLS = [
     {
         "name": "get_youtube_transcript",
         "description": "Get auto-generated transcript of a YouTube video.",
-        "input_schema": {
+        "parameters": {
             "type": "object",
             "properties": {
                 "video_id": {"type": "string", "description": "YouTube video ID (11-char string)"},
@@ -351,7 +355,7 @@ TOOLS = [
     {
         "name": "download_pdf",
         "description": "Download an arXiv paper PDF into raw/ for later processing by build_wiki.py.",
-        "input_schema": {
+        "parameters": {
             "type": "object",
             "properties": {
                 "arxiv_id": {"type": "string", "description": "arXiv ID, e.g. 2312.00752"},
@@ -363,7 +367,7 @@ TOOLS = [
     {
         "name": "check_wiki",
         "description": "Check if content with a given title already exists in the wiki.",
-        "input_schema": {
+        "parameters": {
             "type": "object",
             "properties": {
                 "title": {"type": "string", "description": "Title to check"},
@@ -378,7 +382,7 @@ TOOLS = [
             "(GitHub repos, blog posts, YouTube transcripts). "
             "Include full YAML frontmatter: title, tags, year, tldr, wikilinks."
         ),
-        "input_schema": {
+        "parameters": {
             "type": "object",
             "properties": {
                 "filename": {"type": "string", "description": "Output filename, e.g. nanoGPT.md"},
@@ -390,7 +394,7 @@ TOOLS = [
     {
         "name": "done",
         "description": "Signal the agent is finished. Provide a summary plus lists of added and skipped items.",
-        "input_schema": {
+        "parameters": {
             "type": "object",
             "properties": {
                 "summary": {"type": "string"},
@@ -447,7 +451,7 @@ def _base_context(existing: list[str]) -> str:
     )
 
 
-def _make_system(mode: str, extra: str, existing: list[str]) -> list[dict]:
+def _make_system(mode: str, extra: str, existing: list[str]) -> str:
     text = (
         f"You are a research ingestion agent for an AI/ML knowledge wiki. "
         f"Mode: {mode}.\n\n"
@@ -455,8 +459,7 @@ def _make_system(mode: str, extra: str, existing: list[str]) -> list[dict]:
         + "\n\n"
         + _base_context(existing)
     )
-    # Cache the (large, stable) system prompt
-    return [{"type": "text", "text": text, "cache_control": {"type": "ephemeral"}}]
+    return text
 
 
 # ── Citation refresh (Semantic Scholar) ─────────────────────────────────────
@@ -637,52 +640,55 @@ def run_agent(mode: str = "daily", topic: str = None, min_citations: int = 100) 
         )
         messages = [{"role": "user", "content": "Run daily monitoring check."}]
 
-    system = _make_system(mode, extra, existing)
+    messages = [{"role": "system", "content": _make_system(mode, extra, existing)}] + messages
 
     added   = []
     skipped = []
 
     for iteration in range(20):
-        response = client.messages.create(
+        response = client.chat.completions.create(
             model=_MODEL,
             max_tokens=4096,
-            system=system,
-            tools=TOOLS,
             messages=messages,
+            tools=TOOLS,
         )
 
-        messages.append({"role": "assistant", "content": response.content})
+        msg = response.choices[0].message
+        messages.append(msg)
 
-        if response.stop_reason == "end_turn":
+        if msg.content:
+            print(f"  {msg.content[:200]}")
+
+        if not msg.tool_calls:
             break
 
         tool_results = []
         finished     = False
 
-        for block in response.content:
-            if block.type != "tool_use":
-                continue
+        for tc in msg.tool_calls:
+            name   = tc.function.name
+            inputs = json.loads(tc.function.arguments)
 
-            print(f"  → {block.name}({json.dumps(block.input)[:100]})")
-            result = execute_tool(block.name, block.input)
+            print(f"  → {name}({json.dumps(inputs)[:100]})")
+            result = execute_tool(name, inputs)
 
-            if block.name == "done":
+            if name == "done":
                 data    = json.loads(result)
                 added   = data.get("added", [])
                 skipped = data.get("skipped", [])
                 finished = True
-            elif block.name == "download_pdf":
+            elif name == "download_pdf":
                 r = json.loads(result)
                 if r.get("status") == "downloaded":
                     added.append(r["filename"])
-            elif block.name == "write_note":
+            elif name == "write_note":
                 r = json.loads(result)
                 if r.get("status") == "written":
                     added.append(r["path"])
 
             tool_results.append({
-                "type": "tool_result",
-                "tool_use_id": block.id,
+                "role": "tool",
+                "tool_call_id": tc.id,
                 "content": result,
             })
 
