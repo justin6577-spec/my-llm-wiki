@@ -207,6 +207,22 @@
     ]
   },
   {
+    "id": "ASRD_Anchor_Revocable_Decoding",
+    "title": "ASRD_Anchor_Revocable_Decoding",
+    "authors": "",
+    "tags": [],
+    "year": "",
+    "tldr": "",
+    "aliases": [],
+    "links": [],
+    "citation_count": null,
+    "arxiv": "",
+    "cited_by_details": null,
+    "html": "<h1>ASRD: Anchor Supervised Revocable Decoding</h1>\n<p><strong>Authors</strong>: arXiv:2606.16847\n<strong>Year</strong>: 2026</p>\n<p>ASRD addresses error propagation and local error reinforcement in revocable decoding strategies for Diffusion LLMs (dLLMs).</p>\n<h2>Method</h2>\n<p>Operates in <strong>embedding space</strong> with two key mechanisms:</p>\n<ol>\n<li><strong>Anchor-Guided Generation</strong>: Injects entropy-weighted anchor signals into masked positions to implicitly rectify attention toward the reliable global skeleton</li>\n<li><strong>Anchor-Perturbed Verification</strong>: Applies orthogonal perturbations to uncertain candidate tokens, destabilizing errors driven by fragile local consensus</li>\n</ol>\n<p>Uses a dynamic <strong>Anchor Tokens Cache</strong> identified via temporal consistency.</p>\n<h2>Results</h2>\n<ul>\n<li>Outperforms recent remasking baselines on math and coding benchmarks</li>\n<li>Accuracy improvements up to <strong>6.4%</strong></li>\n<li>Inference throughput improvement up to <strong>7.2×</strong></li>\n</ul>",
+    "search_text": "asrd: anchor supervised revocable decoding authors : arxiv:2606.16847 year : 2026 asrd addresses error propagation and local error reinforcement in revocable decoding strategies for diffusion llms (dllms). method operates in embedding space with two key mechanisms: anchor-guided generation : injects entropy-weighted anchor signals into masked positions to implicitly rectify attention toward the reliable global skeleton anchor-perturbed verification : applies orthogonal perturbations to uncertain candidate tokens, destabilizing errors driven by fragile local consensus uses a dynamic anchor tokens cache identified via temporal consistency. results outperforms recent remasking baselines on math and coding benchmarks accuracy improvements up to 6.4% inference throughput improvement up to 7.2×",
+    "backlinks": []
+  },
+  {
     "id": "Adapter-Layers",
     "title": "Adapter Layers",
     "authors": "",
@@ -914,6 +930,25 @@
     "backlinks": [
       "Direct-Preference-Optimization-Your-Language-Model-is-Secretly-a-Reward-Model"
     ]
+  },
+  {
+    "id": "ContextRL",
+    "title": "ContextRL",
+    "authors": "",
+    "tags": [],
+    "year": "",
+    "tldr": "",
+    "aliases": [],
+    "links": [
+      "reinforcement-learning",
+      "GRPO"
+    ],
+    "citation_count": null,
+    "arxiv": "",
+    "cited_by_details": null,
+    "html": "<h1>ContextRL</h1>\n<p><strong>Authors</strong>: arXiv:2606.17053\n<strong>Year</strong>: 2026</p>\n<p>ContextRL addresses LLM failures in identifying small but decisive evidence within long or complex contexts.</p>\n<h2>Method</h2>\n<p>A context-aware [[reinforcement learning]] (RL) method with an <strong>indirect auxiliary objective</strong>:</p>\n<ul>\n<li>Presents the model with a query, an answer, and two highly similar contexts</li>\n<li>Rewards the model for selecting the context that supports the query-answer pair</li>\n<li>Encourages fine-grained grounding without direct answer supervision</li>\n</ul>\n<p><strong>Data construction</strong>:\n- Coding agents: 1K trajectory pairs via condition filtering\n- Multimodal reasoning: 7K image pairs via generative editing and similarity search</p>\n<h2>Results</h2>\n<ul>\n<li><strong>+2.2%</strong> over standard [[GRPO]] on 5 long-horizon benchmarks</li>\n<li><strong>+1.8%</strong> across 12 diverse visual question answering benchmarks</li>\n<li>Ablations show gains arise from the context-selection objective, not from additional data alone</li>\n</ul>",
+    "search_text": "contextrl authors : arxiv:2606.17053 year : 2026 contextrl addresses llm failures in identifying small but decisive evidence within long or complex contexts. method a context-aware [[reinforcement learning]] (rl) method with an indirect auxiliary objective : presents the model with a query, an answer, and two highly similar contexts rewards the model for selecting the context that supports the query-answer pair encourages fine-grained grounding without direct answer supervision data construction : - coding agents: 1k trajectory pairs via condition filtering - multimodal reasoning: 7k image pairs via generative editing and similarity search results +2.2% over standard [[grpo]] on 5 long-horizon benchmarks +1.8% across 12 diverse visual question answering benchmarks ablations show gains arise from the context-selection objective, not from additional data alone",
+    "backlinks": []
   },
   {
     "id": "Convolutional-view",
@@ -2240,6 +2275,7 @@
     "search_text": "group relative policy optimization (grpo) used in [[deepseek_v4]] and earlier deepseek models, 2024–2026. why not just use ppo? proximal policy optimization (ppo) is the standard rl algorithm for llm fine-tuning. it estimates the advantage of each action — how much better was this response than what the value function predicted? — using a separately-trained critic network. the critic has roughly the same size as the policy (i.e., another full llm), which means: 2× memory — you need both the policy and the critic loaded simultaneously critic training instability — the critic lags the policy; early in training its estimates are wrong, which produces noisy gradient signal long rollouts are hard — credit assignment over many tokens requires a good value function, which is hard to train grpo sidesteps the critic entirely. the core idea: groups as their own baseline for each prompt $q$, generate $g$ independent rollouts $\\{o_1, o_2, \\ldots, o_g\\}$ from the current policy. score each with a reward function $r_i = r(q, o_i)$. compute the advantage of rollout $i$ relative to the group : $$\\hat{a}_i = \\frac{r_i - \\text{mean}(\\{r_1,\\ldots,r_g\\})}{\\text{std}(\\{r_1,\\ldots,r_g\\})}$$ this normalized advantage says: was this response better or worse than the policy's average response to this prompt? no critic needed — the group of responses is its own baseline. the policy gradient loss is then: $$\\mathcal{l}_\\text{grpo} = -\\mathbb{e} \\left[ \\sum_{t} \\min\\!\\left( \\frac{\\pi_\\theta(o_t|q,o_{ the clip and kl penalty are inherited from ppo — they prevent the policy from moving too far from the reference model in one update. key design choices parameter role $g$ group size — more rollouts = more stable advantage estimate; typical $g = 8$–$16$ $\\epsilon$ ppo clip threshold — limits how much the policy changes per step $\\beta$ kl penalty weight — keeps the policy near the reference $r(q, o)$ reward function — domain-specific (rule-based for math/code, model-based for instruction following) why it works for llms llm responses are long sequences. assigning credit to individual tokens is hard — most of the value is in the final answer. grpo sidesteps this with outcome-level rewards : score the full response, then assign that score uniformly to all tokens in the response. crude, but it works when the reward is reliable (e.g., checking a math answer against a verified solution). the group normalization automatically handles reward scale — you don't need to carefully calibrate absolute reward magnitudes, only that the reward is informative (some responses to a prompt are better than others). grpo in deepseek-v4's post-training in [[deepseek_v4]]'s two-stage post-training: stage 1 (specialist training): each domain expert is trained with sft + grpo. the reward model is domain-specific: exact match for math, test execution for code, rubric-based scoring for instruction following. stage 2: [[on-policy distillation]] unifies the specialists — grpo is not used in stage 2. where it appears [[deepseek_v4]] — stage 1 specialist rl for math, code, agent, and instruction-following domains [[rlvr]] — the broader post-training paradigm that grpo enables; grpo is the rl algorithm underlying rlvr-style training related concepts [[rlvr]] — rl with verifiable rewards; grpo is the optimizer, rlvr is the paradigm [[on-policy distillation]] — stage 2 of deepseek-v4 post-training; consolidates grpo-trained specialists [[multi-token prediction]] — complementary training signal during pre-training [[deepseek_v4]] — the model whose post-training pipeline uses grpo at scale",
     "backlinks": [
       "000-Index",
+      "ContextRL",
       "DeepSeek_V4",
       "LLaMA-2",
       "On-Policy-Distillation",
@@ -2474,6 +2510,22 @@
       "PyramidKV",
       "SnapKV"
     ]
+  },
+  {
+    "id": "HAMON_Optical_Sequence_Mixing",
+    "title": "HAMON_Optical_Sequence_Mixing",
+    "authors": "",
+    "tags": [],
+    "year": "",
+    "tldr": "",
+    "aliases": [],
+    "links": [],
+    "citation_count": null,
+    "arxiv": "",
+    "cited_by_details": null,
+    "html": "<h1>HAMON: Passive Optical Sequence Mixing</h1>\n<p><strong>Authors</strong>: arXiv:2606.17028\n<strong>Year</strong>: 2026</p>\n<p>HAMON explores whether the core forecasting operator can be implemented optically rather than as learned digital temporal mixing.</p>\n<h2>Method</h2>\n<ul>\n<li>Historical values encoded onto an optical aperture</li>\n<li>Future positions left dark</li>\n<li>Cascaded <strong>trainable phase masks</strong> with free-space diffraction shape the forecast in the output field</li>\n<li>Inference: single passive optical propagation pass</li>\n<li>No trainable digital sequence-mixing layer</li>\n</ul>\n<h2>Results</h2>\n<ul>\n<li>Outperforms strongest digital baselines on <strong>ETTm2</strong> at all horizons</li>\n<li>Outperforms on <strong>ETTh2</strong> at all but the longest horizon</li>\n<li>MSE improvement up to <strong>14%</strong></li>\n<li>Competitive on Weather benchmark</li>\n<li>Defines a concrete target for passive physical sequence mixing hardware</li>\n</ul>",
+    "search_text": "hamon: passive optical sequence mixing authors : arxiv:2606.17028 year : 2026 hamon explores whether the core forecasting operator can be implemented optically rather than as learned digital temporal mixing. method historical values encoded onto an optical aperture future positions left dark cascaded trainable phase masks with free-space diffraction shape the forecast in the output field inference: single passive optical propagation pass no trainable digital sequence-mixing layer results outperforms strongest digital baselines on ettm2 at all horizons outperforms on etth2 at all but the longest horizon mse improvement up to 14% competitive on weather benchmark defines a concrete target for passive physical sequence mixing hardware",
+    "backlinks": []
   },
   {
     "id": "HBM",
@@ -3680,6 +3732,24 @@
     ]
   },
   {
+    "id": "KVEraser",
+    "title": "KVEraser",
+    "authors": "",
+    "tags": [],
+    "year": "",
+    "tldr": "",
+    "aliases": [],
+    "links": [
+      "KV-cache"
+    ],
+    "citation_count": null,
+    "arxiv": "",
+    "cited_by_details": null,
+    "html": "<h1>KVEraser</h1>\n<p><strong>Authors</strong>: arXiv:2606.17034\n<strong>Year</strong>: 2026</p>\n<p>KVEraser addresses the challenge of post-hoc context erasing over the [[KV cache]]. When a span needs to be removed from an already-processed context, exact erasing requires recomputing all subsequent tokens — cost proportional to the suffix length, not the erased span.</p>\n<h2>Method</h2>\n<p>KVEraser replaces only the KV states of the erased interval with learned <strong>steering states</strong> while reusing the remaining cache unchanged. A two-stage training pipeline is used:</p>\n<ol>\n<li><strong>Generic span-neighbor pretraining</strong>: Teaches the eraser to suppress the influence of the erased span</li>\n<li><strong>Task-specific fine-tuning</strong>: Adapts to downstream scenarios</li>\n</ol>\n<h2>Results</h2>\n<ul>\n<li>Nearly matches full recomputation in post-erasure performance</li>\n<li>Context lengths: 1K–32K</li>\n<li>Latency increases by only 24% vs 17.6x for full recomputation</li>\n<li>Generalizes to unseen long-document QA with harmful factual distractors</li>\n<li>Achieves 3–4x speedup over full recomputation</li>\n</ul>",
+    "search_text": "kveraser authors : arxiv:2606.17034 year : 2026 kveraser addresses the challenge of post-hoc context erasing over the [[kv cache]]. when a span needs to be removed from an already-processed context, exact erasing requires recomputing all subsequent tokens — cost proportional to the suffix length, not the erased span. method kveraser replaces only the kv states of the erased interval with learned steering states while reusing the remaining cache unchanged. a two-stage training pipeline is used: generic span-neighbor pretraining : teaches the eraser to suppress the influence of the erased span task-specific fine-tuning : adapts to downstream scenarios results nearly matches full recomputation in post-erasure performance context lengths: 1k–32k latency increases by only 24% vs 17.6x for full recomputation generalizes to unseen long-document qa with harmful factual distractors achieves 3–4x speedup over full recomputation",
+    "backlinks": []
+  },
+  {
     "id": "KVQuant",
     "title": "KVQuant",
     "authors": "",
@@ -3778,6 +3848,24 @@
       "Tensor-Cores",
       "Tiling"
     ]
+  },
+  {
+    "id": "LESS_Mutual_Stability_Sampling",
+    "title": "LESS_Mutual_Stability_Sampling",
+    "authors": "",
+    "tags": [],
+    "year": "",
+    "tldr": "",
+    "aliases": [],
+    "links": [
+      "diffusion-large-language-models"
+    ],
+    "citation_count": null,
+    "arxiv": "",
+    "cited_by_details": null,
+    "html": "<h1>LESS: Mutual-Stability Sampling</h1>\n<p><strong>Authors</strong>: arXiv:2606.16908\n<strong>Year</strong>: 2026</p>\n<p>LESS addresses the efficiency bottleneck in [[diffusion large language models]] (dLLMs), where fixed-budget decoding wastes computation on already-stable positions and commits unstable ones too early.</p>\n<h2>Method</h2>\n<p><strong>Mutual-stability sampling</strong> — a token is eligible for unmasking when all three conditions hold:\n1. <strong>High confidence</strong>: Top-1 prediction probability is high\n2. <strong>Temporal persistence</strong>: Top-1 token persists across recent reverse steps\n3. <strong>Distribution stability</strong>: Predictive distribution is stable under top-K inter-step Jensen-Shannon divergence</p>\n<h2>Results</h2>\n<ul>\n<li>Models tested: Dream-7B, LLaDA-8B, LLaDA-1.5-8B</li>\n<li>7 benchmarks spanning general knowledge, math, and code</li>\n<li><strong>72.1% fewer reverse steps</strong> than fixed-budget decoding</li>\n<li>Improves average accuracy over strong training-free adaptive samplers</li>\n<li>Reductions translate to lower wall-clock latency and inference compute</li>\n</ul>",
+    "search_text": "less: mutual-stability sampling authors : arxiv:2606.16908 year : 2026 less addresses the efficiency bottleneck in [[diffusion large language models]] (dllms), where fixed-budget decoding wastes computation on already-stable positions and commits unstable ones too early. method mutual-stability sampling — a token is eligible for unmasking when all three conditions hold: 1. high confidence : top-1 prediction probability is high 2. temporal persistence : top-1 token persists across recent reverse steps 3. distribution stability : predictive distribution is stable under top-k inter-step jensen-shannon divergence results models tested: dream-7b, llada-8b, llada-1.5-8b 7 benchmarks spanning general knowledge, math, and code 72.1% fewer reverse steps than fixed-budget decoding improves average accuracy over strong training-free adaptive samplers reductions translate to lower wall-clock latency and inference compute",
+    "backlinks": []
   },
   {
     "id": "LLM-Benchmarks",
@@ -6534,6 +6622,22 @@
     ]
   },
   {
+    "id": "Qwen-RobotWorld",
+    "title": "Qwen-RobotWorld",
+    "authors": "",
+    "tags": [],
+    "year": "",
+    "tldr": "",
+    "aliases": [],
+    "links": [],
+    "citation_count": null,
+    "arxiv": "",
+    "cited_by_details": null,
+    "html": "<h1>Qwen-RobotWorld</h1>\n<p><strong>Authors</strong>: arXiv:2606.17030\n<strong>Year</strong>: 2026</p>\n<p>Qwen-RobotWorld is a language-conditioned video world model for embodied intelligence, using natural language as a unified action interface.</p>\n<h2>Architecture</h2>\n<ul>\n<li><strong>Double-Stream MMDiT</strong>: 60-layer double-stream diffusion transformer</li>\n<li><strong>MLLM Action Encoding</strong>: Couples frozen Qwen2.5-VL semantics with video-VAE latents through layer-wise joint attention</li>\n<li><strong>Embodied World Knowledge (EWK)</strong>: 8.6M video-text corpus (200M+ frames), 20+ embodiments, 500+ action categories</li>\n<li><strong>General+Expert Progressive Curriculum</strong>: Two-stage training (general visual priors → embodied specialization)</li>\n</ul>\n<h2>Results</h2>\n<ul>\n<li>Ranks <strong>1st overall</strong> on EWMBench and DreamGen Bench</li>\n<li>Outperforms all open-source models on WorldModelBench and PBench</li>\n<li>Zero-shot generalization on RoboTwin-IF benchmark</li>\n</ul>",
+    "search_text": "qwen-robotworld authors : arxiv:2606.17030 year : 2026 qwen-robotworld is a language-conditioned video world model for embodied intelligence, using natural language as a unified action interface. architecture double-stream mmdit : 60-layer double-stream diffusion transformer mllm action encoding : couples frozen qwen2.5-vl semantics with video-vae latents through layer-wise joint attention embodied world knowledge (ewk) : 8.6m video-text corpus (200m+ frames), 20+ embodiments, 500+ action categories general+expert progressive curriculum : two-stage training (general visual priors → embodied specialization) results ranks 1st overall on ewmbench and dreamgen bench outperforms all open-source models on worldmodelbench and pbench zero-shot generalization on robotwin-if benchmark",
+    "backlinks": []
+  },
+  {
     "id": "Qwen2.5",
     "title": "Qwen2.5",
     "authors": "",
@@ -8110,6 +8214,22 @@
     ]
   },
   {
+    "id": "T-Rex_Mixture_of_Transformers",
+    "title": "T-Rex_Mixture_of_Transformers",
+    "authors": "",
+    "tags": [],
+    "year": "",
+    "tldr": "",
+    "aliases": [],
+    "links": [],
+    "citation_count": null,
+    "arxiv": "",
+    "cited_by_details": null,
+    "html": "<h1>T-Rex: Mixture-of-Transformers</h1>\n<p><strong>Authors</strong>: arXiv:2606.17055\n<strong>Year</strong>: 2026</p>\n<p>T-Rex introduces a <strong>variable-rate Mixture-of-Transformers (MoT)</strong> architecture for tactile-reactive robotic manipulation. This is the first work to effectively integrate high-frequency tactile signals into Vision-Language-Action (VLA) models.</p>\n<h2>Key Contributions</h2>\n<ul>\n<li>Large-scale 100-hour tactile-rich dataset</li>\n<li><strong>Variable-rate MoT architecture</strong> with temporal tactile VQ-VAE encoder</li>\n<li>Processes high-frequency touch signals without sacrificing existing VLA capabilities</li>\n</ul>\n<h2>Results</h2>\n<ul>\n<li>+30% higher average success rate over strongest baseline</li>\n<li>12 manipulation tasks requiring delicate force control and deformable object manipulation</li>\n</ul>",
+    "search_text": "t-rex: mixture-of-transformers authors : arxiv:2606.17055 year : 2026 t-rex introduces a variable-rate mixture-of-transformers (mot) architecture for tactile-reactive robotic manipulation. this is the first work to effectively integrate high-frequency tactile signals into vision-language-action (vla) models. key contributions large-scale 100-hour tactile-rich dataset variable-rate mot architecture with temporal tactile vq-vae encoder processes high-frequency touch signals without sacrificing existing vla capabilities results +30% higher average success rate over strongest baseline 12 manipulation tasks requiring delicate force control and deformable object manipulation",
+    "backlinks": []
+  },
+  {
     "id": "TPU",
     "title": "TPU (Tensor Processing Unit)",
     "authors": "",
@@ -8297,6 +8417,25 @@
     ]
   },
   {
+    "id": "The_Value_Axis",
+    "title": "The_Value_Axis",
+    "authors": "",
+    "tags": [],
+    "year": "",
+    "tldr": "",
+    "aliases": [],
+    "links": [
+      "reinforcement-learning",
+      "DPO"
+    ],
+    "citation_count": null,
+    "arxiv": "",
+    "cited_by_details": null,
+    "html": "<h1>The Value Axis</h1>\n<p><strong>Authors</strong>: arXiv:2606.17056\n<strong>Year</strong>: 2026</p>\n<p>This paper investigates whether language models internally encode a \"value\" estimate of their ongoing trajectory — the likelihood that their current strategy will achieve its goals.</p>\n<h2>Key Findings</h2>\n<p>Using synthetic in-context [[reinforcement learning]] data with Qwen3-8B:</p>\n<ul>\n<li>Activations along the value axis distinguish between:</li>\n<li>High vs low verbalized confidence</li>\n<li>Rollouts without vs with backtracking</li>\n<li>Correct vs corrupted code</li>\n<li><strong>Steering toward high value</strong>: Suppresses self-correction, reduces explanatory verbosity</li>\n<li><strong>Steering toward low value</strong>: Induces backtracking and exploration</li>\n<li>[[DPO]] (Direct Preference Optimization) can increase the internal value of rewarded behaviors</li>\n</ul>\n<h2>Applications</h2>\n<ul>\n<li>Qwen assigns low value to politically sensitive chat queries after post-training</li>\n<li>Supervised fine-tuning increases internal confidence within the training domain</li>\n<li>Suggests LMs linearly encode an estimate of expected goal success that modulates confidence</li>\n</ul>",
+    "search_text": "the value axis authors : arxiv:2606.17056 year : 2026 this paper investigates whether language models internally encode a \"value\" estimate of their ongoing trajectory — the likelihood that their current strategy will achieve its goals. key findings using synthetic in-context [[reinforcement learning]] data with qwen3-8b: activations along the value axis distinguish between: high vs low verbalized confidence rollouts without vs with backtracking correct vs corrupted code steering toward high value : suppresses self-correction, reduces explanatory verbosity steering toward low value : induces backtracking and exploration [[dpo]] (direct preference optimization) can increase the internal value of rewarded behaviors applications qwen assigns low value to politically sensitive chat queries after post-training supervised fine-tuning increases internal confidence within the training domain suggests lms linearly encode an estimate of expected goal success that modulates confidence",
+    "backlinks": []
+  },
+  {
     "id": "Thread-block",
     "title": "Thread Block (GPU)",
     "authors": "",
@@ -8481,6 +8620,22 @@
       "000-Index",
       "KV-Cache-Optimization"
     ]
+  },
+  {
+    "id": "TokenPilot",
+    "title": "TokenPilot",
+    "authors": "",
+    "tags": [],
+    "year": "",
+    "tldr": "",
+    "aliases": [],
+    "links": [],
+    "citation_count": null,
+    "arxiv": "",
+    "cited_by_details": null,
+    "html": "<h1>TokenPilot</h1>\n<p><strong>Authors</strong>: arXiv:2606.17016\n<strong>Year</strong>: 2026</p>\n<p>TokenPilot addresses the context accumulation problem in LLM agents deployed in long-horizon sessions, where growing context drives up inference costs.</p>\n<h2>Method</h2>\n<p>A <strong>dual-granularity context management framework</strong>:</p>\n<ul>\n<li><strong>Global (Ingestion-Aware Compaction)</strong>: Stabilizes prompt prefixes and eliminates open-world environmental noise at the ingestion gate</li>\n<li><strong>Local (Lifecycle-Aware Eviction)</strong>: Monitors residual utility of context segments, enforcing conservative batch-turn scheduling to offload content when task relevance expires</li>\n</ul>\n<h2>Results</h2>\n<ul>\n<li><strong>PinchBench</strong>: 61% cost reduction (isolated), 61% (continuous)</li>\n<li><strong>Claw-Eval</strong>: 56% cost reduction (isolated), 87% (continuous)</li>\n<li>Maintains competitive performance compared to prior systems</li>\n<li>Integrated into LightMem2</li>\n</ul>",
+    "search_text": "tokenpilot authors : arxiv:2606.17016 year : 2026 tokenpilot addresses the context accumulation problem in llm agents deployed in long-horizon sessions, where growing context drives up inference costs. method a dual-granularity context management framework : global (ingestion-aware compaction) : stabilizes prompt prefixes and eliminates open-world environmental noise at the ingestion gate local (lifecycle-aware eviction) : monitors residual utility of context segments, enforcing conservative batch-turn scheduling to offload content when task relevance expires results pinchbench : 61% cost reduction (isolated), 61% (continuous) claw-eval : 56% cost reduction (isolated), 87% (continuous) maintains competitive performance compared to prior systems integrated into lightmem2",
+    "backlinks": []
   },
   {
     "id": "ToolLLM",
@@ -9377,8 +9532,27 @@
     "backlinks": [
       "llm.c",
       "micrograd",
-      "minbpe"
+      "minbpe",
+      "nanochat"
     ]
+  },
+  {
+    "id": "nanochat",
+    "title": "nanochat",
+    "authors": "",
+    "tags": [],
+    "year": "",
+    "tldr": "",
+    "aliases": [],
+    "links": [
+      "nanoGPT"
+    ],
+    "citation_count": null,
+    "arxiv": "",
+    "cited_by_details": null,
+    "html": "<h1>nanochat</h1>\n<p>nanochat is a minimal experimental harness for training LLMs from scratch, created by Andrej Karpathy as the successor to [[nanoGPT]]. It is designed for single-GPU-node training and covers all major LLM stages: tokenization, pretraining, finetuning, evaluation, inference, and a ChatGPT-like web UI.</p>\n<p>Key features:\n- <strong>Single-dial complexity</strong>: A single <code>--depth</code> parameter (number of transformer layers) automatically determines all other hyperparameters (width, heads, learning rate, training horizon, weight decay) for compute-optimal training.\n- <strong>GPT-2 speedrun leaderboard</strong>: Tracks wall-clock time to match GPT-2 (1.6B) capability on 8×H100 nodes. Current record: ~1.65 hours (down from OpenAI's original 168 hours/$43K in 2019).\n- <strong>Cost efficiency</strong>: Can train GPT-2-capability models for ~$48 on 8×H100 GPUs, or ~$15 on spot instances.\n- <strong>Full pipeline</strong>: Includes tokenization (via uv), pretraining, finetuning, core metric evaluation (DCLM CORE), and chat UI.</p>\n<p>The repo uses PyTorch and the <code>uv</code> package manager, and supports CUDA and CPU/MPS backends.</p>\n<p>Source: https://github.com/karpathy/nanochat</p>",
+    "search_text": "nanochat nanochat is a minimal experimental harness for training llms from scratch, created by andrej karpathy as the successor to [[nanogpt]]. it is designed for single-gpu-node training and covers all major llm stages: tokenization, pretraining, finetuning, evaluation, inference, and a chatgpt-like web ui. key features: - single-dial complexity : a single --depth parameter (number of transformer layers) automatically determines all other hyperparameters (width, heads, learning rate, training horizon, weight decay) for compute-optimal training. - gpt-2 speedrun leaderboard : tracks wall-clock time to match gpt-2 (1.6b) capability on 8×h100 nodes. current record: ~1.65 hours (down from openai's original 168 hours/$43k in 2019). - cost efficiency : can train gpt-2-capability models for ~$48 on 8×h100 gpus, or ~$15 on spot instances. - full pipeline : includes tokenization (via uv), pretraining, finetuning, core metric evaluation (dclm core), and chat ui. the repo uses pytorch and the uv package manager, and supports cuda and cpu/mps backends. source: https://github.com/karpathy/nanochat",
+    "backlinks": []
   },
   {
     "id": "sLSTM",
