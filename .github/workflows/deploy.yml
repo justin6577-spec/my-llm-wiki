@@ -2,9 +2,13 @@ name: Build and Deploy
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+    paths-ignore: ['.env', '.gitignore']
   workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Reason for manual run'
+        required: false
 
 permissions:
   contents: write
