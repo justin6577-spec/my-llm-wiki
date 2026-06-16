@@ -22,16 +22,22 @@ from pathlib import Path
 
 from openai import OpenAI
 
-# ── OpenRouter client (no API key needed — reads OPENROUTER_API_KEY from env) ──
+# ── OpenRouter client (lazy — only initialized when LLM mode is used) ────────
 _OR_KEY = os.environ.get("OPENROUTER_API_KEY")
 _OR_URL = os.environ.get("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
 _MODEL  = os.environ.get("AGENT_LLM_MODEL", "anthropic/claude-sonnet-4-6")
 
-if not _OR_KEY:
-    print("ERROR: OPENROUTER_API_KEY not set. Create a .env file or export it.")
-    sys.exit(1)
+_client = None
 
-client = OpenAI(api_key=_OR_KEY, base_url=_OR_URL)
+def _get_client():
+    global _client
+    if _client is not None:
+        return _client
+    if not _OR_KEY:
+        print("ERROR: OPENROUTER_API_KEY not set. Create a .env file or export it.")
+        sys.exit(1)
+    _client = OpenAI(api_key=_OR_KEY, base_url=_OR_URL)
+    return _client
 
 # Wiki location: override with WIKI_VAULT env var; defaults to this file's directory.
 VAULT = Path(os.environ.get("WIKI_VAULT", Path(__file__).resolve().parent))
@@ -646,7 +652,7 @@ def run_agent(mode: str = "daily", topic: str = None, min_citations: int = 100) 
     skipped = []
 
     for iteration in range(20):
-        response = client.chat.completions.create(
+        response = _get_client().chat.completions.create(
             model=_MODEL,
             max_tokens=4096,
             messages=messages,

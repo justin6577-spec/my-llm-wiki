@@ -205,5 +205,23 @@
       "xLSTM.md (-490)"
     ],
     "skipped": []
+  },
+  {
+    "timestamp": "2026-06-16T03:14:20.876620",
+    "mode": "update-citations",
+    "topic": null,
+    "added": [
+      "RetNet.md (+15)",
+      "RoPE.md (+494)",
+      "S4.md (+86)",
+      "SWE-bench Pro.md (+2)",
+      "SWE-bench.md (+1,366)",
+      "Speculative Decoding.md (+1)",
+      "The Llama 3 Herd of Models.md (+3,093)",
+      "ToolLLM.md (-92)",
+      "Transformer.md (+1,880)",
+      "Transformers Are SSMs.md (+55)"
+    ],
+    "skipped": []
   }
 ]
